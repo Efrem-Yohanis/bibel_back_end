@@ -25,7 +25,7 @@ quiz_service = QuizService()
 
 class BookLevelsView(APIView):
     """Get available quiz levels for a specific book"""
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     
     @swagger_auto_schema(
         operation_description="Get available difficulty levels for a book",
