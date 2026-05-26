@@ -1,8 +1,9 @@
-Django==4.2.7  # or your version
+Django==4.2.7
 psycopg2-binary==2.9.9
 gunicorn==21.2.0
 python-dotenv==1.0.0
-django-environ==0.11.2  # Better for Django .env management
-django-allauth==0.60.1  # For Google OAuth (recommended for Django)
+django-environ==0.11.2
+django-allauth==0.60.1
+dj-database-url==2.1.0
+authlib==1.3.0
 requests==2.31.0
-authlib==1.3.0  # If you're using Authlib instead of allauth
