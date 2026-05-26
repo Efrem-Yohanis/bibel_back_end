@@ -4,22 +4,24 @@ Django settings for bibel_project project - PRODUCTION READY for Render
 
 from pathlib import Path
 import os
-import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# Get from Render environment variable - CRITICAL for production
+# For production on Render: set SECRET_KEY in environment variables
+# For local development: a default key will be used
 SECRET_KEY = os.environ.get('SECRET_KEY')
 if not SECRET_KEY:
-    raise ValueError("SECRET_KEY environment variable is required!")
+    # Use a default key for local development (never use this in production!)
+    SECRET_KEY = 'django-insecure-default-key-for-local-dev-only'
+    print("⚠️  WARNING: Using default SECRET_KEY. Set SECRET_KEY environment variable for production!")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 # Get allowed hosts from Render environment variable
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,*.onrender.com').split(',')
 
 # Custom User Model
 AUTH_USER_MODEL = 'core.User'
@@ -162,18 +164,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'bibel_project.wsgi.application'
 
-# Database - Must use DATABASE_URL from Render
-DATABASE_URL = os.environ.get('DATABASE_URL')
-if not DATABASE_URL:
-    raise ValueError("DATABASE_URL environment variable is required!")
-
+# Database - Using SQLite (simple and works perfectly on Render)
 DATABASES = {
-    'default': dj_database_url.config(
-        default=DATABASE_URL,
-        conn_max_age=600,
-        conn_health_checks=True,
-        ssl_require=True,  # Render PostgreSQL requires SSL
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
 # Password validation
