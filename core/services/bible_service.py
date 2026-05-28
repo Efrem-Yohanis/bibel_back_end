@@ -1,6 +1,6 @@
 """
-Bible Service - Manages Bible text retrieval for Django
-FIXED: Chapter content, verse of the day, and URL encoding errors
+Bible Service - Manages Bible text retrieval and audio for Django
+FIXED: Chapter content, verse of the day, URL encoding errors, and audio support
 """
 
 from django.db import models
@@ -10,12 +10,14 @@ from typing import List, Dict, Optional, Any
 from urllib.parse import unquote
 import random
 from ..models import (
-    Language, Book, Testament, Chapter, Verse, VerseText
+    Language, Book, Testament, Chapter, Verse, VerseText,
+    BookAudio, ChapterAudio, UserBookProgress
 )
+from ..models import User
 
 
 class BibleService:
-    """Service for Bible text operations using Django ORM"""
+    """Service for Bible text and audio operations using Django ORM"""
     
     def __init__(self):
         pass
@@ -30,26 +32,29 @@ class BibleService:
         
         return list(languages)
     
+# In your bible_service.py, look for any .annotate() calls
+
     def get_books_by_language(self, language_code: str = 'en') -> List[Dict]:
-        """Get all books that have content in the specified language"""
         try:
             language = Language.objects.get(code=language_code)
         except Language.DoesNotExist:
             return []
         
-        # Get books with verses in this language
+        # Change this:
         books = Book.objects.filter(
             chapters__verses__texts__language=language
         ).distinct().annotate(
-            chapters_count=models.Count('chapters__id', distinct=True)
-        ).select_related('testament').order_by('testament__id', 'id')
+            chapter_count=models.Count('chapters__id', distinct=True)  # ← Use different name
+        ).select_related('testament').order_by('testament__id', 'bible_order')
         
         return [
             {
                 'id': book.id,
                 'name': book.name,
                 'testament': book.testament.name if book.testament else None,
-                'chapters': getattr(book, 'chapters_count', 0)
+                'chapters': getattr(book, 'chapter_count', 0),  # ← Use the annotated name
+                'has_audio': book.has_audio,
+                'bible_order': book.bible_order
             }
             for book in books
         ]
@@ -69,8 +74,8 @@ class BibleService:
             chapters_count=models.Count('chapters__id', distinct=True),
             verses_count=models.Count('chapters__verses__id', distinct=True)
         ).values(
-            'id', 'name', 'testament__name', 'chapters_count', 'verses_count'
-        ).order_by('id')
+            'id', 'name', 'testament__name', 'chapters_count', 'verses_count', 'has_audio', 'bible_order'
+        ).order_by('bible_order')
         
         return list(books)
     
@@ -85,22 +90,276 @@ class BibleService:
             testament__name=testament_name,
             chapters__verses__texts__language=language
         ).distinct().annotate(
-            total_chapters=models.Count('chapters__id', distinct=True)
-        ).values('id', 'name', 'total_chapters').order_by('id')
+            total_chapters_count=models.Count('chapters__id', distinct=True)
+        ).values('id', 'name', 'total_chapters_count', 'has_audio', 'bible_order').order_by('bible_order')
         
         return [
             {
                 'book_id': book['id'],
                 'book_name': book['name'],
-                'total_chapters': book['total_chapters'] or 0
+                'total_chapters': book['total_chapters_count'] or 0,
+                'has_audio': book['has_audio'],
+                'bible_order': book['bible_order']
             }
             for book in books
         ]
     
+    # ==================== AUDIO METHODS ====================
+    
+    def get_book_audio(self, book_id: int, language_code: str = 'en') -> Dict:
+        """Get audio information for a specific book"""
+        try:
+            language = Language.objects.get(code=language_code)
+            
+            # Check for book-level audio
+            book_audio = BookAudio.objects.filter(
+                book_id=book_id,
+                language=language,
+                is_available=True
+            ).first()
+            
+            if book_audio:
+                return {
+                    'has_audio': True,
+                    'audio_type': 'full_book',
+                    'audio_url': book_audio.get_audio_url(),
+                    'duration': book_audio.duration,
+                    'part_number': book_audio.part_number,
+                    'total_parts': book_audio.total_parts,
+                    'chapter_timestamps': book_audio.chapter_timestamps
+                }
+            
+            # Check for chapter-level audio
+            chapter_audios = ChapterAudio.objects.filter(
+                book_id=book_id,
+                language=language,
+                is_available=True
+            ).order_by('chapter_number')
+            
+            if chapter_audios.exists():
+                return {
+                    'has_audio': True,
+                    'audio_type': 'chapter_by_chapter',
+                    'chapters': [
+                        {
+                            'chapter': ca.chapter_number,
+                            'audio_url': ca.get_audio_url(),
+                            'duration': ca.duration,
+                            'start_time': ca.start_time
+                        }
+                        for ca in chapter_audios
+                    ]
+                }
+            
+            return {'has_audio': False}
+            
+        except Language.DoesNotExist:
+            return {'has_audio': False, 'error': f'Language {language_code} not found'}
+    
+    def get_chapter_audio(self, book_id: int, chapter_number: int, language_code: str = 'en') -> Dict:
+        """Get audio for a specific chapter"""
+        try:
+            language = Language.objects.get(code=language_code)
+            
+            chapter_audio = ChapterAudio.objects.filter(
+                book_id=book_id,
+                chapter_number=chapter_number,
+                language=language,
+                is_available=True
+            ).first()
+            
+            if chapter_audio:
+                # Also get next/previous chapter audio
+                next_audio = ChapterAudio.objects.filter(
+                    book_id=book_id,
+                    chapter_number=chapter_number + 1,
+                    language=language,
+                    is_available=True
+                ).first()
+                
+                prev_audio = ChapterAudio.objects.filter(
+                    book_id=book_id,
+                    chapter_number=chapter_number - 1,
+                    language=language,
+                    is_available=True
+                ).first()
+                
+                return {
+                    'success': True,
+                    'has_audio': True,
+                    'audio_url': chapter_audio.get_audio_url(),
+                    'duration': chapter_audio.duration,
+                    'chapter_number': chapter_number,
+                    'next_chapter_audio': next_audio.chapter_number if next_audio else None,
+                    'prev_chapter_audio': prev_audio.chapter_number if prev_audio else None,
+                    'start_time': chapter_audio.start_time
+                }
+            
+            return {'success': False, 'has_audio': False, 'message': 'No audio available for this chapter'}
+            
+        except Language.DoesNotExist:
+            return {'success': False, 'error': f'Language {language_code} not found'}
+    
+    def get_user_audio_progress(self, user_id: int, book_id: int) -> Dict:
+        """Get user's audio progress for a specific book"""
+        try:
+            progress = UserBookProgress.objects.get(
+                user_id=user_id,
+                book_id=book_id
+            )
+            
+            book = Book.objects.get(id=book_id)
+            
+            return {
+                'success': True,
+                'current_chapter': progress.current_chapter,
+                'current_verse': progress.current_verse,
+                'audio_current_position': progress.audio_current_position,
+                'audio_completed_chapters': progress.audio_completed_chapters,
+                'completed': progress.completed,
+                'progress_percentage': progress.get_audio_progress_percentage()
+            }
+        except UserBookProgress.DoesNotExist:
+            return {
+                'success': True,
+                'current_chapter': 1,
+                'current_verse': 1,
+                'audio_current_position': 0,
+                'audio_completed_chapters': [],
+                'completed': False,
+                'progress_percentage': 0
+            }
+
+    # ==================== AUDIO PROGRESS METHODS ====================
+
+    def record_chapter_completion(self, user_id, book_id, chapter_number, language_code='en'):
+        """Record that a user completed a chapter audio"""
+        try:
+            user = User.objects.get(id=user_id)
+            book = Book.objects.get(id=book_id)
+            language = Language.objects.get(code=language_code)
+
+            progress, created = UserBookProgress.objects.get_or_create(
+                user=user,
+                book=book,
+                defaults={
+                    'current_chapter': chapter_number + 1 if chapter_number < book.total_chapters else chapter_number,
+                    'current_verse': 1
+                }
+            )
+
+            if not progress.audio_completed_chapters:
+                progress.audio_completed_chapters = []
+
+            if chapter_number not in progress.audio_completed_chapters:
+                progress.audio_completed_chapters.append(chapter_number)
+                progress.audio_completed_chapters.sort()
+
+                # Update current chapter to next uncompleted chapter
+                next_chapter = chapter_number + 1
+                if next_chapter <= book.total_chapters:
+                    progress.current_chapter = next_chapter
+
+                progress.last_audio_listened = timezone.now()
+                progress.save()
+
+                # Check if book is complete
+                if len(progress.audio_completed_chapters) >= book.total_chapters:
+                    progress.completed = True
+                    progress.save()
+
+            pct = 0
+            if book.total_chapters and book.total_chapters > 0:
+                pct = (len(progress.audio_completed_chapters) / book.total_chapters) * 100
+
+            return {
+                'success': True,
+                'completed_chapters': progress.audio_completed_chapters,
+                'current_chapter': progress.current_chapter,
+                'next_chapter': chapter_number + 1 if chapter_number < book.total_chapters else None,
+                'book_completed': progress.completed,
+                'progress_percentage': pct
+            }
+
+        except Exception as e:
+            return {'success': False, 'error': str(e)}
+
+    def get_user_audio_status(self, user_id, book_id):
+        """Get user's audio progress for a book"""
+        try:
+            progress = UserBookProgress.objects.get(user_id=user_id, book_id=book_id)
+            pct = 0
+            if progress.book.total_chapters and progress.book.total_chapters > 0:
+                pct = (len(progress.audio_completed_chapters) / progress.book.total_chapters) * 100
+
+            return {
+                'success': True,
+                'completed_chapters': progress.audio_completed_chapters,
+                'current_chapter': progress.current_chapter,
+                'book_completed': progress.completed,
+                'progress_percentage': pct
+            }
+        except UserBookProgress.DoesNotExist:
+            return {
+                'success': True,
+                'completed_chapters': [],
+                'current_chapter': 1,
+                'book_completed': False,
+                'progress_percentage': 0
+            }
+    
+    def update_audio_progress(self, user_id: int, book_id: int, chapter_number: int, 
+                              current_position: int = None, completed_chapter: int = None) -> Dict:
+        """Update user's audio progress for a book"""
+        try:
+            progress, created = UserBookProgress.objects.get_or_create(
+                user_id=user_id,
+                book_id=book_id,
+                defaults={
+                    'current_chapter': chapter_number,
+                    'current_verse': 1
+                }
+            )
+            
+            # Update current chapter
+            progress.current_chapter = chapter_number
+            
+            # Update audio position if provided
+            if current_position is not None:
+                progress.audio_current_position = current_position
+                progress.last_audio_listened = timezone.now()
+            
+            # Mark chapter as completed if provided
+            if completed_chapter is not None:
+                if not progress.audio_completed_chapters:
+                    progress.audio_completed_chapters = []
+                if completed_chapter not in progress.audio_completed_chapters:
+                    progress.audio_completed_chapters.append(completed_chapter)
+                    progress.audio_completed_chapters.sort()
+            
+            # Check if book is fully completed
+            book = Book.objects.get(id=book_id)
+            if len(progress.audio_completed_chapters) >= book.total_chapters:
+                progress.completed = True
+            
+            progress.save()
+            
+            return {
+                'success': True,
+                'current_chapter': progress.current_chapter,
+                'audio_current_position': progress.audio_current_position,
+                'audio_completed_chapters': progress.audio_completed_chapters,
+                'completed': progress.completed,
+                'progress_percentage': progress.get_audio_progress_percentage()
+            }
+            
+        except Exception as e:
+            return {'success': False, 'error': str(e)}
+    
     # ==================== BOOK CONTENT METHODS ====================
     
     def get_book_full_content(self, book_name: str, language_code: str = 'en') -> Dict:
-        """Get full content of a specific book with book info"""
+        """Get full content of a specific book with book info and chapter audio"""
         try:
             book_name = unquote(book_name)
             language = Language.objects.get(code=language_code)
@@ -109,13 +368,26 @@ class BibleService:
             book = Book.objects.filter(
                 Q(name__iexact=book_name) | 
                 Q(name__icontains=book_name)
-            ).annotate(
-                total_chapters=models.Count('chapters__id', distinct=True),
-                total_verses=models.Count('chapters__verses__id', distinct=True)
-            ).select_related('testament').first()
+            ).first()
             
             if not book:
                 return {'error': f'Book "{book_name}" not found'}
+            
+            # Get all chapter audio availability at once
+            chapter_audios = ChapterAudio.objects.filter(
+                book=book,
+                language=language,
+                is_available=True
+            ).values('chapter_number', 'audio_url', 'duration')
+            
+            # Create a lookup dict for chapter audio
+            audio_lookup = {}
+            for ca in chapter_audios:
+                audio_lookup[ca['chapter_number']] = {
+                    'has_audio': True,
+                    'audio_url': ca['audio_url'],
+                    'audio_duration': ca['duration']
+                }
             
             # Get all verses in this book for the specified language
             verses = VerseText.objects.filter(
@@ -133,31 +405,79 @@ class BibleService:
             )
             
             # Organize by chapter
-            chapters_content = {}
+            chapters_content = []
+            current_chapter = None
+            current_verses = []
+            
             for verse in verses:
                 chapter = verse['verse__chapter__chapter_number']
-                if chapter not in chapters_content:
-                    chapters_content[chapter] = []
-                chapters_content[chapter].append({
+                
+                if current_chapter != chapter:
+                    if current_chapter is not None:
+                        audio_info_chapter = audio_lookup.get(current_chapter, {
+                            'has_audio': False,
+                            'audio_url': None,
+                            'audio_duration': None
+                        })
+                        chapters_content.append({
+                            'chapter': current_chapter,
+                            'has_audio': audio_info_chapter['has_audio'],
+                            'audio_url': audio_info_chapter['audio_url'],
+                            'audio_duration': audio_info_chapter['audio_duration'],
+                            'verses': current_verses
+                        })
+                    current_chapter = chapter
+                    current_verses = []
+                
+                current_verses.append({
                     'verse': verse['verse__verse_number'],
                     'text': verse['text']
                 })
+            
+            # Add last chapter
+            if current_chapter is not None:
+                audio_info_chapter = audio_lookup.get(current_chapter, {
+                    'has_audio': False,
+                    'audio_url': None,
+                    'audio_duration': None
+                })
+                chapters_content.append({
+                    'chapter': current_chapter,
+                    'has_audio': audio_info_chapter['has_audio'],
+                    'audio_url': audio_info_chapter['audio_url'],
+                    'audio_duration': audio_info_chapter['audio_duration'],
+                    'verses': current_verses
+                })
+            
+            # Get overall book audio info
+            book_audio = BookAudio.objects.filter(
+                book=book,
+                language=language,
+                is_available=True
+            ).first()
+            
+            # Check if any chapter has audio
+            has_any_audio = len(audio_lookup) > 0 or book_audio is not None
+            
+            audio_info = {
+                'has_audio': has_any_audio,
+                'type': 'full_book' if book_audio else ('chapter_by_chapter' if len(audio_lookup) > 0 else 'none'),
+                'book_audio_url': book_audio.get_audio_url() if book_audio else None,
+                'book_duration': book_audio.duration if book_audio else None,
+                'chapters_with_audio': len(audio_lookup)
+            }
             
             return {
                 'book_info': {
                     'id': book.id,
                     'name': book.name,
                     'testament': book.testament.name if book.testament else None,
-                    'total_chapters': getattr(book, 'total_chapters', 0),
-                    'total_verses': getattr(book, 'total_verses', 0)
+                    'total_chapters': book.chapters.count(),
+                    'total_verses': Verse.objects.filter(chapter__book=book).count(),
+                    'has_audio': book.has_audio or has_any_audio
                 },
-                'chapters': [
-                    {
-                        'chapter': chapter,
-                        'verses': verses_data
-                    }
-                    for chapter, verses_data in sorted(chapters_content.items())
-                ]
+                'audio_info': audio_info,
+                'chapters': chapters_content
             }
             
         except Language.DoesNotExist:
@@ -185,7 +505,9 @@ class BibleService:
             
             return {
                 'book': book.name,
+                'book_id': book.id,
                 'total_chapters': chapters.count(),
+                'has_audio': book.has_audio,
                 'chapters': list(chapters)
             }
             
@@ -226,6 +548,7 @@ class BibleService:
                 'book_id': book.id,
                 'book_name': book.name,
                 'total_chapters': len(chapters_list),
+                'has_audio': book.has_audio,
                 'chapters': chapters_list
             }
             
@@ -274,11 +597,17 @@ class BibleService:
             if not verses.exists():
                 return {'error': f'No verses found for {book.name} {chapter} in {language_code}'}
             
+            # Get audio for this chapter
+            audio_info = self.get_chapter_audio(book.id, chapter, language_code)
+            
             return {
                 'reference': f'{book.name} {chapter}',
                 'book': book.name,
+                'book_id': book.id,
                 'chapter': chapter,
                 'total_verses': verses.count(),
+                'has_audio': audio_info.get('has_audio', False),
+                'audio_url': audio_info.get('audio_url') if audio_info.get('has_audio') else None,
                 'verses': [
                     {
                         'verse': v['verse__verse_number'],
@@ -321,6 +650,7 @@ class BibleService:
                 return {
                     'reference': f'{book.name} {chapter}:{verse}',
                     'book': book.name,
+                    'book_id': book.id,
                     'chapter': chapter,
                     'verse': verse,
                     'text': verse_text.text
@@ -391,6 +721,7 @@ class BibleService:
             'verse__chapter__book'
         ).values(
             'verse__chapter__book__name',
+            'verse__chapter__book__id',
             'verse__chapter__chapter_number',
             'verse__verse_number',
             'text'
@@ -400,6 +731,7 @@ class BibleService:
             {
                 'reference': f"{vt['verse__chapter__book__name']} {vt['verse__chapter__chapter_number']}:{vt['verse__verse_number']}",
                 'book': vt['verse__chapter__book__name'],
+                'book_id': vt['verse__chapter__book__id'],
                 'chapter': vt['verse__chapter__chapter_number'],
                 'verse': vt['verse__verse_number'],
                 'text': vt['text']
@@ -440,6 +772,7 @@ class BibleService:
         return {
             'reference': f"{verse_text.verse.chapter.book.name} {verse_text.verse.chapter.chapter_number}:{verse_text.verse.verse_number}",
             'book': verse_text.verse.chapter.book.name,
+            'book_id': verse_text.verse.chapter.book.id,
             'chapter': verse_text.verse.chapter.chapter_number,
             'verse': verse_text.verse.verse_number,
             'text': verse_text.text
@@ -477,6 +810,7 @@ class BibleService:
         return {
             'reference': f"{verse_text.verse.chapter.book.name} {verse_text.verse.chapter.chapter_number}:{verse_text.verse.verse_number}",
             'book': verse_text.verse.chapter.book.name,
+            'book_id': verse_text.verse.chapter.book.id,
             'chapter': verse_text.verse.chapter.chapter_number,
             'verse': verse_text.verse.verse_number,
             'text': verse_text.text
@@ -513,4 +847,21 @@ class BibleService:
             'books': stats['books'] or 0,
             'chapters': stats['chapters'] or 0,
             'verses': stats['verses'] or 0
+        }
+    
+    def get_audio_stats(self) -> Dict:
+        """Get statistics about audio availability"""
+        total_books = Book.objects.count()
+        books_with_audio = Book.objects.filter(has_audio=True).count()
+        
+        total_chapter_audio = ChapterAudio.objects.filter(is_available=True).count()
+        total_book_audio = BookAudio.objects.filter(is_available=True).count()
+        
+        return {
+            'total_books': total_books,
+            'books_with_audio': books_with_audio,
+            'books_without_audio': total_books - books_with_audio,
+            'chapter_audio_files': total_chapter_audio,
+            'book_audio_files': total_book_audio,
+            'audio_coverage_percentage': (books_with_audio / total_books * 100) if total_books > 0 else 0
         }

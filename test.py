@@ -1,191 +1,109 @@
-# migrate_fixed.py
-import sqlite3
-import psycopg2
-from urllib.parse import urlparse
-import time
+# insert_genesis_chapter26_audio.py
+import os
+import sys
+from pathlib import Path
 
-DATABASE_URL = "postgresql://bibel_quiz_user:IBQceDb477BJ0i7DWL4MSIOy6hnkATEO@dpg-d84b0f58nd3s73ctqle0-a.oregon-postgres.render.com/bibel_quiz"
+# Setup Django
+project_root = Path(__file__).resolve().parent
+sys.path.insert(0, str(project_root))
 
-result = urlparse(DATABASE_URL)
-PG_CONFIG = {
-    "host": result.hostname,
-    "database": result.path[1:],
-    "user": result.username,
-    "password": result.password,
-    "port": result.port or 5432,
-    "sslmode": "require"
-}
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'bibel_project.settings')
 
-def disable_foreign_keys():
-    """Disable foreign key checks temporarily"""
-    pg_conn = psycopg2.connect(**PG_CONFIG)
-    pg_cursor = pg_conn.cursor()
-    pg_cursor.execute("SET session_replication_role = 'replica';")
-    pg_conn.commit()
-    pg_conn.close()
-    print("   Foreign key checks disabled")
+import django
+django.setup()
 
-def enable_foreign_keys():
-    """Re-enable foreign key checks"""
-    pg_conn = psycopg2.connect(**PG_CONFIG)
-    pg_cursor = pg_conn.cursor()
-    pg_cursor.execute("SET session_replication_role = 'origin';")
-    pg_conn.commit()
-    pg_conn.close()
-    print("   Foreign key checks re-enabled")
+from core.models import Book, Language, ChapterAudio
 
-def migrate_table_safe(table_name, columns, skip_columns=None, convert_booleans=None):
-    """Migrate table safely with error handling"""
-    print(f"📋 Migrating {table_name}...", end=" ", flush=True)
+def insert_chapter26_audio():
+    """Insert Genesis Chapter 26 audio into database"""
     
-    sqlite_conn = sqlite3.connect('db.sqlite3')
-    sqlite_cursor = sqlite_conn.cursor()
+    print("=" * 60)
+    print("🔊 INSERTING GENESIS CHAPTER 26 AUDIO")
+    print("=" * 60)
     
+    # Get Genesis book
     try:
-        pg_conn = psycopg2.connect(**PG_CONFIG)
-        pg_cursor = pg_conn.cursor()
-        
-        # Check if table exists in SQLite
-        sqlite_cursor.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}'")
-        if not sqlite_cursor.fetchone():
-            print("(table not found)")
-            return 0
-        
-        # Get column names
-        sqlite_cursor.execute(f"PRAGMA table_info({table_name})")
-        all_columns = [col[1] for col in sqlite_cursor.fetchall()]
-        
-        # Filter out columns to skip
-        if skip_columns:
-            columns_to_use = [col for col in all_columns if col not in skip_columns]
-        else:
-            columns_to_use = all_columns
-        
-        # Build SELECT query
-        select_cols = ','.join(columns_to_use)
-        sqlite_cursor.execute(f"SELECT {select_cols} FROM {table_name}")
-        rows = sqlite_cursor.fetchall()
-        
-        if not rows:
-            print("(no data)")
-            return 0
-        
-        # Clear existing data
-        try:
-            pg_cursor.execute(f"TRUNCATE TABLE {table_name} RESTART IDENTITY CASCADE")
-        except:
-            pass
-        
-        # Insert data with type conversion
-        placeholders = ','.join(['%s'] * len(columns_to_use))
-        insert_sql = f"INSERT INTO {table_name} ({','.join(columns_to_use)}) VALUES ({placeholders})"
-        
-        inserted = 0
-        errors = 0
-        
-        for row in rows:
-            try:
-                # Convert values
-                converted_row = list(row)
-                
-                # Convert boolean fields
-                if convert_booleans:
-                    for idx, col_name in enumerate(columns_to_use):
-                        if col_name in convert_booleans and converted_row[idx] in (0, 1):
-                            converted_row[idx] = bool(converted_row[idx])
-                
-                pg_cursor.execute(insert_sql, converted_row)
-                inserted += 1
-            except Exception as e:
-                errors += 1
-                if errors <= 3:  # Show first 3 errors only
-                    print(f"\n   ⚠️  Error on row {inserted + errors}: {str(e)[:100]}")
-        
-        pg_conn.commit()
-        print(f"✅ {inserted}/{len(rows)} rows (errors: {errors})")
-        return inserted
-        
-    except Exception as e:
-        print(f"❌ Error: {e}")
-        return 0
-    finally:
-        sqlite_conn.close()
-        pg_conn.close()
-
-def verify_and_fix_foreign_keys():
-    """Check and fix missing foreign key references"""
-    print("\n🔧 Checking foreign key references...")
+        book = Book.objects.get(name="Genesis")
+        print(f"✅ Book: {book.name} (id={book.id})")
+    except Book.DoesNotExist:
+        print("❌ Book not found!")
+        return
     
-    pg_conn = psycopg2.connect(**PG_CONFIG)
-    pg_cursor = pg_conn.cursor()
+    # Get English language
+    try:
+        language = Language.objects.get(code='en')
+        print(f"✅ Language: {language.name} (code={language.code})")
+    except Language.DoesNotExist:
+        print("❌ Language not found!")
+        return
     
-    # Check for books with invalid testament_id
-    pg_cursor.execute("""
-        SELECT COUNT(*) FROM books b 
-        WHERE testament_id IS NOT NULL 
-        AND NOT EXISTS (SELECT 1 FROM testaments t WHERE t.id = b.testament_id)
-    """)
-    invalid_books = pg_cursor.fetchone()[0]
-    if invalid_books > 0:
-        print(f"   ⚠️  Found {invalid_books} books with invalid testament_id")
-        pg_cursor.execute("""
-            UPDATE books SET testament_id = NULL 
-            WHERE testament_id IS NOT NULL 
-            AND NOT EXISTS (SELECT 1 FROM testaments t WHERE t.id = books.testament_id)
-        """)
-        pg_conn.commit()
-        print(f"   ✅ Fixed {invalid_books} books")
+    # The Cloudinary URL from upload
+    audio_url = "https://res.cloudinary.com/dleykahqd/video/upload/bible_audio/bibel_audio/old/en/genesis/26"
     
-    pg_conn.close()
-
-def main():
-    print("=" * 60)
-    print("🚀 MIGRATING SQLITE TO POSTGRESQL (FIXED VERSION)")
-    print("=" * 60)
+    # Or read from file
+    # with open('genesis_chapter26_url.txt', 'r') as f:
+    #     audio_url = f.read().strip()
     
-    # Step 1: Disable foreign key checks
-    print("\n1️⃣ Disabling foreign key constraints...")
-    disable_foreign_keys()
+    print(f"\n📝 Audio URL: {audio_url}")
     
-    # Step 2: Migrate tables in correct order with proper conversion
-    print("\n2️⃣ Migrating tables...")
+    # Insert or update
+    chapter_audio, created = ChapterAudio.objects.update_or_create(
+        book=book,
+        chapter_number=26,
+        language=language,
+        defaults={
+            'audio_url': audio_url,
+            'cloudinary_public_id': 'bible_audio/bibel_audio/old/en/genesis/26',
+            'duration': None,  # You can update later if you have duration
+            'file_size': None,  # You can update later
+            'is_available': True
+        }
+    )
     
-    migrations = [
-        # Basic lookup tables
-        ('languages', None, ['is_active']),
-        ('levels', None, None),
-        ('testaments', None, None),
-        
-        # Main data tables
-        ('books', None, None),
-        ('chapters', None, None),
-        ('verses', None, None),
-        
-        # Text tables (skip problematic columns)
-        ('verse_texts', ['id'], None),  # Skip id column, let PostgreSQL generate
-        ('questions', None, None),
-        ('question_texts', ['id'], None),
-        ('options', None, None),
-        ('option_texts', ['id'], None),
-        ('explanations', ['id'], None),
-    ]
+    if created:
+        print("\n✅ Successfully created Chapter 26 audio!")
+    else:
+        print("\n🔄 Successfully updated Chapter 26 audio!")
     
-    total = 0
-    for table, skip_cols, bool_cols in migrations:
-        count = migrate_table_safe(table, None, skip_cols, bool_cols)
-        total += count
-        time.sleep(0.3)
+    # Verify
+    print("\n📊 Verification:")
+    en_audio_count = ChapterAudio.objects.filter(
+        book=book, 
+        language=language, 
+        is_available=True
+    ).count()
+    print(f"   English chapters with audio: {en_audio_count}/50")
     
-    # Step 3: Re-enable foreign key checks
-    print("\n3️⃣ Re-enabling foreign key constraints...")
-    enable_foreign_keys()
-    
-    # Step 4: Verify and fix any issues
-    verify_and_fix_foreign_keys()
+    # Show Chapter 26 audio
+    ch26 = ChapterAudio.objects.get(book=book, chapter_number=26, language=language)
+    print(f"   Chapter 26 audio URL: {ch26.audio_url[:80]}...")
     
     print("\n" + "=" * 60)
-    print(f"✅ Migration complete! Processed {total} rows")
+    print("✅ Genesis Chapter 26 audio inserted successfully!")
     print("=" * 60)
 
+def update_chapter26_duration():
+    """Update duration if known (optional)"""
+    
+    # If you know the duration in seconds, you can update it
+    # For example, if Chapter 26 is 145 seconds long:
+    
+    from core.models import ChapterAudio
+    
+    book = Book.objects.get(name="Genesis")
+    language = Language.objects.get(code='en')
+    
+    chapter_audio = ChapterAudio.objects.get(
+        book=book,
+        chapter_number=26,
+        language=language
+    )
+    
+    # Update duration (replace 145 with actual duration)
+    # chapter_audio.duration = 145
+    # chapter_audio.save()
+    # print("✅ Duration updated!")
+
 if __name__ == "__main__":
-    main()
+    insert_chapter26_audio()
+    # update_chapter26_duration()  # Uncomment to update duration

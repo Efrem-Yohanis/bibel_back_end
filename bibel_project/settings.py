@@ -15,7 +15,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 if not SECRET_KEY:
     # Use a default key for local development (never use this in production!)
     SECRET_KEY = 'django-insecure-default-key-for-local-dev-only'
-    print("⚠️  WARNING: Using default SECRET_KEY. Set SECRET_KEY environment variable for production!")
+    print("WARNING: Using default SECRET_KEY. Set SECRET_KEY environment variable for production!")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'

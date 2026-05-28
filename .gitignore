@@ -17,3 +17,6 @@ staticfiles/
 media/
 logs/
 *.log
+bibel_txt/
+db_backup_.sqlite3
+db_backup.sqlite3

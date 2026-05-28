@@ -1,11 +1,11 @@
 """
-Bible Views - Django REST Framework views for Bible operations
+Bible Views - Django REST Framework views for Bible operations with Audio Support
 """
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
@@ -110,7 +110,9 @@ class BooksByLanguageView(APIView):
                                     'id': openapi.Schema(type=openapi.TYPE_INTEGER),
                                     'name': openapi.Schema(type=openapi.TYPE_STRING),
                                     'testament': openapi.Schema(type=openapi.TYPE_STRING),
-                                    'chapters': openapi.Schema(type=openapi.TYPE_INTEGER)
+                                    'chapters': openapi.Schema(type=openapi.TYPE_INTEGER),
+                                    'has_audio': openapi.Schema(type=openapi.TYPE_BOOLEAN),
+                                    'bible_order': openapi.Schema(type=openapi.TYPE_INTEGER)
                                 }
                             )
                         )
@@ -198,7 +200,7 @@ class BooksByTestamentView(APIView):
 
 
 class BookFullContentView(APIView):
-    """Get full book content with all chapters and verses"""
+    """Get full book content with all chapters and verses (with audio info)"""
     permission_classes = [AllowAny]
     
     @swagger_auto_schema(
@@ -233,17 +235,14 @@ class BookFullContentView(APIView):
                     'message': result['error']
                 }, status=status.HTTP_404_NOT_FOUND)
             
-            # Format response to match Flask API
-            chapters_list = [
-                {'chapter': ch['chapter'], 'verses': ch['verses']}
-                for ch in result.get('chapters', [])
-            ]
-            
             return Response({
                 'status': 'success',
                 'book': book_name,
+                'book_id': result.get('book_info', {}).get('id'),
                 'language': language,
-                'chapters': chapters_list
+                'has_audio': result.get('book_info', {}).get('has_audio', False),
+                'audio_info': result.get('audio_info', {}),
+                'chapters': result.get('chapters', [])
             }, status=status.HTTP_200_OK)
             
         except Exception as e:
@@ -295,7 +294,9 @@ class BookChaptersView(APIView):
             return Response({
                 'status': 'success',
                 'book': book_name,
+                'book_id': result.get('book_id'),
                 'total_chapters': len(chapter_numbers),
+                'has_audio': result.get('has_audio', False),
                 'chapters': chapter_numbers
             }, status=status.HTTP_200_OK)
             
@@ -307,7 +308,7 @@ class BookChaptersView(APIView):
 
 
 class ChapterContentView(APIView):
-    """Get specific chapter content"""
+    """Get specific chapter content with audio"""
     permission_classes = [AllowAny]
     
     @swagger_auto_schema(
@@ -347,8 +348,11 @@ class ChapterContentView(APIView):
             return Response({
                 'status': 'success',
                 'book': book_name,
+                'book_id': result.get('book_id'),
                 'chapter': chapter_number,
                 'language': language,
+                'has_audio': result.get('has_audio', False),
+                'audio_url': result.get('audio_url'),
                 'verses': verses
             }, status=status.HTTP_200_OK)
             
@@ -398,10 +402,226 @@ class SpecificVerseView(APIView):
             return Response({
                 'status': 'success',
                 'book': book_name,
+                'book_id': result.get('book_id'),
                 'chapter': chapter_number,
                 'verse': verse_number,
                 'language': language,
                 'text': result['text']
+            }, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            return Response({
+                'status': 'error',
+                'message': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# ==================== AUDIO VIEWS ====================
+
+class BookAudioView(APIView):
+    """Get audio information for a specific book"""
+    permission_classes = [AllowAny]
+    
+    @swagger_auto_schema(
+        operation_description="Get audio information for a specific book",
+        operation_summary="Get book audio",
+        tags=['Audio'],
+        manual_parameters=[
+            openapi.Parameter(
+                'language',
+                openapi.IN_QUERY,
+                description="Language code",
+                type=openapi.TYPE_STRING,
+                default='en'
+            )
+        ],
+        responses={
+            200: openapi.Response(description="Book audio information"),
+            404: openapi.Response(description="Book not found"),
+            500: openapi.Response(description="Server error")
+        }
+    )
+    def get(self, request, book_id):
+        """Get audio for a book"""
+        try:
+            language = request.query_params.get('language', 'en')
+            
+            audio_info = bible_service.get_book_audio(book_id, language)
+            
+            return Response({
+                'status': 'success',
+                'book_id': book_id,
+                'audio': audio_info
+            }, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            return Response({
+                'status': 'error',
+                'message': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class ChapterAudioView(APIView):
+    """Get audio for a specific chapter"""
+    permission_classes = [AllowAny]
+    
+    @swagger_auto_schema(
+        operation_description="Get audio URL for a specific chapter",
+        operation_summary="Get chapter audio",
+        tags=['Audio'],
+        manual_parameters=[
+            openapi.Parameter(
+                'language',
+                openapi.IN_QUERY,
+                description="Language code",
+                type=openapi.TYPE_STRING,
+                default='en'
+            )
+        ],
+        responses={
+            200: openapi.Response(description="Chapter audio information"),
+            404: openapi.Response(description="Audio not found"),
+            500: openapi.Response(description="Server error")
+        }
+    )
+    def get(self, request, book_id, chapter_number):
+        """Get audio for a specific chapter"""
+        try:
+            language = request.query_params.get('language', 'en')
+            
+            result = bible_service.get_chapter_audio(book_id, chapter_number, language)
+            
+            if not result.get('success', False):
+                return Response({
+                    'status': 'error',
+                    'message': result.get('message', 'Audio not found')
+                }, status=status.HTTP_404_NOT_FOUND)
+            
+            return Response({
+                'status': 'success',
+                'data': result
+            }, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            return Response({
+                'status': 'error',
+                'message': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class UserAudioProgressView(APIView):
+    """Get user's audio progress for a book"""
+    permission_classes = [IsAuthenticated]
+    
+    @swagger_auto_schema(
+        operation_description="Get user's audio listening progress for a book",
+        operation_summary="Get audio progress",
+        tags=['Audio', 'User'],
+        responses={
+            200: openapi.Response(description="User's audio progress"),
+            500: openapi.Response(description="Server error")
+        }
+    )
+    def get(self, request, book_id):
+        """Get user's audio progress"""
+        try:
+            result = bible_service.get_user_audio_progress(request.user.id, book_id)
+            
+            return Response({
+                'status': 'success',
+                'data': result
+            }, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            return Response({
+                'status': 'error',
+                'message': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class UpdateAudioProgressView(APIView):
+    """Update user's audio progress"""
+    permission_classes = [IsAuthenticated]
+    
+    @swagger_auto_schema(
+        operation_description="Update user's audio listening progress",
+        operation_summary="Update audio progress",
+        tags=['Audio', 'User'],
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['chapter_number'],
+            properties={
+                'chapter_number': openapi.Schema(type=openapi.TYPE_INTEGER, description="Current chapter number"),
+                'current_position': openapi.Schema(type=openapi.TYPE_INTEGER, description="Current position in seconds"),
+                'completed_chapter': openapi.Schema(type=openapi.TYPE_INTEGER, description="Chapter just completed (if any)"),
+            }
+        ),
+        responses={
+            200: openapi.Response(description="Progress updated"),
+            400: openapi.Response(description="Invalid request"),
+            500: openapi.Response(description="Server error")
+        }
+    )
+    def post(self, request, book_id):
+        """Update audio progress"""
+        try:
+            chapter_number = request.data.get('chapter_number')
+            if not chapter_number:
+                return Response({
+                    'status': 'error',
+                    'message': 'chapter_number is required'
+                }, status=status.HTTP_400_BAD_REQUEST)
+            
+            current_position = request.data.get('current_position')
+            completed_chapter = request.data.get('completed_chapter')
+            
+            result = bible_service.update_audio_progress(
+                user_id=request.user.id,
+                book_id=book_id,
+                chapter_number=chapter_number,
+                current_position=current_position,
+                completed_chapter=completed_chapter
+            )
+            
+            if not result.get('success'):
+                return Response({
+                    'status': 'error',
+                    'message': result.get('error', 'Failed to update progress')
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+            return Response({
+                'status': 'success',
+                'data': result
+            }, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            return Response({
+                'status': 'error',
+                'message': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class AudioStatsView(APIView):
+    """Get overall audio statistics"""
+    permission_classes = [AllowAny]
+    
+    @swagger_auto_schema(
+        operation_description="Get overall audio availability statistics",
+        operation_summary="Audio statistics",
+        tags=['Audio'],
+        responses={
+            200: openapi.Response(description="Audio statistics"),
+            500: openapi.Response(description="Server error")
+        }
+    )
+    def get(self, request):
+        """Get audio statistics"""
+        try:
+            stats = bible_service.get_audio_stats()
+            
+            return Response({
+                'status': 'success',
+                'data': stats
             }, status=status.HTTP_200_OK)
             
         except Exception as e:
@@ -573,6 +793,36 @@ class VerseOfTheDayView(APIView):
             return Response({
                 'status': 'success',
                 'data': verse
+            }, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            return Response({
+                'status': 'error',
+                'message': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class BibleStatsView(APIView):
+    """Get overall Bible statistics"""
+    permission_classes = [AllowAny]
+    
+    @swagger_auto_schema(
+        operation_description="Get overall Bible statistics (books, chapters, verses)",
+        operation_summary="Bible statistics",
+        tags=['Bible'],
+        responses={
+            200: openapi.Response(description="Bible statistics"),
+            500: openapi.Response(description="Server error")
+        }
+    )
+    def get(self, request):
+        """Get Bible statistics"""
+        try:
+            stats = bible_service.get_bible_stats()
+            
+            return Response({
+                'status': 'success',
+                'data': stats
             }, status=status.HTTP_200_OK)
             
         except Exception as e:

@@ -1,16 +1,16 @@
+# core/models.py
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.utils import timezone
 from django.core.validators import MinLengthValidator, MaxLengthValidator
 
-# Custom User Manager
-# Custom User Manager - FIXED
+# ==================== CUSTOM USER MANAGER ====================
+
 class CustomUserManager(BaseUserManager):
     def create_user(self, username, password=None, email=None, **extra_fields):
         if not username:
             raise ValueError('Username is required')
         
-        # Normalize email
         if email:
             email = self.normalize_email(email)
         
@@ -31,11 +31,13 @@ class CustomUserManager(BaseUserManager):
     def create_superuser(self, username, password=None, email=None, **extra_fields):
         extra_fields.setdefault('is_admin', True)
         extra_fields.setdefault('is_active', True)
-        
-        # Don't set is_staff or is_superuser as fields - they are properties
-        return self.create_user(username, password, email, **extra_fields)      
-# 1. Language table
+        return self.create_user(username, password, email, **extra_fields)
+
+
+# ==================== BIBLE CONTENT MODELS ====================
+
 class Language(models.Model):
+    """Language table for multi-language support"""
     code = models.CharField(max_length=10, unique=True)  # 'en', 'am', 'or', 'ti'
     name = models.CharField(max_length=50)  # 'English', 'Amharic', 'Afaan Oromo', 'Tigrinya'
     native_name = models.CharField(max_length=100, blank=True, null=True)
@@ -49,8 +51,9 @@ class Language(models.Model):
     def __str__(self):
         return f"{self.name} ({self.code})"
 
-# 2. Level table (Difficulty levels)
+
 class Level(models.Model):
+    """Difficulty levels for quizzes"""
     level_number = models.IntegerField(unique=True)  # 1, 2, 3
     name = models.CharField(max_length=50)  # 'Easy', 'Medium', 'Hard'
     description = models.TextField(blank=True, null=True)
@@ -65,8 +68,9 @@ class Level(models.Model):
     def __str__(self):
         return f"Level {self.level_number}: {self.name}"
 
-# 3. Testament (Old/New)
+
 class Testament(models.Model):
+    """Old or New Testament"""
     name = models.CharField(max_length=50)  # "Old" or "New"
     
     class Meta:
@@ -75,22 +79,73 @@ class Testament(models.Model):
     def __str__(self):
         return f"{self.name} Testament"
 
-# 4. Book (Genesis, Exodus, etc.)
+
 class Book(models.Model):
+    """Bible book model with audio support"""
     name = models.CharField(max_length=100)
     testament = models.ForeignKey(Testament, on_delete=models.CASCADE, related_name='books', null=True, blank=True)
     
+    # New audio-related fields
+    bible_order = models.IntegerField(default=0, help_text="Order in the Bible (1-66)")
+    has_audio = models.BooleanField(default=False, help_text="Whether audio is available for this book")
+    total_chapters = models.IntegerField(default=0, help_text="Total number of chapters")
+    
+    
     class Meta:
         db_table = 'books'
-        ordering = ['id']
+        ordering = ['bible_order', 'id']
     
     def __str__(self):
         return self.name
+    
+    def get_audio_for_language(self, language_code='en'):
+        """Get book-level audio for a specific language"""
+        try:
+            language = Language.objects.get(code=language_code)
+            return BookAudio.objects.filter(
+                book=self, 
+                language=language, 
+                is_available=True
+            ).first()
+        except Language.DoesNotExist:
+            return None
+    
+    def get_chapter_audio(self, chapter_number, language_code='en'):
+        """Get audio for a specific chapter"""
+        try:
+            language = Language.objects.get(code=language_code)
+            return ChapterAudio.objects.get(
+                book=self,
+                chapter_number=chapter_number,
+                language=language,
+                is_available=True
+            )
+        except (ChapterAudio.DoesNotExist, Language.DoesNotExist):
+            return None
+    
+    def get_chapter_audio_url(self, chapter_number, language_code='en'):
+        """Get audio URL for a specific chapter"""
+        chapter_audio = self.get_chapter_audio(chapter_number, language_code)
+        return chapter_audio.get_audio_url() if chapter_audio else None
+    
+    def get_audio_progress(self, chapter_number, language_code='en'):
+        """Get audio progress for a specific chapter"""
+        chapter_audio = self.get_chapter_audio(chapter_number, language_code)
+        if chapter_audio:
+            return {
+                'has_audio': True,
+                'duration': chapter_audio.duration,
+                'url': chapter_audio.get_audio_url(),
+                'start_time': chapter_audio.start_time
+            }
+        return {'has_audio': False}
 
-# 5. Chapter
+
 class Chapter(models.Model):
+    """Bible chapter model"""
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='chapters')
     chapter_number = models.IntegerField()
+    total_verses = models.IntegerField(default=0, help_text="Total number of verses in this chapter")
     
     class Meta:
         db_table = 'chapters'
@@ -100,8 +155,9 @@ class Chapter(models.Model):
     def __str__(self):
         return f"{self.book.name} {self.chapter_number}"
 
-# 6. Verse
+
 class Verse(models.Model):
+    """Bible verse model"""
     chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, related_name='verses')
     verse_number = models.IntegerField()
     
@@ -113,8 +169,9 @@ class Verse(models.Model):
     def __str__(self):
         return f"{self.chapter.book.name} {self.chapter.chapter_number}:{self.verse_number}"
 
-# 7. Verse Text (Multi-language)
+
 class VerseText(models.Model):
+    """Multi-language verse text"""
     verse = models.ForeignKey(Verse, on_delete=models.CASCADE, related_name='texts')
     language = models.ForeignKey(Language, on_delete=models.CASCADE, related_name='verse_texts')
     text = models.TextField()
@@ -126,8 +183,91 @@ class VerseText(models.Model):
     def __str__(self):
         return f"{self.verse} - {self.language.code}"
 
-# 8. Question
+
+# ==================== AUDIO MODELS ====================
+
+class BookAudio(models.Model):
+    """Audio files for entire Bible books (for continuous play)"""
+    book = models.OneToOneField(Book, on_delete=models.CASCADE, related_name='audio')
+    language = models.ForeignKey(Language, on_delete=models.CASCADE, related_name='book_audios')
+    
+    # Audio file information
+    audio_url = models.URLField(max_length=500, blank=True, null=True)
+    cloudinary_public_id = models.CharField(max_length=500, blank=True, null=True)
+    
+    # Audio metadata
+    duration = models.IntegerField(help_text="Duration in seconds", null=True, blank=True)
+    file_size = models.BigIntegerField(help_text="File size in bytes", null=True, blank=True)
+    is_available = models.BooleanField(default=True)
+    
+    # For multi-part books (Psalms has 3 parts, Isaiah has 2, etc.)
+    part_number = models.IntegerField(default=1, help_text="Part number for multi-part books")
+    total_parts = models.IntegerField(default=1, help_text="Total parts for multi-part books")
+    
+    # Chapter timestamps for navigation
+    chapter_timestamps = models.JSONField(default=dict, help_text="Mapping of chapter numbers to timestamps in seconds")
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        db_table = 'book_audios'
+        unique_together = ['book', 'language', 'part_number']
+        ordering = ['book', 'part_number']
+    
+    def __str__(self):
+        part_info = f" (Part {self.part_number}/{self.total_parts})" if self.total_parts > 1 else ""
+        return f"{self.book.name} - {self.language.code}{part_info}"
+    
+    def get_audio_url(self):
+        """Get the full audio URL"""
+        return self.audio_url if self.audio_url else None
+    
+    def get_chapter_start_time(self, chapter_number):
+        """Get start time for a specific chapter"""
+        return self.chapter_timestamps.get(str(chapter_number), 0)
+
+
+class ChapterAudio(models.Model):
+    """Audio files for individual chapters (granular control)"""
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='chapter_audios')
+    chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, related_name='audio', null=True, blank=True)
+    chapter_number = models.IntegerField()  # Denormalized for easier querying
+    language = models.ForeignKey(Language, on_delete=models.CASCADE, related_name='chapter_audios')
+    
+    # Audio file information
+    audio_url = models.URLField(max_length=500, blank=True, null=True)
+    cloudinary_public_id = models.CharField(max_length=500, blank=True, null=True)
+    
+    # Audio metadata
+    duration = models.IntegerField(help_text="Duration in seconds", null=True, blank=True)
+    file_size = models.BigIntegerField(help_text="File size in bytes", null=True, blank=True)
+    is_available = models.BooleanField(default=True)
+    
+    # For continuous play across chapters
+    start_time = models.IntegerField(default=0, help_text="Start time in seconds for full book audio")
+    end_time = models.IntegerField(null=True, blank=True, help_text="End time in seconds for full book audio")
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        db_table = 'chapter_audios'
+        unique_together = ['book', 'chapter_number', 'language']
+        ordering = ['book', 'chapter_number']
+    
+    def __str__(self):
+        return f"{self.book.name} Chapter {self.chapter_number} - {self.language.code}"
+    
+    def get_audio_url(self):
+        """Get the full audio URL"""
+        return self.audio_url if self.audio_url else None
+
+
+# ==================== QUIZ MODELS ====================
+
 class Question(models.Model):
+    """Quiz question model"""
     OPTION_CHOICES = [
         ('A', 'A'),
         ('B', 'B'),
@@ -149,8 +289,9 @@ class Question(models.Model):
     def __str__(self):
         return f"Question {self.id} - {self.book.name if self.book else 'No book'}"
 
-# 9. Question Text (Multi-language)
+
 class QuestionText(models.Model):
+    """Multi-language question text"""
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='texts')
     language = models.ForeignKey(Language, on_delete=models.CASCADE, related_name='question_texts')
     text = models.TextField()
@@ -162,8 +303,9 @@ class QuestionText(models.Model):
     def __str__(self):
         return f"Q{self.question.id} - {self.language.code}"
 
-# 10. Option (A, B, C, D)
+
 class Option(models.Model):
+    """Quiz options (A, B, C, D)"""
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='options')
     label = models.CharField(max_length=1)  # 'A', 'B', 'C', 'D'
     
@@ -174,8 +316,9 @@ class Option(models.Model):
     def __str__(self):
         return f"Option {self.label} for Q{self.question.id}"
 
-# 11. Option Text (Multi-language)
+
 class OptionText(models.Model):
+    """Multi-language option text"""
     option = models.ForeignKey(Option, on_delete=models.CASCADE, related_name='texts')
     language = models.ForeignKey(Language, on_delete=models.CASCADE, related_name='option_texts')
     text = models.TextField()
@@ -187,8 +330,9 @@ class OptionText(models.Model):
     def __str__(self):
         return f"Option {self.option.label} - {self.language.code}"
 
-# 12. Explanation (Multi-language)
+
 class Explanation(models.Model):
+    """Multi-language answer explanation"""
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='explanations')
     language = models.ForeignKey(Language, on_delete=models.CASCADE, related_name='explanations')
     text = models.TextField()
@@ -200,12 +344,14 @@ class Explanation(models.Model):
     def __str__(self):
         return f"Explanation Q{self.question.id} - {self.language.code}"
 
-# 13. User (Custom User Model)
-# 13. User (Custom User Model) - COMPLETELY FIXED
+
+# ==================== USER MODELS ====================
+
 class User(AbstractBaseUser, PermissionsMixin):
+    """Custom User Model"""
     username = models.CharField(max_length=50, unique=True)
     email = models.EmailField(max_length=100, unique=True, blank=True, null=True)
-    password = models.CharField(max_length=255)  # Django expects 'password'
+    password = models.CharField(max_length=255)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
     last_login = models.DateTimeField(blank=True, null=True)
@@ -239,15 +385,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     
     @property
     def is_staff(self):
-        """Required for admin interface"""
         return self.is_admin
     
     @property
     def is_superuser(self):
-        """Required for admin interface"""
         return self.is_admin
     
-    # Override required methods
     def has_perm(self, perm, obj=None):
         return self.is_admin
     
@@ -255,8 +398,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.is_admin
 
 
-
 class UserSession(models.Model):
+    """User session for token authentication"""
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sessions')
     token = models.CharField(max_length=255, unique=True)
     created_at = models.DateTimeField(default=timezone.now)
@@ -273,8 +416,9 @@ class UserSession(models.Model):
     def __str__(self):
         return f"Session for {self.user.username}"
 
-# 15. Quiz Attempt
+
 class QuizAttempt(models.Model):
+    """Quiz attempt tracking"""
     STATUS_CHOICES = [
         ('in_progress', 'In Progress'),
         ('completed', 'Completed'),
@@ -300,8 +444,9 @@ class QuizAttempt(models.Model):
     def __str__(self):
         return f"Attempt {self.id} - {self.user.username}"
 
-# 16. Quiz Answer
+
 class QuizAnswer(models.Model):
+    """Individual quiz answers"""
     attempt = models.ForeignKey(QuizAttempt, on_delete=models.CASCADE, related_name='answers')
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     selected_option = models.CharField(max_length=1)
@@ -315,8 +460,9 @@ class QuizAnswer(models.Model):
     def __str__(self):
         return f"Answer for Q{self.question.id} - {'Correct' if self.is_correct else 'Wrong'}"
 
-# 17. User Book Progress
+
 class UserBookProgress(models.Model):
+    """Track user's progress through books (reading + audio)"""
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='book_progress')
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     current_chapter = models.IntegerField(default=1)
@@ -326,9 +472,20 @@ class UserBookProgress(models.Model):
     correct_answers = models.IntegerField(default=0)
     completed = models.BooleanField(default=False)
     
+    # Audio-specific progress
+    audio_current_position = models.IntegerField(default=0, help_text="Current position in seconds")
+    audio_completed_chapters = models.JSONField(default=list, help_text="Chapters completed via audio")
+    last_audio_listened = models.DateTimeField(blank=True, null=True)
+    
     class Meta:
         db_table = 'user_book_progress'
         unique_together = ['user', 'book']
     
     def __str__(self):
         return f"{self.user.username} - {self.book.name}"
+    
+    def get_audio_progress_percentage(self):
+        """Get audio progress percentage for the current book"""
+        if self.book.total_chapters > 0:
+            return int((len(self.audio_completed_chapters) / self.book.total_chapters) * 100)
+        return 0
