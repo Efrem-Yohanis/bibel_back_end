@@ -38,7 +38,10 @@ def api_root(request):
                     "POST /login",
                     "POST /logout",
                     "POST /forgot-password",
-                    "POST /reset-password"
+                    "POST /reset-password",
+                    "POST /google/",  # Google OAuth login
+                    "GET /google/redirect/",  # Get Google auth URL
+                    "POST /google/callback/",  # Google OAuth callback
                 ]
             },
             "user": {
@@ -90,16 +93,22 @@ urlpatterns = [
     # Admin
     path('admin/', admin.site.urls),
     
+    # Django Allauth URLs (for Google OAuth and social login)
+    path('accounts/', include('allauth.urls')),
+    
+    # dj-rest-auth URLs (for JWT authentication)
+    path('api/auth/', include('dj_rest_auth.urls')),
+    path('api/auth/registration/', include('dj_rest_auth.registration.urls')),
+    
     # Swagger
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     re_path(r'^swagger\.json$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     
-    # API endpoints
+    # API endpoints (custom auth URLs will be included, but dj-rest-auth provides defaults)
     path('api/bible/', include('core.urls.bible_urls')),
-    path('api/auth/', include('core.urls.auth_urls')),
+    path('api/auth/', include('core.urls.auth_urls')),  # Your custom auth endpoints
     path('api/user/', include('core.urls.user_urls')),
     path('api/quiz/', include('core.urls.quiz_urls')),
     path('api/admin/', include('core.urls.admin_urls')),
-
 ]

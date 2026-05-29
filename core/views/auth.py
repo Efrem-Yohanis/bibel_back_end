@@ -209,3 +209,124 @@ class ResetPasswordView(APIView):
             'status': 'success',
             'message': 'Password reset successfully'
         }, status=status.HTTP_200_OK)
+
+
+class GoogleLoginView(APIView):
+    """Google OAuth2 login endpoint"""
+    permission_classes = [AllowAny]
+    
+    @swagger_auto_schema(
+        operation_description="Login or register using Google OAuth2 token",
+        operation_summary="Google Login",
+        tags=['Authentication'],
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'access_token': openapi.Schema(type=openapi.TYPE_STRING, description='Google OAuth2 access token'),
+                'id_token': openapi.Schema(type=openapi.TYPE_STRING, description='Google ID token (alternative)'),
+            },
+            required=['access_token']
+        ),
+        responses={
+            200: TokenResponseSerializer,
+            400: 'Invalid token'
+        }
+    )
+    def post(self, request):
+        access_token = request.data.get('access_token')
+        id_token = request.data.get('id_token')
+        
+        if not access_token and not id_token:
+            return Response({
+                'status': 'error',
+                'message': 'Either access_token or id_token is required'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Use the auth service to handle Google login
+        result, error = auth_service.google_login(
+            access_token=access_token,
+            id_token=id_token,
+            ip_address=request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR')),
+            user_agent=request.META.get('HTTP_USER_AGENT')
+        )
+        
+        if error:
+            return Response({
+                'status': 'error',
+                'message': error
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response({
+            'status': 'success',
+            'data': result
+        }, status=status.HTTP_200_OK)
+
+
+class GoogleAuthRedirectView(APIView):
+    """Get Google OAuth2 redirect URL"""
+    permission_classes = [AllowAny]
+    
+    @swagger_auto_schema(
+        operation_description="Get Google OAuth2 authorization URL",
+        operation_summary="Google Auth Redirect",
+        tags=['Authentication'],
+        responses={
+            200: openapi.Response('Auth URL generated'),
+        }
+    )
+    def get(self, request):
+        result, error = auth_service.get_google_auth_url()
+        
+        if error:
+            return Response({
+                'status': 'error',
+                'message': error
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response({
+            'status': 'success',
+            'data': result
+        }, status=status.HTTP_200_OK)
+
+
+class GoogleAuthCallbackView(APIView):
+    """Handle Google OAuth2 callback"""
+    permission_classes = [AllowAny]
+    
+    @swagger_auto_schema(
+        operation_description="Handle Google OAuth2 callback and exchange code for tokens",
+        operation_summary="Google Auth Callback",
+        tags=['Authentication'],
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'code': openapi.Schema(type=openapi.TYPE_STRING, description='Authorization code from Google'),
+            },
+            required=['code']
+        ),
+        responses={
+            200: TokenResponseSerializer,
+            400: 'Invalid code'
+        }
+    )
+    def post(self, request):
+        code = request.data.get('code')
+        
+        if not code:
+            return Response({
+                'status': 'error',
+                'message': 'Authorization code is required'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        result, error = auth_service.handle_google_callback(code)
+        
+        if error:
+            return Response({
+                'status': 'error',
+                'message': error
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response({
+            'status': 'success',
+            'data': result
+        }, status=status.HTTP_200_OK)

@@ -1,5 +1,5 @@
 """
-Auth Service - Handles user authentication, registration, and session management
+Auth Service - Handles user authentication, registration, session management, and Google OAuth
 """
 
 from django.contrib.auth.hashers import make_password, check_password
@@ -8,6 +8,10 @@ from django.db import models
 from typing import Optional, Tuple, Dict, Any
 import secrets
 from datetime import timedelta
+import requests
+from urllib.parse import urlencode
+from django.conf import settings
+
 from ..models import User, UserSession
 
 
@@ -100,6 +104,175 @@ class AuthService:
         except Exception as e:
             return None, f"Login failed: {str(e)}"
     
+    def google_login(self, access_token: str = None, id_token: str = None, 
+                     ip_address: str = None, user_agent: str = None) -> Tuple[Optional[Dict], Optional[str]]:
+        """Handle Google OAuth2 login"""
+        try:
+            user_info = None
+            
+            # If id_token is provided, verify it with Google
+            if id_token:
+                verification_url = f"https://oauth2.googleapis.com/tokeninfo?id_token={id_token}"
+                response = requests.get(verification_url)
+                
+                if response.status_code != 200:
+                    return None, "Invalid Google ID token"
+                
+                user_info = response.json()
+            
+            # If access_token is provided, get user info from Google
+            elif access_token:
+                userinfo_url = "https://www.googleapis.com/oauth2/v2/userinfo"
+                headers = {'Authorization': f'Bearer {access_token}'}
+                response = requests.get(userinfo_url, headers=headers)
+                
+                if response.status_code != 200:
+                    return None, "Invalid Google access token"
+                
+                user_info = response.json()
+            
+            else:
+                return None, "No token provided"
+            
+            email = user_info.get('email')
+            google_id = user_info.get('id') or user_info.get('sub')
+            name = user_info.get('name', '')
+            first_name = user_info.get('given_name', '')
+            last_name = user_info.get('family_name', '')
+            
+            if not email:
+                return None, "Email not provided by Google"
+            
+            # Check if user already exists
+            user = self.get_user_by_email(email)
+            is_new_user = False
+            
+            if user:
+                # Link Google ID if not already linked
+                if not user.google_id:
+                    user.google_id = google_id
+                    user.auth_provider = 'google'
+                    user.save()
+            else:
+                # Create new user
+                username = email.split('@')[0]
+                # Ensure username is unique
+                if User.objects.filter(username=username).exists():
+                    username = f"{username}_{secrets.token_hex(4)}"
+                
+                random_password = secrets.token_urlsafe(12)
+                user = User.objects.create(
+                    username=username,
+                    email=email,
+                    password=make_password(random_password),
+                    google_id=google_id,
+                    auth_provider='google',
+                    first_name=first_name,
+                    last_name=last_name,
+                    created_at=timezone.now(),
+                    updated_at=timezone.now(),
+                    is_active=True,
+                    is_admin=False
+                )
+                is_new_user = True
+            
+            if not user.is_active:
+                return None, "Account is deactivated"
+            
+            # Generate session token
+            token = secrets.token_urlsafe(32)
+            expires_at = timezone.now() + timedelta(days=30)
+            
+            # Store session
+            UserSession.objects.create(
+                user=user,
+                token=token,
+                expires_at=expires_at,
+                ip_address=ip_address,
+                user_agent=user_agent,
+                is_active=True
+            )
+            
+            # Update last login
+            user.last_login = timezone.now()
+            user.updated_at = timezone.now()
+            user.save()
+            
+            # Generate JWT tokens
+            from rest_framework_simplejwt.tokens import RefreshToken
+            refresh = RefreshToken.for_user(user)
+            
+            return {
+                'access_token': str(refresh.access_token),
+                'refresh_token': str(refresh),
+                'session_token': token,
+                'user': {
+                    'id': user.id,
+                    'username': user.username,
+                    'email': user.email,
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                },
+                'is_new_user': is_new_user
+            }, None
+            
+        except Exception as e:
+            return None, f"Google login failed: {str(e)}"
+    
+    def get_google_auth_url(self) -> Tuple[Optional[Dict], Optional[str]]:
+        """Get Google OAuth2 authorization URL"""
+        try:
+            google_auth_url = "https://accounts.google.com/o/oauth2/v2/auth"
+            
+            params = {
+                'client_id': settings.GOOGLE_CLIENT_ID,
+                'redirect_uri': settings.GOOGLE_REDIRECT_URI,
+                'response_type': 'code',
+                'scope': 'email profile',
+                'access_type': 'offline',
+                'prompt': 'select_account',
+            }
+            
+            auth_url = f"{google_auth_url}?{urlencode(params)}"
+            
+            return {'auth_url': auth_url}, None
+            
+        except Exception as e:
+            return None, f"Failed to generate auth URL: {str(e)}"
+    
+    def handle_google_callback(self, code: str, ip_address: str = None, 
+                               user_agent: str = None) -> Tuple[Optional[Dict], Optional[str]]:
+        """Handle Google OAuth2 callback and exchange code for tokens"""
+        try:
+            # Exchange code for access token
+            token_url = "https://oauth2.googleapis.com/token"
+            token_data = {
+                'code': code,
+                'client_id': settings.GOOGLE_CLIENT_ID,
+                'client_secret': settings.GOOGLE_CLIENT_SECRET,
+                'redirect_uri': settings.GOOGLE_REDIRECT_URI,
+                'grant_type': 'authorization_code',
+            }
+            
+            token_response = requests.post(token_url, data=token_data)
+            
+            if token_response.status_code != 200:
+                return None, "Failed to exchange authorization code"
+            
+            token_info = token_response.json()
+            access_token = token_info.get('access_token')
+            id_token = token_info.get('id_token')
+            
+            if not access_token:
+                return None, "No access token received"
+            
+            # Use the access token to login
+            return self.google_login(access_token=access_token, id_token=id_token,
+                                    ip_address=ip_address, user_agent=user_agent)
+            
+        except Exception as e:
+            return None, f"Callback handling failed: {str(e)}"
+    
     def get_user_by_google_id(self, google_id: str) -> Optional[User]:
         """Find a user by their Google account ID"""
         try:
@@ -125,37 +298,6 @@ class AuthService:
             return True, None
         except Exception as e:
             return False, f"Linking Google account failed: {str(e)}"
-    
-    def create_google_user(self, username: str, email: str, google_id: str, provider: str = 'google') -> Tuple[Optional[User], Optional[str], Optional[str]]:
-        """Create a new user account for a Google-authenticated user"""
-        try:
-            # Check if email exists
-            if email and User.objects.filter(email=email).exists():
-                return None, None, "Email already registered"
-            
-            # Check if username exists
-            if User.objects.filter(username=username).exists():
-                # Append random number to username
-                username = f"{username}_{secrets.token_hex(4)}"
-            
-            # Create user with random password (they will use Google login)
-            random_password = secrets.token_urlsafe(12)
-            user = User.objects.create(
-                username=username,
-                email=email,
-                password=make_password(random_password),
-                google_id=google_id,
-                auth_provider=provider,
-                created_at=timezone.now(),
-                updated_at=timezone.now(),
-                is_active=True,
-                is_admin=False
-            )
-            
-            return user, random_password, None
-            
-        except Exception as e:
-            return None, None, f"Google user creation failed: {str(e)}"
     
     def set_password_reset_token(self, email: str) -> Tuple[Optional[str], Optional[str]]:
         """Generate and store a password reset token for a user"""
