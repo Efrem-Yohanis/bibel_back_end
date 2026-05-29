@@ -11,6 +11,7 @@ from datetime import timedelta
 import requests
 from urllib.parse import urlencode
 from django.conf import settings
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from ..models import User, UserSession
 
@@ -73,14 +74,16 @@ class AuthService:
             if not check_password(password, user.password):
                 return None, "Invalid username/email or password"
             
-            # Generate token
-            token = secrets.token_urlsafe(32)
+            # Generate JWT tokens
+            refresh = RefreshToken.for_user(user)
+            
+            # Create session for tracking
+            session_token = secrets.token_urlsafe(32)
             expires_at = timezone.now() + timedelta(days=30)
             
-            # Store session
-            session = UserSession.objects.create(
+            UserSession.objects.create(
                 user=user,
-                token=token,
+                token=session_token,
                 expires_at=expires_at,
                 ip_address=ip_address,
                 user_agent=user_agent,
@@ -93,11 +96,13 @@ class AuthService:
             user.save()
             
             return {
-                'access_token': token,
-                'token_type': 'bearer',
+                'access_token': str(refresh.access_token),
+                'refresh_token': str(refresh),
+                'session_token': session_token,
                 'expires_at': expires_at,
                 'user_id': user.id,
                 'username': user.username,
+                'email': user.email,
                 'is_admin': user.is_admin
             }, None
             
@@ -136,7 +141,6 @@ class AuthService:
             
             email = user_info.get('email')
             google_id = user_info.get('id') or user_info.get('sub')
-            name = user_info.get('name', '')
             first_name = user_info.get('given_name', '')
             last_name = user_info.get('family_name', '')
             
@@ -160,11 +164,10 @@ class AuthService:
                 if User.objects.filter(username=username).exists():
                     username = f"{username}_{secrets.token_hex(4)}"
                 
-                random_password = secrets.token_urlsafe(12)
                 user = User.objects.create(
                     username=username,
                     email=email,
-                    password=make_password(random_password),
+                    password=make_password(secrets.token_urlsafe(12)),
                     google_id=google_id,
                     auth_provider='google',
                     first_name=first_name,
@@ -179,14 +182,16 @@ class AuthService:
             if not user.is_active:
                 return None, "Account is deactivated"
             
-            # Generate session token
-            token = secrets.token_urlsafe(32)
+            # Generate JWT tokens
+            refresh = RefreshToken.for_user(user)
+            
+            # Create session
+            session_token = secrets.token_urlsafe(32)
             expires_at = timezone.now() + timedelta(days=30)
             
-            # Store session
             UserSession.objects.create(
                 user=user,
-                token=token,
+                token=session_token,
                 expires_at=expires_at,
                 ip_address=ip_address,
                 user_agent=user_agent,
@@ -198,14 +203,10 @@ class AuthService:
             user.updated_at = timezone.now()
             user.save()
             
-            # Generate JWT tokens
-            from rest_framework_simplejwt.tokens import RefreshToken
-            refresh = RefreshToken.for_user(user)
-            
             return {
                 'access_token': str(refresh.access_token),
                 'refresh_token': str(refresh),
-                'session_token': token,
+                'session_token': session_token,
                 'user': {
                     'id': user.id,
                     'username': user.username,
@@ -229,7 +230,7 @@ class AuthService:
                 'redirect_uri': settings.GOOGLE_REDIRECT_URI,
                 'response_type': 'code',
                 'scope': 'email profile',
-                'access_type': 'offline',
+                'access_type': 'online',
                 'prompt': 'select_account',
             }
             
@@ -261,14 +262,12 @@ class AuthService:
             
             token_info = token_response.json()
             access_token = token_info.get('access_token')
-            id_token = token_info.get('id_token')
             
             if not access_token:
                 return None, "No access token received"
             
             # Use the access token to login
-            return self.google_login(access_token=access_token, id_token=id_token,
-                                    ip_address=ip_address, user_agent=user_agent)
+            return self.google_login(access_token=access_token, ip_address=ip_address, user_agent=user_agent)
             
         except Exception as e:
             return None, f"Callback handling failed: {str(e)}"
@@ -406,7 +405,6 @@ class AuthService:
     def validate_token(self, token: str) -> Tuple[Optional[User], Optional[str]]:
         """Validate user session token"""
         try:
-            # Debug: Print token being validated
             print(f"Validating token: {token[:20]}...")
             
             # Check if token exists and is active

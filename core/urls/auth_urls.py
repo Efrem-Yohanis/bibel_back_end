@@ -2,9 +2,9 @@
 from django.urls import path
 from ..views.auth import (
     RegisterView, LoginView, LogoutView,
-    ForgotPasswordView, ResetPasswordView,
-    GoogleLoginView, GoogleAuthRedirectView, GoogleAuthCallbackView
+    ForgotPasswordView, ResetPasswordView
 )
+from ..views.google_auth_views import GoogleLogin, GoogleAuthRedirectView, GoogleAuthCallbackView
 
 urlpatterns = [
     # Traditional Authentication
@@ -17,7 +17,7 @@ urlpatterns = [
     path('reset-password', ResetPasswordView.as_view(), name='reset-password'),
     
     # Google OAuth2
-    path('google/', GoogleLoginView.as_view(), name='google-login'),
+    path('google/', GoogleLogin.as_view(), name='google-login'),
     path('google/redirect/', GoogleAuthRedirectView.as_view(), name='google-redirect'),
     path('google/callback/', GoogleAuthCallbackView.as_view(), name='google-callback'),
 ]

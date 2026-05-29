@@ -50,7 +50,9 @@ class GoogleAuthRedirectView(APIView):
         
         return Response({
             'status': 'success',
-            'auth_url': auth_url
+            'auth_url': auth_url,
+            'redirect_uri': settings.GOOGLE_REDIRECT_URI,
+            'client_id': settings.GOOGLE_CLIENT_ID,
         })
 
 
@@ -66,11 +68,10 @@ class GoogleAuthCallbackView(APIView):
         code = request.GET.get('code')
         error = request.GET.get('error')
         
-        # Get frontend URL from settings or use default
-        FRONTEND_URL = getattr(settings, 'FRONTEND_URL', 'https://bibel-quiz.onrender.com')
+        # Your frontend URL - Lovable app
+        FRONTEND_URL = getattr(settings, 'FRONTEND_URL', 'https://bibel-quiz-christan-felloship.lovable.app')
         
         if error:
-            # Redirect to frontend login with error
             return redirect(f"{FRONTEND_URL}/login?error={error}")
         
         if not code:
@@ -82,8 +83,7 @@ class GoogleAuthCallbackView(APIView):
         if result.get('error'):
             return redirect(f"{FRONTEND_URL}/login?error={result['error']}")
         
-        # Redirect to frontend home page with tokens in URL
-        # Frontend will read these and store in localStorage
+        # Redirect to frontend with tokens in URL
         redirect_url = (
             f"{FRONTEND_URL}/?"
             f"access_token={result['access_token']}&"
@@ -123,7 +123,6 @@ class GoogleAuthCallbackView(APIView):
     
     def exchange_code_for_tokens(self, code):
         """Exchange authorization code for access token and user info"""
-        # Exchange code for access token
         token_url = "https://oauth2.googleapis.com/token"
         token_data = {
             'code': code,
