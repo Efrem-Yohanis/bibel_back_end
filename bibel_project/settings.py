@@ -150,7 +150,10 @@ SWAGGER_SETTINGS = {
 # Google OAuth2 Configuration - Get from Render environment variables
 GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')
 GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET', '')
-GOOGLE_REDIRECT_URI = os.environ.get('GOOGLE_REDIRECT_URI', 'https://bibel-quiz.onrender.com/api/auth/google/callback')
+GOOGLE_REDIRECT_URI = os.environ.get('GOOGLE_REDIRECT_URI', 'https://bibel-quiz.onrender.com/api/auth/google/callback/')
+
+# Frontend URL for redirects
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'https://bibel-quiz-christan-felloship.lovable.app')
 
 # Allauth Account Settings
 ACCOUNT_EMAIL_REQUIRED = True
