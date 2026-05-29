@@ -202,6 +202,15 @@
             statusDiv.style.display = 'block';
             statusDiv.className = `status ${type}`;
             statusDiv.innerHTML = message;
+            
+            // Auto-hide success messages after 3 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    if (statusDiv.innerHTML === message) {
+                        statusDiv.style.display = 'none';
+                    }
+                }, 3000);
+            }
         }
         
         function hideStatus() {
@@ -228,7 +237,7 @@
             tokenDiv.innerHTML = `
                 <div class="token-section">
                     <h3>🔑 Access Token</h3>
-                    <div class="token-box">${token.substring(0, 200)}...</div>
+                    <div class="token-box">${token.substring(0, 200)}${token.length > 200 ? '...' : ''}</div>
                     <button onclick="copyToken()">📋 Copy Token</button>
                     <button onclick="logout()" class="logout-btn">🚪 Logout</button>
                 </div>
@@ -240,72 +249,93 @@
             if (token) {
                 navigator.clipboard.writeText(token);
                 showStatus('✅ Token copied to clipboard!', 'success');
-                setTimeout(hideStatus, 2000);
             }
         };
         
-        function logout() {
+        window.logout = function() {
             localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
             localStorage.removeItem('user');
             document.getElementById('login-section').style.display = 'block';
             document.getElementById('user-info').style.display = 'none';
             document.getElementById('token-section').style.display = 'none';
-            showStatus('Logged out successfully', 'success');
+            showStatus('✅ Logged out successfully', 'success');
             setTimeout(() => {
-                hideStatus();
                 window.location.href = window.location.pathname;
             }, 1500);
-        }
+        };
         
         async function loginWithGoogle() {
             showStatus('🔄 Getting Google auth URL...', 'loading');
             
             try {
                 const response = await fetch(`${API_URL}/api/auth/google/redirect/`);
-                const data = await response.json();
                 
-                if (data.status === 'success') {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('API Response:', data); // Debug log
+                
+                // CORRECTED: Access auth_url directly from data, not data.data
+                if (data.status === 'success' && data.auth_url) {
                     showStatus('🔄 Redirecting to Google...', 'loading');
-                    window.location.href = data.data.auth_url;
+                    window.location.href = data.auth_url;
                 } else {
-                    showStatus('❌ Error: ' + data.message, 'error');
+                    showStatus('❌ Error: Invalid response from server', 'error');
                 }
             } catch (error) {
+                console.error('Login error:', error);
                 showStatus('❌ Error: ' + error.message, 'error');
             }
         }
         
         async function exchangeCodeForToken(code) {
-            showStatus('🔄 Exchanging code for tokens...', 'loading');
+            showStatus('🔄 Authenticating with Google...', 'loading');
             
             try {
-                const response = await fetch(`${API_URL}/api/auth/google/callback/`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ code: code })
+                // The callback should be a GET request according to OAuth spec
+                const response = await fetch(`${API_URL}/api/auth/google/callback/?code=${encodeURIComponent(code)}`, {
+                    method: 'GET',
+                    headers: { 
+                        'Content-Type': 'application/json'
+                    }
                 });
                 
-                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
                 
-                if (data.status === 'success') {
+                const data = await response.json();
+                console.log('Token exchange response:', data); // Debug log
+                
+                if (data.status === 'success' && data.data) {
                     const tokenData = data.data;
                     
                     // Store tokens
-                    localStorage.setItem('access_token', tokenData.access_token);
-                    localStorage.setItem('refresh_token', tokenData.refresh_token);
-                    localStorage.setItem('user', JSON.stringify(tokenData.user));
+                    if (tokenData.access_token) {
+                        localStorage.setItem('access_token', tokenData.access_token);
+                    }
+                    if (tokenData.refresh_token) {
+                        localStorage.setItem('refresh_token', tokenData.refresh_token);
+                    }
+                    if (tokenData.user) {
+                        localStorage.setItem('user', JSON.stringify(tokenData.user));
+                    }
                     
-                    showStatus('✅ Login successful! Welcome ' + tokenData.user.username + '!', 'success');
+                    showStatus('✅ Login successful! Welcome ' + (tokenData.user?.username || 'User') + '!', 'success');
                     showUserInfo(tokenData.user);
                     showTokenSection(tokenData.access_token);
                     document.getElementById('login-section').style.display = 'none';
                     
-                    // Clear URL parameters
+                    // Clear URL parameters without refreshing
                     window.history.replaceState({}, document.title, window.location.pathname);
                 } else {
-                    showStatus('❌ Login failed: ' + data.message, 'error');
+                    showStatus('❌ Login failed: ' + (data.message || 'Unknown error'), 'error');
                 }
             } catch (error) {
+                console.error('Token exchange error:', error);
                 showStatus('❌ Error: ' + error.message, 'error');
             }
         }
@@ -316,11 +346,17 @@
             const user = localStorage.getItem('user');
             
             if (token && user) {
-                document.getElementById('login-section').style.display = 'none';
-                showUserInfo(JSON.parse(user));
-                showTokenSection(token);
-                showStatus('✅ Welcome back! You are already logged in.', 'success');
-                setTimeout(hideStatus, 3000);
+                try {
+                    const userData = JSON.parse(user);
+                    document.getElementById('login-section').style.display = 'none';
+                    showUserInfo(userData);
+                    showTokenSection(token);
+                    showStatus('✅ Welcome back! You are already logged in.', 'success');
+                } catch (e) {
+                    console.error('Error parsing user data:', e);
+                    // Clear invalid data
+                    localStorage.removeItem('user');
+                }
             }
         }
         

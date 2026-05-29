@@ -83,7 +83,10 @@ class GoogleAuthCallbackView(APIView):
         if result.get('error'):
             return redirect(f"{FRONTEND_URL}/login?error={result['error']}")
         
-        # Redirect to frontend with tokens in URL
+        # Get full name from Google (temporary, not stored in DB)
+        google_full_name = result.get('google_full_name', result['user']['username'])
+        
+        # Redirect to frontend with tokens in URL (no first_name/last_name)
         redirect_url = (
             f"{FRONTEND_URL}/?"
             f"access_token={result['access_token']}&"
@@ -91,8 +94,7 @@ class GoogleAuthCallbackView(APIView):
             f"user_id={result['user']['id']}&"
             f"username={result['user']['username']}&"
             f"email={result['user']['email']}&"
-            f"first_name={result['user']['first_name']}&"
-            f"last_name={result['user']['last_name']}&"
+            f"display_name={google_full_name}&"
             f"is_new_user={result['is_new_user']}"
         )
         
@@ -136,7 +138,8 @@ class GoogleAuthCallbackView(APIView):
             token_response = requests.post(token_url, data=token_data)
             
             if token_response.status_code != 200:
-                return {'error': 'Failed to exchange authorization code'}
+                error_msg = token_response.json().get('error_description', 'Failed to exchange authorization code')
+                return {'error': error_msg}
             
             token_data = token_response.json()
             access_token = token_data.get('access_token')
@@ -151,34 +154,70 @@ class GoogleAuthCallbackView(APIView):
             
             user_data = user_response.json()
             
-            # Create or update user
+            # Extract Google user data
             email = user_data.get('email')
             google_id = user_data.get('id')
-            first_name = user_data.get('given_name', '')
-            last_name = user_data.get('family_name', '')
+            google_full_name = user_data.get('name', '')
             
-            # Check if user exists
-            user, created = User.objects.get_or_create(
-                email=email,
-                defaults={
-                    'username': email.split('@')[0],
-                    'first_name': first_name,
-                    'last_name': last_name,
-                    'google_id': google_id,
-                    'auth_provider': 'google',
-                    'is_active': True
-                }
-            )
+            # Create username from email (remove domain and special chars)
+            if not email:
+                return {'error': 'Email not provided by Google'}
             
-            if not created and not user.google_id:
-                user.google_id = google_id
-                user.auth_provider = 'google'
-                user.save()
+            base_username = email.split('@')[0]
+            # Clean username (remove special characters)
+            base_username = ''.join(c for c in base_username if c.isalnum() or c == '_')
+            
+            # Check if user exists by email
+            user = None
+            try:
+                user = User.objects.get(email=email)
+            except User.DoesNotExist:
+                pass
+            
+            # If not found by email, try google_id
+            if not user and google_id:
+                try:
+                    user = User.objects.get(google_id=google_id)
+                except User.DoesNotExist:
+                    pass
+            
+            created = False
+            
+            if user:
+                # Update existing user with google_id if not already set
+                updated = False
+                if not user.google_id and google_id:
+                    user.google_id = google_id
+                    updated = True
+                if user.auth_provider != 'google':
+                    user.auth_provider = 'google'
+                    updated = True
+                if updated:
+                    user.save()
+            else:
+                # Create new user - ensure username is unique
+                username = base_username
+                counter = 1
+                while User.objects.filter(username=username).exists():
+                    username = f"{base_username}{counter}"
+                    counter += 1
+                
+                # Create user with ONLY fields that exist in your User model
+                user = User.objects.create_user(
+                    username=username,
+                    email=email,
+                    password=None,  # No password for Google auth users
+                    google_id=google_id,
+                    auth_provider='google',
+                    is_active=True
+                )
+                created = True
             
             # Generate JWT tokens
             from rest_framework_simplejwt.tokens import RefreshToken
             refresh = RefreshToken.for_user(user)
             
+            # Return user data (only fields from your model)
             return {
                 'access_token': str(refresh.access_token),
                 'refresh_token': str(refresh),
@@ -186,11 +225,12 @@ class GoogleAuthCallbackView(APIView):
                     'id': user.id,
                     'email': user.email,
                     'username': user.username,
-                    'first_name': user.first_name,
-                    'last_name': user.last_name,
                 },
+                'google_full_name': google_full_name,  # Temporary, not stored in DB
                 'is_new_user': created
             }
             
         except Exception as e:
+            import traceback
+            traceback.print_exc()
             return {'error': str(e)}

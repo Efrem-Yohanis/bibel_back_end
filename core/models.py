@@ -350,6 +350,8 @@ class Explanation(models.Model):
 class User(AbstractBaseUser, PermissionsMixin):
     """Custom User Model"""
     username = models.CharField(max_length=50, unique=True)
+    first_name = models.CharField(max_length=150, blank=True)
+    last_name = models.CharField(max_length=150, blank=True)
     email = models.EmailField(max_length=100, unique=True, blank=True, null=True)
     password = models.CharField(max_length=255)
     created_at = models.DateTimeField(default=timezone.now)
