@@ -1,377 +1,328 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
+    <title>Google OAuth Test</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bible Quiz - Google Login</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
             padding: 20px;
+            background: #f0f2f5;
         }
-        
         .container {
             background: white;
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 500px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        
         h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 10px;
+            color: #1a73e8;
+            margin-top: 0;
         }
-        
-        .subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 14px;
+        .step {
+            background: #f8f9fa;
+            border-left: 4px solid #1a73e8;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
         }
-        
-        .google-btn {
-            width: 100%;
-            padding: 15px;
-            background: #4285f4;
+        button {
+            background: #1a73e8;
             color: white;
             border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 5px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: all 0.3s;
-        }
-        
-        .google-btn:hover {
-            background: #3367d6;
-            transform: translateY(-2px);
-        }
-        
-        .google-btn:active {
-            transform: translateY(0);
-        }
-        
-        .status {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
             font-size: 14px;
+            margin: 5px;
         }
-        
-        .status.loading {
-            background: #d1ecf1;
-            color: #0c5460;
+        button:hover {
+            background: #1557b0;
         }
-        
+        .danger {
+            background: #dc3545;
+        }
+        .danger:hover {
+            background: #c82333;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 12px;
+            font-family: 'Consolas', monospace;
+            margin-top: 20px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
         .status.success {
             background: #d4edda;
             color: #155724;
+            border: 1px solid #c3e6cb;
         }
-        
         .status.error {
             background: #f8d7da;
             color: #721c24;
+            border: 1px solid #f5c6cb;
         }
-        
-        .user-info {
-            margin-top: 20px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
         }
-        
-        .user-info h3 {
-            color: #333;
-            margin-bottom: 15px;
-            font-size: 16px;
-        }
-        
-        .user-info p {
-            margin: 8px 0;
-            font-size: 14px;
-            color: #555;
-        }
-        
-        .user-info .label {
-            font-weight: 600;
-            color: #333;
-            width: 80px;
-            display: inline-block;
-        }
-        
-        .token-section {
-            margin-top: 20px;
-        }
-        
-        .token-section h3 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 14px;
-        }
-        
         .token-box {
-            background: #2d2d2d;
-            color: #f8f8f2;
+            background: #e9ecef;
             padding: 10px;
-            border-radius: 8px;
+            border-radius: 5px;
             font-family: monospace;
             font-size: 11px;
             word-break: break-all;
-            max-height: 100px;
-            overflow-y: auto;
-        }
-        
-        button {
-            background: #28a745;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 12px;
             margin-top: 10px;
         }
-        
-        button:hover {
-            background: #218838;
+        h3 {
+            margin-top: 0;
+            color: #333;
         }
-        
-        .logout-btn {
-            background: #dc3545;
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
             margin-left: 10px;
         }
-        
-        .logout-btn:hover {
-            background: #c82333;
-        }
-        
-        .divider {
-            text-align: center;
-            margin: 20px 0;
-            color: #999;
-            font-size: 12px;
+        .badge.http {
+            background: #28a745;
+            color: white;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📖 Bible Quiz</h1>
-        <div class="subtitle">Sign in to continue</div>
+        <h1>🔐 Google OAuth Test <span class="badge http">HTTP Mode</span></h1>
+        <p>Backend: <strong>http://127.0.0.1:8000</strong></p>
         
-        <div id="login-section">
-            <button class="google-btn" onclick="loginWithGoogle()">
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                    <path fill="white" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                    <path fill="white" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                    <path fill="white" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                    <path fill="white" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                </svg>
-                Sign in with Google
-            </button>
+        <div class="step">
+            <h3>📡 Step 1: Test Connection</h3>
+            <button onclick="checkHealth()">🏥 Check API Health</button>
+            <button onclick="getAuthUrl()">🔑 Get Google Login URL</button>
         </div>
         
-        <div id="status" style="display: none;"></div>
-        <div id="user-info" style="display: none;"></div>
-        <div id="token-section" style="display: none;"></div>
+        <div id="authSection" style="display:none;" class="step">
+            <h3>🔐 Step 2: Exchange Authorization Code</h3>
+            <p>After Google login, copy the <code>code</code> parameter from the redirect URL:</p>
+            <input type="text" id="codeInput" placeholder="Paste the authorization code here...">
+            <button onclick="exchangeCode()">🔄 Exchange Code for Tokens</button>
+        </div>
+        
+        <div class="step">
+            <h3>👤 Step 3: Test Authentication</h3>
+            <button onclick="getProfile()">📋 Get User Profile</button>
+            <button onclick="clearTokens()" class="danger">🗑️ Clear Tokens</button>
+        </div>
+        
+        <div id="status"></div>
+        <div id="userInfo"></div>
+        <pre id="output">Click a button to start testing...</pre>
     </div>
 
     <script>
-        const API_URL = 'https://bibel-quiz.onrender.com';
+        // Use HTTP explicitly
+        const BASE_URL = "http://127.0.0.1:8000";
+        let accessToken = localStorage.getItem('access_token') || "";
         
         function showStatus(message, type) {
             const statusDiv = document.getElementById('status');
-            statusDiv.style.display = 'block';
-            statusDiv.className = `status ${type}`;
-            statusDiv.innerHTML = message;
-            
-            // Auto-hide success messages after 3 seconds
-            if (type === 'success') {
-                setTimeout(() => {
-                    if (statusDiv.innerHTML === message) {
-                        statusDiv.style.display = 'none';
-                    }
-                }, 3000);
-            }
+            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+            setTimeout(() => {
+                if (statusDiv.innerHTML.includes(message)) {
+                    statusDiv.innerHTML = '';
+                }
+            }, 5000);
         }
         
-        function hideStatus() {
-            document.getElementById('status').style.display = 'none';
+        function log(data) {
+            const output = document.getElementById("output");
+            if (typeof data === "string") {
+                output.innerText = data;
+            } else {
+                output.innerText = JSON.stringify(data, null, 2);
+            }
         }
         
         function showUserInfo(user) {
-            const userDiv = document.getElementById('user-info');
-            userDiv.style.display = 'block';
+            const userDiv = document.getElementById('userInfo');
             userDiv.innerHTML = `
-                <div class="user-info">
-                    <h3>👤 User Information</h3>
-                    <p><span class="label">Name:</span> ${user.first_name || user.username} ${user.last_name || ''}</p>
-                    <p><span class="label">Email:</span> ${user.email}</p>
-                    <p><span class="label">Username:</span> ${user.username}</p>
-                    <p><span class="label">User ID:</span> ${user.id}</p>
+                <div class="status success">
+                    <strong>✅ Logged in as:</strong><br>
+                    Username: ${user.username}<br>
+                    Email: ${user.email || 'N/A'}<br>
+                    User ID: ${user.id}
                 </div>
             `;
         }
         
-        function showTokenSection(token) {
-            const tokenDiv = document.getElementById('token-section');
-            tokenDiv.style.display = 'block';
-            tokenDiv.innerHTML = `
-                <div class="token-section">
-                    <h3>🔑 Access Token</h3>
-                    <div class="token-box">${token.substring(0, 200)}${token.length > 200 ? '...' : ''}</div>
-                    <button onclick="copyToken()">📋 Copy Token</button>
-                    <button onclick="logout()" class="logout-btn">🚪 Logout</button>
-                </div>
-            `;
-        }
-        
-        window.copyToken = function() {
-            const token = localStorage.getItem('access_token');
-            if (token) {
-                navigator.clipboard.writeText(token);
-                showStatus('✅ Token copied to clipboard!', 'success');
-            }
-        };
-        
-        window.logout = function() {
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
-            localStorage.removeItem('user');
-            document.getElementById('login-section').style.display = 'block';
-            document.getElementById('user-info').style.display = 'none';
-            document.getElementById('token-section').style.display = 'none';
-            showStatus('✅ Logged out successfully', 'success');
-            setTimeout(() => {
-                window.location.href = window.location.pathname;
-            }, 1500);
-        };
-        
-        async function loginWithGoogle() {
-            showStatus('🔄 Getting Google auth URL...', 'loading');
-            
+        // 1. Health check
+        async function checkHealth() {
             try {
-                const response = await fetch(`${API_URL}/api/auth/google/redirect/`);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-                
-                const data = await response.json();
-                console.log('API Response:', data); // Debug log
-                
-                // CORRECTED: Access auth_url directly from data, not data.data
-                if (data.status === 'success' && data.auth_url) {
-                    showStatus('🔄 Redirecting to Google...', 'loading');
-                    window.location.href = data.auth_url;
-                } else {
-                    showStatus('❌ Error: Invalid response from server', 'error');
+                showStatus("Checking API health...", "info");
+                const res = await fetch(`${BASE_URL}/health/`);
+                const data = await res.json();
+                log(data);
+                if (res.ok) {
+                    showStatus("✅ API is healthy! Django is running on HTTP port 8000", "success");
                 }
             } catch (error) {
-                console.error('Login error:', error);
-                showStatus('❌ Error: ' + error.message, 'error');
+                log("Error: " + error.message);
+                showStatus("❌ Cannot connect. Make sure Django is running: python manage.py runserver", "error");
             }
         }
         
-        async function exchangeCodeForToken(code) {
-            showStatus('🔄 Authenticating with Google...', 'loading');
+        // 2. Get Google Auth URL
+        async function getAuthUrl() {
+            try {
+                showStatus("Getting Google auth URL...", "info");
+                const res = await fetch(`${BASE_URL}/api/auth/google/redirect/`);
+                const data = await res.json();
+                log(data);
+                
+                const url = data.auth_url;
+                
+                if (url) {
+                    showStatus("✅ Opening Google login window...", "success");
+                    // Open in new window
+                    const newWindow = window.open(url, "_blank", "width=500,height=600");
+                    document.getElementById("authSection").style.display = "block";
+                    showStatus("After login, copy the 'code' parameter from the URL and paste it below", "info");
+                } else {
+                    showStatus("❌ No auth_url in response", "error");
+                }
+            } catch (error) {
+                log("Error: " + error.message);
+                showStatus("❌ Error: " + error.message, "error");
+            }
+        }
+        
+        // 3. Exchange code for token
+        async function exchangeCode() {
+            const code = document.getElementById("codeInput").value.trim();
+            
+            if (!code) {
+                showStatus("❌ Please paste the authorization code", "error");
+                return;
+            }
             
             try {
-                // The callback should be a GET request according to OAuth spec
-                const response = await fetch(`${API_URL}/api/auth/google/callback/?code=${encodeURIComponent(code)}`, {
-                    method: 'GET',
-                    headers: { 
-                        'Content-Type': 'application/json'
+                showStatus("Exchanging code for tokens...", "info");
+                const res = await fetch(`${BASE_URL}/api/auth/google/callback/`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ code: code })
+                });
+                
+                const data = await res.json();
+                log(data);
+                
+                if (data.status === 'success') {
+                    // Handle different response structures
+                    if (data.data) {
+                        accessToken = data.data.access_token;
+                        if (data.data.user) showUserInfo(data.data.user);
+                    } else if (data.access_token) {
+                        accessToken = data.access_token;
+                    }
+                    
+                    if (accessToken) {
+                        localStorage.setItem('access_token', accessToken);
+                        showStatus("✅ Login successful! Token stored.", "success");
+                        document.getElementById("codeInput").value = "";
+                        
+                        // Show token preview
+                        const output = document.getElementById("output");
+                        output.innerText += "\n\n✅ Token saved successfully!\n" + accessToken.substring(0, 100) + "...";
+                    } else {
+                        showStatus("⚠️ Login successful but no token received", "info");
+                    }
+                } else {
+                    showStatus("❌ Login failed: " + (data.message || "Unknown error"), "error");
+                }
+            } catch (error) {
+                log("Error: " + error.message);
+                showStatus("❌ Error: " + error.message, "error");
+            }
+        }
+        
+        // 4. Get user profile
+        async function getProfile() {
+            accessToken = localStorage.getItem('access_token');
+            
+            if (!accessToken) {
+                showStatus("❌ No access token! Please login first (Step 2)", "error");
+                return;
+            }
+            
+            try {
+                showStatus("Fetching user profile...", "info");
+                const res = await fetch(`${BASE_URL}/api/user/profile/`, {
+                    headers: {
+                        "Authorization": "Bearer " + accessToken
                     }
                 });
                 
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
+                const data = await res.json();
+                log(data);
                 
-                const data = await response.json();
-                console.log('Token exchange response:', data); // Debug log
-                
-                if (data.status === 'success' && data.data) {
-                    const tokenData = data.data;
-                    
-                    // Store tokens
-                    if (tokenData.access_token) {
-                        localStorage.setItem('access_token', tokenData.access_token);
-                    }
-                    if (tokenData.refresh_token) {
-                        localStorage.setItem('refresh_token', tokenData.refresh_token);
-                    }
-                    if (tokenData.user) {
-                        localStorage.setItem('user', JSON.stringify(tokenData.user));
-                    }
-                    
-                    showStatus('✅ Login successful! Welcome ' + (tokenData.user?.username || 'User') + '!', 'success');
-                    showUserInfo(tokenData.user);
-                    showTokenSection(tokenData.access_token);
-                    document.getElementById('login-section').style.display = 'none';
-                    
-                    // Clear URL parameters without refreshing
-                    window.history.replaceState({}, document.title, window.location.pathname);
+                if (res.ok) {
+                    showStatus("✅ Profile retrieved successfully!", "success");
+                    showUserInfo(data);
                 } else {
-                    showStatus('❌ Login failed: ' + (data.message || 'Unknown error'), 'error');
+                    showStatus("❌ Failed to get profile: " + (data.message || "Unauthorized"), "error");
                 }
             } catch (error) {
-                console.error('Token exchange error:', error);
-                showStatus('❌ Error: ' + error.message, 'error');
+                log("Error: " + error.message);
+                showStatus("❌ Error: " + error.message, "error");
             }
         }
         
-        // Check for existing session
-        function checkExistingSession() {
-            const token = localStorage.getItem('access_token');
-            const user = localStorage.getItem('user');
-            
-            if (token && user) {
-                try {
-                    const userData = JSON.parse(user);
-                    document.getElementById('login-section').style.display = 'none';
-                    showUserInfo(userData);
-                    showTokenSection(token);
-                    showStatus('✅ Welcome back! You are already logged in.', 'success');
-                } catch (e) {
-                    console.error('Error parsing user data:', e);
-                    // Clear invalid data
-                    localStorage.removeItem('user');
-                }
-            }
+        function clearTokens() {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            accessToken = "";
+            document.getElementById('userInfo').innerHTML = '';
+            showStatus("✅ Tokens cleared!", "success");
+            log("Tokens cleared. You can now login again.");
         }
         
-        // Handle OAuth callback
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
-        const error = urlParams.get('error');
-        
-        if (error) {
-            showStatus('❌ Google login error: ' + error, 'error');
-        } else if (code) {
-            exchangeCodeForToken(code);
-        } else {
-            checkExistingSession();
+        // Check for existing token on load
+        if (localStorage.getItem('access_token')) {
+            showStatus("ℹ️ Found stored token. You can test the profile endpoint.", "info");
         }
+        
+        // Instructions to disable HTTPS forcing in different browsers
+        console.log(`
+        If you see HTTPS errors:
+        Chrome: Type chrome://net-internals/#hsts → Delete domain security policies for localhost
+        Firefox: Settings → Privacy & Security → HTTPS-Only Mode → Off
+        Edge: Type edge://net-internals/#hsts → Delete domain security policies for localhost
+        `);
     </script>
 </body>
 </html>
