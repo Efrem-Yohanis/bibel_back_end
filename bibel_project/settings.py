@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'drf_yasg',
     'corsheaders',
-    'django_extensions',
     'whitenoise.runserver_nostatic',
     
     # Django Allauth
