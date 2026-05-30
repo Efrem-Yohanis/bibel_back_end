@@ -42,16 +42,27 @@ class InProgressQuizSerializer(serializers.Serializer):
 
 
 class BookProgressSerializer(serializers.Serializer):
+    book_id = serializers.IntegerField()
     book_name = serializers.CharField()
     testament = serializers.CharField(allow_null=True)
     current_chapter = serializers.IntegerField()
     current_verse = serializers.IntegerField()
     questions_answered = serializers.IntegerField()
     correct_answers = serializers.IntegerField()
+    audio_started = serializers.BooleanField()
+    audio_can_resume = serializers.BooleanField()
     audio_current_position = serializers.IntegerField()
     audio_completed_chapters = serializers.ListField(child=serializers.IntegerField(), allow_empty=True)
     audio_progress_percentage = serializers.IntegerField()
     total_audio_chapters = serializers.IntegerField()
+    quiz_in_progress = serializers.BooleanField()
+    quiz_resume_attempt_id = serializers.IntegerField(allow_null=True)
+    quiz_resume_status = serializers.CharField(allow_null=True)
+    quiz_resume_total_questions = serializers.IntegerField()
+    quiz_resume_answered_questions = serializers.IntegerField()
+    quiz_resume_correct_answers = serializers.IntegerField()
+    quiz_resume_score_percentage = serializers.FloatField()
+    quiz_resume_progress_percentage = serializers.IntegerField()
     last_activity = serializers.DateTimeField()
     completed = serializers.BooleanField()
 

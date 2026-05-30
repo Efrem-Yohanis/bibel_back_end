@@ -1,6 +1,6 @@
 # Audio and Quiz Progress Endpoints
 
-**Base URL:** `https://bibel-quiz.onrender.com/api` (or `http://localhost:8000/api` locally)
+**Base URL:** `https://bibel-quiz.onrender.com/api`
 
 **Authentication:** All progress endpoints require JWT Bearer token
 ```
@@ -64,7 +64,7 @@ Authorization: Bearer <access_token>
 
 **cURL Example:**
 ```bash
-curl -X GET "http://localhost:8000/api/user/audio/progress/1" \
+curl -X GET "https://bibel-quiz.onrender.com/api/user/audio/progress/1" \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 ```
 
@@ -126,7 +126,7 @@ Content-Type: application/json
 
 **cURL Example:**
 ```bash
-curl -X POST "http://localhost:8000/api/user/audio/progress/1/update" \
+curl -X POST "https://bibel-quiz.onrender.com/api/user/audio/progress/1/update" \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
   -H "Content-Type: application/json" \
   -d '{
@@ -224,7 +224,7 @@ Authorization: Bearer <access_token>
 
 **cURL Example:**
 ```bash
-curl -X GET "http://localhost:8000/api/user/quiz-progress/1" \
+curl -X GET "https://bibel-quiz.onrender.com/api/user/quiz-progress/1" \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 ```
 
@@ -274,7 +274,7 @@ Content-Type: application/json
 
 **cURL Example:**
 ```bash
-curl -X POST "http://localhost:8000/api/user/quiz/start" \
+curl -X POST "https://bibel-quiz.onrender.com/api/user/quiz/start" \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
   -H "Content-Type: application/json" \
   -d '{
@@ -325,7 +325,7 @@ Content-Type: application/json
 
 **cURL Example:**
 ```bash
-curl -X POST "http://localhost:8000/api/user/quiz/submit-answer" \
+curl -X POST "https://bibel-quiz.onrender.com/api/user/quiz/submit-answer" \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
   -H "Content-Type: application/json" \
   -d '{
@@ -374,7 +374,7 @@ Content-Type: application/json
 
 **cURL Example:**
 ```bash
-curl -X POST "http://localhost:8000/api/user/quiz/complete" \
+curl -X POST "https://bibel-quiz.onrender.com/api/user/quiz/complete" \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
   -H "Content-Type: application/json" \
   -d '{
@@ -400,30 +400,52 @@ Authorization: Bearer <access_token>
   "status": "success",
   "data": [
     {
+      "book_id": 1,
       "book_name": "Genesis",
       "testament": "Old",
       "current_chapter": 3,
       "current_verse": 15,
       "questions_answered": 45,
       "correct_answers": 38,
+      "audio_started": true,
+      "audio_can_resume": true,
       "audio_current_position": 450,
       "audio_completed_chapters": [1, 2],
       "audio_progress_percentage": 37,
       "total_audio_chapters": 50,
+      "quiz_in_progress": true,
+      "quiz_resume_attempt_id": 45,
+      "quiz_resume_status": "in_progress",
+      "quiz_resume_total_questions": 10,
+      "quiz_resume_answered_questions": 7,
+      "quiz_resume_correct_answers": 5,
+      "quiz_resume_score_percentage": 71.43,
+      "quiz_resume_progress_percentage": 70,
       "last_activity": "2026-05-30T10:25:00Z",
       "completed": false
     },
     {
+      "book_id": 2,
       "book_name": "Exodus",
       "testament": "Old",
       "current_chapter": 1,
       "current_verse": 1,
       "questions_answered": 0,
       "correct_answers": 0,
+      "audio_started": false,
+      "audio_can_resume": false,
       "audio_current_position": 0,
       "audio_completed_chapters": [],
       "audio_progress_percentage": 0,
       "total_audio_chapters": 40,
+      "quiz_in_progress": false,
+      "quiz_resume_attempt_id": null,
+      "quiz_resume_status": null,
+      "quiz_resume_total_questions": 0,
+      "quiz_resume_answered_questions": 0,
+      "quiz_resume_correct_answers": 0,
+      "quiz_resume_score_percentage": 0.0,
+      "quiz_resume_progress_percentage": 0,
       "last_activity": null,
       "completed": false
     }
@@ -433,9 +455,37 @@ Authorization: Bearer <access_token>
 
 **cURL Example:**
 ```bash
-curl -X GET "http://localhost:8000/api/user/book-progress" \
+curl -X GET "https://bibel-quiz.onrender.com/api/user/book-progress" \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 ```
+
+---
+
+## 🧭 Frontend Profile Page Usage
+
+Use `GET /user/book-progress` to render the user's book-level progress list. Each book item now contains:
+- `book_id`, `book_name`, `testament` — identify the book
+- `audio_started` — whether audio listening has begun
+- `audio_can_resume` — whether audio is started but not completed
+- `audio_progress_percentage` — progress bar value for audio
+- `quiz_in_progress` — whether a quiz attempt exists for the book
+- `quiz_resume_attempt_id` / `quiz_resume_status` — resume button data
+- `quiz_resume_progress_percentage` — quiz progress bar value
+
+### Suggested UI behavior
+- Show a book card for each entry in `book_progress`
+- If `audio_started` is true, display the audio progress bar using `audio_progress_percentage`
+- If `audio_can_resume` is true, show an "Resume Audio" button linking to `GET /user/audio/progress/<book_id>`
+- If `quiz_in_progress` is true, show an "Resume Quiz" button using `quiz_resume_attempt_id`
+- For quiz details, call `GET /user/quiz-progress/<book_id>` when the book is selected
+- For audio details, call `GET /user/audio/progress/<book_id>` when the user wants to resume or inspect progress
+
+### Example book card state
+- Book: Genesis
+- Audio progress: 37% (show progress bar)
+- Audio resume: visible if `audio_can_resume` is true
+- Quiz progress: 70% (show progress bar)
+- Quiz resume: visible if `quiz_in_progress` is true
 
 ---
 
@@ -470,7 +520,7 @@ Content-Type: application/json
 
 **cURL Example:**
 ```bash
-curl -X POST "http://localhost:8000/api/auth/login" \
+curl -X POST "https://bibel-quiz.onrender.com/api/auth/login" \
   -H "Content-Type: application/json" \
   -d '{
     "username": "user@example.com",

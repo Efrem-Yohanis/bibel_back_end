@@ -121,17 +121,60 @@ class UserProfileService:
         
         progress = []
         for record in progress_records:
+            quiz_attempt = QuizAttempt.objects.filter(
+                user_id=user_id,
+                book_id=record.book.id,
+                status='in_progress'
+            ).order_by('-started_at').first()
+
+            quiz_resume_data = {
+                'quiz_in_progress': bool(quiz_attempt),
+                'quiz_resume_attempt_id': None,
+                'quiz_resume_status': None,
+                'quiz_resume_total_questions': 0,
+                'quiz_resume_answered_questions': 0,
+                'quiz_resume_correct_answers': 0,
+                'quiz_resume_score_percentage': 0.0,
+                'quiz_resume_progress_percentage': 0
+            }
+
+            if quiz_attempt:
+                answered_questions = QuizAnswer.objects.filter(attempt=quiz_attempt).count()
+                quiz_resume_data.update({
+                    'quiz_resume_attempt_id': quiz_attempt.id,
+                    'quiz_resume_status': quiz_attempt.status,
+                    'quiz_resume_total_questions': quiz_attempt.total_questions,
+                    'quiz_resume_answered_questions': answered_questions,
+                    'quiz_resume_correct_answers': quiz_attempt.correct_answers,
+                    'quiz_resume_score_percentage': quiz_attempt.score_percentage,
+                    'quiz_resume_progress_percentage': int((answered_questions / quiz_attempt.total_questions) * 100) if quiz_attempt.total_questions > 0 else 0
+                })
+
+            audio_started = bool(record.audio_current_position or record.audio_completed_chapters)
+            audio_can_resume = audio_started and not record.completed
+
             progress.append({
+                'book_id': record.book.id,
                 'book_name': record.book.name,
                 'testament': record.book.testament.name if record.book.testament else None,
                 'current_chapter': record.current_chapter,
                 'current_verse': record.current_verse,
                 'questions_answered': record.questions_answered,
                 'correct_answers': record.correct_answers,
+                'audio_started': audio_started,
+                'audio_can_resume': audio_can_resume,
                 'audio_current_position': record.audio_current_position,
                 'audio_completed_chapters': record.audio_completed_chapters,
                 'audio_progress_percentage': record.get_audio_progress_percentage(),
                 'total_audio_chapters': record.book.total_chapters,
+                'quiz_in_progress': quiz_resume_data['quiz_in_progress'],
+                'quiz_resume_attempt_id': quiz_resume_data['quiz_resume_attempt_id'],
+                'quiz_resume_status': quiz_resume_data['quiz_resume_status'],
+                'quiz_resume_total_questions': quiz_resume_data['quiz_resume_total_questions'],
+                'quiz_resume_answered_questions': quiz_resume_data['quiz_resume_answered_questions'],
+                'quiz_resume_correct_answers': quiz_resume_data['quiz_resume_correct_answers'],
+                'quiz_resume_score_percentage': quiz_resume_data['quiz_resume_score_percentage'],
+                'quiz_resume_progress_percentage': quiz_resume_data['quiz_resume_progress_percentage'],
                 'completed': record.completed,
                 'last_activity': record.last_activity
             })
