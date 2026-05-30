@@ -11,12 +11,13 @@ from ..serializers.user_serializers import (
     UserProfileSerializer, 
     CompleteUserProfileSerializer, 
     QuizHistorySerializer,
-    UserStartQuizSerializer,  # This is correct
-    UserSubmitAnswerSerializer,  # This is correct
+    UserStartQuizSerializer,
+    UserSubmitAnswerSerializer,
     CompleteQuizSerializer,
     BookProgressSerializer, 
     UserStatisticsSerializer, 
-    InProgressQuizSerializer
+    InProgressQuizSerializer,
+    UserQuizProgressSerializer
 )
 from ..serializers.auth_serializers import ChangePasswordSerializer
 
@@ -242,6 +243,26 @@ class BookProgressView(APIView):
         """GET /api/user/book-progress - Get book progress"""
         progress = user_profile_service.get_book_progress(request.user.id)
         
+        return Response({
+            'status': 'success',
+            'data': progress
+        }, status=status.HTTP_200_OK)
+
+
+class UserQuizProgressView(APIView):
+    """Get user's quiz progress for a specific book"""
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_description="Get user's quiz progress for a book",
+        operation_summary="Get Quiz Progress",
+        tags=['User', 'Quiz'],
+        responses={200: UserQuizProgressSerializer()}
+    )
+    def get(self, request, book_id):
+        """GET /api/user/quiz-progress/{book_id} - Get quiz progress for a book"""
+        progress = user_profile_service.get_quiz_progress(request.user.id, book_id)
+
         return Response({
             'status': 'success',
             'data': progress

@@ -128,8 +128,12 @@ class UserProfileService:
                 'current_verse': record.current_verse,
                 'questions_answered': record.questions_answered,
                 'correct_answers': record.correct_answers,
-                'last_activity': record.last_activity,
-                'completed': record.completed
+                'audio_current_position': record.audio_current_position,
+                'audio_completed_chapters': record.audio_completed_chapters,
+                'audio_progress_percentage': record.get_audio_progress_percentage(),
+                'total_audio_chapters': record.book.total_chapters,
+                'completed': record.completed,
+                'last_activity': record.last_activity
             })
         
         return progress
@@ -304,7 +308,71 @@ class UserProfileService:
         except Exception as e:
             print(f"Error updating book progress: {e}")
             return False
-    
+
+    def get_quiz_progress(self, user_id: int, book_id: int) -> Dict:
+        """Get user's quiz progress for a specific book."""
+        book = Book.objects.filter(id=book_id).first()
+        book_name = book.name if book else None
+        testament = book.testament.name if book and book.testament else None
+
+        attempts = QuizAttempt.objects.filter(user_id=user_id, book_id=book_id)
+        completed_quizzes = attempts.filter(status='completed').count()
+        in_progress_attempt = attempts.filter(status='in_progress').order_by('-started_at').first()
+
+        quiz_progress = {
+            'book_id': book_id,
+            'book_name': book_name,
+            'testament': testament,
+            'total_quizzes_taken': attempts.count(),
+            'completed_quizzes': completed_quizzes,
+            'in_progress_attempt_id': None,
+            'status': None,
+            'total_questions': 0,
+            'answered_questions': 0,
+            'correct_answers': 0,
+            'score_percentage': 0.0,
+            'progress_percentage': 0,
+            'can_resume': False,
+            'resume_data': None,
+            'last_attempt_at': None
+        }
+
+        if in_progress_attempt:
+            answered_questions = QuizAnswer.objects.filter(attempt=in_progress_attempt).count()
+            quiz_progress.update({
+                'in_progress_attempt_id': in_progress_attempt.id,
+                'status': in_progress_attempt.status,
+                'total_questions': in_progress_attempt.total_questions,
+                'answered_questions': answered_questions,
+                'correct_answers': in_progress_attempt.correct_answers,
+                'score_percentage': in_progress_attempt.score_percentage,
+                'progress_percentage': int((answered_questions / in_progress_attempt.total_questions) * 100) if in_progress_attempt.total_questions > 0 else 0,
+                'can_resume': True,
+                'resume_data': None,
+                'last_attempt_at': in_progress_attempt.started_at
+            })
+
+            if in_progress_attempt.resume_data:
+                try:
+                    quiz_progress['resume_data'] = json.loads(in_progress_attempt.resume_data)
+                except Exception:
+                    quiz_progress['resume_data'] = None
+
+        elif attempts.exists():
+            last_attempt = attempts.order_by('-started_at').first()
+            quiz_progress.update({
+                'status': last_attempt.status,
+                'total_questions': last_attempt.total_questions,
+                'answered_questions': QuizAnswer.objects.filter(attempt=last_attempt).count(),
+                'correct_answers': last_attempt.correct_answers,
+                'score_percentage': last_attempt.score_percentage,
+                'progress_percentage': int(last_attempt.score_percentage),
+                'can_resume': False,
+                'last_attempt_at': last_attempt.started_at
+            })
+
+        return quiz_progress
+
     def get_user_statistics(self, user_id: int) -> Dict:
         """Get aggregated user statistics"""
         try:

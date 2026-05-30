@@ -291,9 +291,9 @@ try:
     import cloudinary
 
     cloudinary.config(
-        cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME', 'dleykahqd'),
-        api_key=os.environ.get('CLOUDINARY_API_KEY', '385881128844515'),
-        api_secret=os.environ.get('CLOUDINARY_API_SECRET', 'FMmGBaaNzWarti_V0Ak62ojhCQc'),
+        cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME', ''),
+        api_key=os.environ.get('CLOUDINARY_API_KEY', ''),
+        api_secret=os.environ.get('CLOUDINARY_API_SECRET', ''),
         secure=True
     )
 except Exception:

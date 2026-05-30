@@ -23,6 +23,7 @@ from ..views.user import (
     # Reading progress
     BookProgressView,
     UpdateBookProgressView,
+    UserQuizProgressView,
 )
 
 from ..views.bible import (
@@ -77,4 +78,6 @@ urlpatterns = [
     path('audio/progress/<int:book_id>', UserAudioProgressView.as_view(), name='user-audio-progress'),
     # POST /api/user/audio/progress/<book_id>/update - Update audio progress for a book
     path('audio/progress/<int:book_id>/update', UpdateAudioProgressView.as_view(), name='user-audio-progress-update'),
+    # GET /api/user/quiz-progress/<book_id> - Get quiz progress for a book
+    path('quiz-progress/<int:book_id>', UserQuizProgressView.as_view(), name='user-quiz-progress'),
 ]

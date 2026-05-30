@@ -155,7 +155,37 @@ class BibleService:
             
         except Language.DoesNotExist:
             return {'has_audio': False, 'error': f'Language {language_code} not found'}
-    
+
+    def _get_book_audio_duration(self, book_id: int, language_code: str = 'en') -> Dict:
+        """Return the total and per-chapter audio duration for a book."""
+        try:
+            language = Language.objects.get(code=language_code)
+        except Language.DoesNotExist:
+            return {'total_seconds': 0, 'chapter_seconds': {}}
+
+        book_audio = BookAudio.objects.filter(
+            book_id=book_id,
+            language=language,
+            is_available=True
+        ).first()
+
+        if book_audio and book_audio.duration:
+            return {'total_seconds': book_audio.duration, 'chapter_seconds': {}}
+
+        chapter_audios = ChapterAudio.objects.filter(
+            book_id=book_id,
+            language=language,
+            is_available=True
+        )
+
+        chapter_seconds = {
+            ca.chapter_number: ca.duration or 0
+            for ca in chapter_audios
+        }
+        total_seconds = sum(chapter_seconds.values())
+
+        return {'total_seconds': total_seconds, 'chapter_seconds': chapter_seconds}
+
     def get_chapter_audio(self, book_id: int, chapter_number: int, language_code: str = 'en') -> Dict:
         """Get audio for a specific chapter"""
         try:
@@ -209,23 +239,49 @@ class BibleService:
             )
             
             book = Book.objects.get(id=book_id)
-            
+            duration_info = self._get_book_audio_duration(book_id)
+            total_duration = duration_info.get('total_seconds', 0)
+            chapter_durations = duration_info.get('chapter_seconds', {})
+
+            listened_seconds = sum(
+                chapter_durations.get(ch, 0) for ch in progress.audio_completed_chapters
+            )
+            current_chapter_duration = chapter_durations.get(progress.current_chapter, 0)
+            listened_seconds += min(progress.audio_current_position or 0, current_chapter_duration)
+            remaining_seconds = max(total_duration - listened_seconds, 0)
+            audio_progress_duration = int((listened_seconds / total_duration) * 100) if total_duration > 0 else progress.get_audio_progress_percentage()
+
             return {
                 'success': True,
+                'book_id': book_id,
+                'book_name': book.name,
+                'testament': book.testament.name if book.testament else None,
                 'current_chapter': progress.current_chapter,
                 'current_verse': progress.current_verse,
                 'audio_current_position': progress.audio_current_position,
                 'audio_completed_chapters': progress.audio_completed_chapters,
+                'total_audio_duration': total_duration,
+                'listened_audio_duration': listened_seconds,
+                'remaining_audio_duration': remaining_seconds,
+                'audio_progress_percentage': audio_progress_duration,
                 'completed': progress.completed,
                 'progress_percentage': progress.get_audio_progress_percentage()
             }
         except UserBookProgress.DoesNotExist:
+            book = Book.objects.filter(id=book_id).first()
             return {
                 'success': True,
+                'book_id': book_id,
+                'book_name': book.name if book else None,
+                'testament': book.testament.name if book and book.testament else None,
                 'current_chapter': 1,
                 'current_verse': 1,
                 'audio_current_position': 0,
                 'audio_completed_chapters': [],
+                'total_audio_duration': 0,
+                'listened_audio_duration': 0,
+                'remaining_audio_duration': 0,
+                'audio_progress_percentage': 0,
                 'completed': False,
                 'progress_percentage': 0
             }
@@ -344,11 +400,30 @@ class BibleService:
             
             progress.save()
             
+            total_duration = 0
+            chapter_durations = {}
+            duration_info = self._get_book_audio_duration(book_id, language_code)
+            total_duration = duration_info.get('total_seconds', 0)
+            chapter_durations = duration_info.get('chapter_seconds', {})
+
+            listened_seconds = sum(
+                chapter_durations.get(ch, 0) for ch in progress.audio_completed_chapters
+            ) + min(progress.audio_current_position or 0, chapter_durations.get(progress.current_chapter, 0))
+            remaining_seconds = max(total_duration - listened_seconds, 0)
+            audio_progress_duration = int((listened_seconds / total_duration) * 100) if total_duration > 0 else progress.get_audio_progress_percentage()
+
             return {
                 'success': True,
+                'book_id': book_id,
+                'book_name': book.name,
+                'testament': book.testament.name if book.testament else None,
                 'current_chapter': progress.current_chapter,
                 'audio_current_position': progress.audio_current_position,
                 'audio_completed_chapters': progress.audio_completed_chapters,
+                'total_audio_duration': total_duration,
+                'listened_audio_duration': listened_seconds,
+                'remaining_audio_duration': remaining_seconds,
+                'audio_progress_percentage': audio_progress_duration,
                 'completed': progress.completed,
                 'progress_percentage': progress.get_audio_progress_percentage()
             }

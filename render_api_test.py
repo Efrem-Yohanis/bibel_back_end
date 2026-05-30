@@ -13,11 +13,10 @@ SESSION.trust_env = False
 
 
 def send_request(method: str, url: str, **kwargs):
+    kwargs.setdefault('verify', VERIFY)
     try:
         return SESSION.request(method, url, **kwargs)
     except requests.exceptions.SSLError as err:
-        if not kwargs.get('verify'):
-            raise
         print('Warning: SSL verification failed. Retrying without certificate verification for debugging...')
         return SESSION.request(method, url, verify=False, **{k: v for k, v in kwargs.items() if k != 'verify'})
 
