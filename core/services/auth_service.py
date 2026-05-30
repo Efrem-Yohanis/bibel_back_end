@@ -11,7 +11,8 @@ from datetime import timedelta
 import requests
 from urllib.parse import urlencode
 from django.conf import settings
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
+from rest_framework_simplejwt.exceptions import TokenError
 
 from ..models import User, UserSession
 
@@ -403,26 +404,50 @@ class AuthService:
             return False, f"Password change failed: {str(e)}"
     
     def validate_token(self, token: str) -> Tuple[Optional[User], Optional[str]]:
-        """Validate user session token"""
+        """Validate user authentication token.
+
+        Supports both JWT access tokens and legacy session tokens.
+        """
         try:
             print(f"Validating token: {token[:20]}...")
             
-            # Check if token exists and is active
+            # If the token looks like a JWT, validate it with SimpleJWT.
+            if token.count('.') == 2:
+                try:
+                    access_token = AccessToken(token)
+                except TokenError as e:
+                    print(f"JWT validation failed: {str(e)}")
+                    return None, "Invalid or expired token"
+
+                user_id = access_token.get('user_id')
+                if not user_id:
+                    print("JWT token missing user_id")
+                    return None, "Invalid token payload"
+
+                user = User.objects.filter(id=user_id, is_active=True).first()
+                if not user:
+                    print("User not found for JWT token")
+                    return None, "User not found"
+
+                print(f"JWT token valid for user: {user.username}")
+                return user, None
+
+            # Fallback: support legacy session tokens stored in UserSession.
             session = UserSession.objects.filter(
                 token=token,
                 is_active=True,
                 expires_at__gt=timezone.now()
             ).select_related('user').first()
-            
+
             if not session:
                 print("Session not found or expired")
                 return None, "Invalid or expired token"
-            
+
             if not session.user.is_active:
                 print("User is inactive")
                 return None, "User account is inactive"
-            
-            print(f"Token valid for user: {session.user.username}")
+
+            print(f"Session token valid for user: {session.user.username}")
             return session.user, None
             
         except Exception as e:
