@@ -221,7 +221,27 @@ class BookAudio(models.Model):
     
     def get_audio_url(self):
         """Get the full audio URL"""
-        return self.audio_url if self.audio_url else None
+        # If a direct audio_url is stored, return it.
+        if self.audio_url:
+            return self.audio_url
+
+        # If a Cloudinary public id is stored, attempt to generate a signed URL.
+        if self.cloudinary_public_id:
+            try:
+                from cloudinary.utils import cloudinary_url
+
+                # Try common resource types for audio delivery: video (Cloudinary often stores mp3 as video), raw, then auto
+                for resource_type in ('video', 'raw', 'auto'):
+                    try:
+                        url, _ = cloudinary_url(self.cloudinary_public_id, resource_type=resource_type, secure=True, sign=True)
+                        if url:
+                            return url
+                    except Exception:
+                        continue
+            except Exception:
+                return None
+
+        return None
     
     def get_chapter_start_time(self, chapter_number):
         """Get start time for a specific chapter"""
@@ -261,7 +281,26 @@ class ChapterAudio(models.Model):
     
     def get_audio_url(self):
         """Get the full audio URL"""
-        return self.audio_url if self.audio_url else None
+        # If a direct audio_url is stored, return it.
+        if self.audio_url:
+            return self.audio_url
+
+        # If Cloudinary public id exists, try to generate a signed URL (try different resource types)
+        if self.cloudinary_public_id:
+            try:
+                from cloudinary.utils import cloudinary_url
+
+                for resource_type in ('video', 'raw', 'auto'):
+                    try:
+                        url, _ = cloudinary_url(self.cloudinary_public_id, resource_type=resource_type, secure=True, sign=True)
+                        if url:
+                            return url
+                    except Exception:
+                        continue
+            except Exception:
+                return None
+
+        return None
 
 
 # ==================== QUIZ MODELS ====================

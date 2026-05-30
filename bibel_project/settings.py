@@ -286,6 +286,19 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# Cloudinary configuration (used to generate signed URLs for private media)
+try:
+    import cloudinary
+
+    cloudinary.config(
+        cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME', 'dleykahqd'),
+        api_key=os.environ.get('CLOUDINARY_API_KEY', '385881128844515'),
+        api_secret=os.environ.get('CLOUDINARY_API_SECRET', 'FMmGBaaNzWarti_V0Ak62ojhCQc'),
+        secure=True
+    )
+except Exception:
+    # Cloudinary not installed or misconfigured — fallback silently
+    pass
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
