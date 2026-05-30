@@ -230,10 +230,10 @@ class BookAudio(models.Model):
             try:
                 from cloudinary.utils import cloudinary_url
 
-                # Try common resource types for audio delivery: video (Cloudinary often stores mp3 as video), raw, then auto
+                public_id = str(self.cloudinary_public_id)
                 for resource_type in ('video', 'raw', 'auto'):
                     try:
-                        url, _ = cloudinary_url(self.cloudinary_public_id, resource_type=resource_type, secure=True, sign=True)
+                        url, _ = cloudinary_url(public_id, resource_type=resource_type, secure=True, sign=True)
                         if url:
                             return url
                     except Exception:
@@ -290,9 +290,10 @@ class ChapterAudio(models.Model):
             try:
                 from cloudinary.utils import cloudinary_url
 
+                public_id = str(self.cloudinary_public_id)
                 for resource_type in ('video', 'raw', 'auto'):
                     try:
-                        url, _ = cloudinary_url(self.cloudinary_public_id, resource_type=resource_type, secure=True, sign=True)
+                        url, _ = cloudinary_url(public_id, resource_type=resource_type, secure=True, sign=True)
                         if url:
                             return url
                     except Exception:

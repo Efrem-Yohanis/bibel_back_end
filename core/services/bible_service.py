@@ -565,6 +565,7 @@ class BibleService:
         """Get a specific chapter's verses"""
         try:
             book_name = unquote(book_name)
+            chapter = int(chapter)
             language = Language.objects.get(code=language_code)
             
             book = Book.objects.filter(
