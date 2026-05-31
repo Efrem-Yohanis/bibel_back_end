@@ -37,6 +37,7 @@ def api_root(request):
                     "POST /register",
                     "POST /login",
                     "POST /logout",
+                    "POST /verify-email",
                     "POST /forgot-password",
                     "POST /reset-password",
                     "POST /google/",

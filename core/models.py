@@ -401,6 +401,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_admin = models.BooleanField(default=False)
     reset_token = models.CharField(max_length=255, blank=True, null=True)
     reset_token_expires = models.DateTimeField(blank=True, null=True)
+    email_verified = models.BooleanField(default=False)
+    email_verification_token = models.CharField(max_length=255, blank=True, null=True)
+    email_verification_token_expires = models.DateTimeField(blank=True, null=True)
     preferred_language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True, blank=True, related_name='users')
     
     # Statistics
@@ -531,3 +534,39 @@ class UserBookProgress(models.Model):
         if self.book.total_chapters > 0:
             return int((len(self.audio_completed_chapters) / self.book.total_chapters) * 100)
         return 0
+
+
+# ==================== DAILY VERSE MODELS ====================
+
+class DailyVerseCategory(models.Model):
+    """Category for daily verse selection"""
+    title = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(unique=True, help_text="URL-friendly identifier")
+    created_at = models.DateTimeField(default=timezone.now)
+    
+    class Meta:
+        db_table = 'daily_verse_categories'
+        ordering = ['title']
+        verbose_name_plural = 'Daily Verse Categories'
+    
+    def __str__(self):
+        return self.title
+
+
+class DailyVerse(models.Model):
+    """Pre-selected daily verses from curated list (1,000 verses across 11 categories)"""
+    category = models.ForeignKey(DailyVerseCategory, on_delete=models.CASCADE, related_name='verses')
+    verse = models.ForeignKey(Verse, on_delete=models.CASCADE, related_name='daily_verse_entries')
+    created_at = models.DateTimeField(default=timezone.now)
+    
+    class Meta:
+        db_table = 'daily_verses'
+        unique_together = ['category', 'verse']
+        ordering = ['category', 'id']
+        indexes = [
+            models.Index(fields=['category']),
+            models.Index(fields=['verse']),
+        ]
+    
+    def __str__(self):
+        return f"{self.verse} - {self.category.title}"

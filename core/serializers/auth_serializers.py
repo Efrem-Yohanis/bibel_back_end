@@ -10,9 +10,9 @@ from ..models import User
 class RegisterSerializer(serializers.Serializer):
     """Serializer for user registration"""
     username = serializers.CharField(max_length=50, min_length=3)
-    email = serializers.EmailField(required=False, allow_null=True, allow_blank=True)
+    email = serializers.EmailField(required=True)
     password = serializers.CharField(write_only=True, min_length=6, max_length=128)
-    confirm_password = serializers.CharField(write_only=True, min_length=6, max_length=128, required=False)
+    confirm_password = serializers.CharField(write_only=True, min_length=6, max_length=128)
     
     def validate_username(self, value):
         if User.objects.filter(username=value).exists():
@@ -79,6 +79,11 @@ class ResetPasswordSerializer(serializers.Serializer):
         if data['new_password'] != data['confirm_password']:
             raise serializers.ValidationError({"confirm_password": "Passwords do not match"})
         return data
+
+
+class EmailVerificationSerializer(serializers.Serializer):
+    """Serializer for email verification"""
+    token = serializers.CharField()
 
 
 class TokenResponseSerializer(serializers.Serializer):

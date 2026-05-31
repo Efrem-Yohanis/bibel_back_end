@@ -855,8 +855,10 @@ class BibleService:
         }
     
     def get_verse_of_the_day(self, language_code: str = 'en') -> Dict:
-        """Get verse of the day (based on current date)"""
+        """Get verse of the day from pre-curated daily verses (based on current date)"""
         from datetime import datetime
+        from ..models import DailyVerse, DailyVerseCategory
+        
         day_of_year = datetime.now().timetuple().tm_yday
         
         try:
@@ -864,32 +866,45 @@ class BibleService:
         except Language.DoesNotExist:
             return {'error': f'Language "{language_code}" not found'}
         
-        # Get total count first
-        total_verses = VerseText.objects.filter(language=language).count()
+        # Get total daily verses
+        total_daily_verses = DailyVerse.objects.count()
         
-        if total_verses == 0:
-            return {'error': f'No verses found for language {language_code}'}
+        if total_daily_verses == 0:
+            return {'error': 'No daily verses configured. Please run: python manage.py load_daily_verses'}
         
-        # Calculate offset based on day of year
-        offset = day_of_year % total_verses
+        # Calculate offset based on day of year (same verse for everyone today)
+        offset = day_of_year % total_daily_verses
         
-        # Get verse at that offset
-        verse_text = VerseText.objects.filter(
-            language=language
-        ).select_related(
-            'verse__chapter__book'
+        # Get daily verse at that offset
+        daily_verse = DailyVerse.objects.select_related(
+            'verse__chapter__book',
+            'category'
         ).order_by('id')[offset:offset+1].first()
         
-        if not verse_text:
-            return self.get_random_verse(language_code)
+        if not daily_verse:
+            return {'error': 'Could not retrieve daily verse'}
+        
+        # Get verse text in requested language
+        try:
+            verse_text = daily_verse.verse.texts.get(language=language)
+            text = verse_text.text
+        except VerseText.DoesNotExist:
+            # Fallback to English if translation not available
+            try:
+                verse_text = daily_verse.verse.texts.get(language__code='en')
+                text = verse_text.text
+            except VerseText.DoesNotExist:
+                text = '[Verse text not available]'
         
         return {
-            'reference': f"{verse_text.verse.chapter.book.name} {verse_text.verse.chapter.chapter_number}:{verse_text.verse.verse_number}",
-            'book': verse_text.verse.chapter.book.name,
-            'book_id': verse_text.verse.chapter.book.id,
-            'chapter': verse_text.verse.chapter.chapter_number,
-            'verse': verse_text.verse.verse_number,
-            'text': verse_text.text
+            'reference': f"{daily_verse.verse.chapter.book.name} {daily_verse.verse.chapter.chapter_number}:{daily_verse.verse.verse_number}",
+            'book': daily_verse.verse.chapter.book.name,
+            'book_id': daily_verse.verse.chapter.book.id,
+            'chapter': daily_verse.verse.chapter.chapter_number,
+            'verse': daily_verse.verse.verse_number,
+            'text': text,
+            'category': daily_verse.category.title,
+            'category_slug': daily_verse.category.slug
         }
     
     # ==================== STATISTICS METHODS ====================

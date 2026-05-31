@@ -13,7 +13,7 @@ from ..services.auth_service import AuthService
 from ..serializers.auth_serializers import (
     RegisterSerializer, LoginSerializer, UserProfileSerializer,
     ChangePasswordSerializer, ForgotPasswordSerializer, ResetPasswordSerializer,
-    TokenResponseSerializer
+    EmailVerificationSerializer, TokenResponseSerializer
 )
 
 auth_service = AuthService()
@@ -53,10 +53,20 @@ class RegisterView(APIView):
                 'status': 'error',
                 'message': error
             }, status=status.HTTP_400_BAD_REQUEST)
+
+        verification_message = 'User registered successfully.'
+        if user.email:
+            _, email_error = auth_service.send_email_verification(user)
+            if email_error:
+                return Response({
+                    'status': 'error',
+                    'message': f"User created but verification email failed: {email_error}"
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            verification_message = 'User registered successfully. Verification email sent.'
         
         return Response({
             'status': 'success',
-            'message': 'User registered successfully',
+            'message': verification_message,
             'data': {
                 'id': user.id,
                 'username': user.username,
@@ -147,7 +157,7 @@ class ForgotPasswordView(APIView):
         operation_summary="Forgot Password",
         tags=['Authentication'],
         request_body=ForgotPasswordSerializer,
-        responses={200: 'Reset token generated'}
+        responses={200: 'Password reset email sent'}
     )
     def post(self, request):
         serializer = ForgotPasswordSerializer(data=request.data)
@@ -157,7 +167,7 @@ class ForgotPasswordView(APIView):
                 'errors': serializer.errors
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        reset_token, error = auth_service.set_password_reset_token(
+        success, error = auth_service.send_password_reset_email(
             email=serializer.validated_data['email']
         )
         
@@ -165,12 +175,11 @@ class ForgotPasswordView(APIView):
             return Response({
                 'status': 'error',
                 'message': error
-            }, status=status.HTTP_404_NOT_FOUND)
+            }, status=status.HTTP_400_BAD_REQUEST)
         
         return Response({
             'status': 'success',
-            'message': 'Password reset token generated',
-            'reset_token': reset_token
+            'message': 'Password reset email sent'
         }, status=status.HTTP_200_OK)
 
 
@@ -208,6 +217,41 @@ class ResetPasswordView(APIView):
         return Response({
             'status': 'success',
             'message': 'Password reset successfully'
+        }, status=status.HTTP_200_OK)
+
+
+class VerifyEmailView(APIView):
+    """Verify email address using a token"""
+    permission_classes = [AllowAny]
+    
+    @swagger_auto_schema(
+        operation_description="Verify an email address with a token",
+        operation_summary="Verify Email",
+        tags=['Authentication'],
+        request_body=EmailVerificationSerializer,
+        responses={200: 'Email verified successfully', 400: 'Invalid token'}
+    )
+    def post(self, request):
+        serializer = EmailVerificationSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response({
+                'status': 'error',
+                'errors': serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        success, error = auth_service.verify_email(
+            token=serializer.validated_data['token']
+        )
+        
+        if error:
+            return Response({
+                'status': 'error',
+                'message': error
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response({
+            'status': 'success',
+            'message': 'Email verified successfully'
         }, status=status.HTTP_200_OK)
 
 

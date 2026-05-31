@@ -5,6 +5,7 @@ Auth Service - Handles user authentication, registration, session management, an
 from django.contrib.auth.hashers import make_password, check_password
 from django.utils import timezone
 from django.db import models
+from django.core.mail import send_mail
 from typing import Optional, Tuple, Dict, Any
 import secrets
 from datetime import timedelta
@@ -30,6 +31,88 @@ class AuthService:
         """Verify password using Django's check_password"""
         return check_password(password, hashed)
     
+    @staticmethod
+    def send_mail_message(subject: str, message: str, recipient: str) -> Tuple[bool, Optional[str]]:
+        """Send a simple email message."""
+        try:
+            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [recipient], fail_silently=False)
+            return True, None
+        except Exception as e:
+            return False, str(e)
+    
+    def send_email_verification(self, user: User) -> Tuple[Optional[str], Optional[str]]:
+        """Generate an email verification link and send it to the user."""
+        if not user.email:
+            return None, "User does not have an email address"
+        try:
+            token = secrets.token_urlsafe(32)
+            expires_at = timezone.now() + timedelta(hours=24)
+            user.email_verification_token = token
+            user.email_verification_token_expires = expires_at
+            user.email_verified = False
+            user.save()
+            frontend_url = settings.FRONTEND_URL.rstrip('/')
+            verify_url = f"{frontend_url}/verify-email?token={token}"
+            subject = "Verify your Bible Quiz account"
+            message = (
+                f"Hello {user.username},\n\n"
+                "Thank you for registering with Bible Quiz. Please verify your email address by clicking the link below:\n\n"
+                f"{verify_url}\n\n"
+                "If you did not register for this account, please ignore this email.\n\n"
+                "Blessings,\nBible Quiz Team"
+            )
+            sent, error = self.send_mail_message(subject, message, user.email)
+            if not sent:
+                return None, error
+            return token, None
+        except Exception as e:
+            return None, f"Email verification send failed: {str(e)}"
+    
+    def verify_email(self, token: str) -> Tuple[bool, Optional[str]]:
+        """Verify a user's email address using a token."""
+        try:
+            user = User.objects.get(email_verification_token=token)
+            if not user.email_verification_token_expires or user.email_verification_token_expires < timezone.now():
+                return False, "Verification token has expired"
+            user.email_verified = True
+            user.email_verification_token = None
+            user.email_verification_token_expires = None
+            user.updated_at = timezone.now()
+            user.save()
+            return True, None
+        except User.DoesNotExist:
+            return False, "Invalid verification token"
+        except Exception as e:
+            return False, f"Email verification failed: {str(e)}"
+    
+    def send_password_reset_email(self, email: str) -> Tuple[bool, Optional[str]]:
+        """Generate a password reset token and send a reset link to the user's email."""
+        try:
+            user = User.objects.get(email=email)
+            if user.auth_provider == 'google':
+                return False, "Password reset is only available for non-Google accounts"
+            reset_token, error = self.set_password_reset_token(email)
+            if error:
+                return False, error
+            frontend_url = settings.FRONTEND_URL.rstrip('/')
+            reset_url = f"{frontend_url}/reset-password?token={reset_token}"
+            subject = "Bible Quiz password reset request"
+            message = (
+                f"Hello {user.username},\n\n"
+                "We received a request to reset your password. Click the link below to choose a new password:\n\n"
+                f"{reset_url}\n\n"
+                "If you did not request a password reset, you can ignore this message.\n\n"
+                "Blessings,\nBible Quiz Team"
+            )
+            sent, error = self.send_mail_message(subject, message, user.email)
+            if not sent:
+                return False, error
+            return True, None
+        except User.DoesNotExist:
+            return False, "User with that email does not exist"
+        except Exception as e:
+            return False, f"Password reset email send failed: {str(e)}"
+    
     def register_user(self, username: str, password: str, email: str = None) -> Tuple[Optional[User], Optional[str]]:
         """Register a new user"""
         try:
@@ -50,7 +133,8 @@ class AuthService:
                 updated_at=timezone.now(),
                 is_active=True,
                 is_admin=False,
-                auth_provider='email'
+                auth_provider='email',
+                email_verified=False
             )
             
             return user, None
@@ -71,6 +155,8 @@ class AuthService:
             
             if not user.is_active:
                 return None, "Account is deactivated"
+            if user.auth_provider != 'google' and user.email and not user.email_verified:
+                return None, "Email address not verified. Please verify your email before logging in"
             
             if not check_password(password, user.password):
                 return None, "Invalid username/email or password"
@@ -157,7 +243,8 @@ class AuthService:
                 if not user.google_id:
                     user.google_id = google_id
                     user.auth_provider = 'google'
-                    user.save()
+                user.email_verified = True
+                user.save()
             else:
                 # Create new user
                 username = email.split('@')[0]
@@ -171,6 +258,7 @@ class AuthService:
                     password=make_password(secrets.token_urlsafe(12)),
                     google_id=google_id,
                     auth_provider='google',
+                    email_verified=True,
                     first_name=first_name,
                     last_name=last_name,
                     created_at=timezone.now(),
@@ -303,6 +391,8 @@ class AuthService:
         """Generate and store a password reset token for a user"""
         try:
             user = User.objects.get(email=email)
+            if user.auth_provider == 'google':
+                return None, "Password reset is unavailable for Google-authenticated accounts"
             reset_token = secrets.token_urlsafe(24)
             expires_at = timezone.now() + timedelta(hours=1)
             
