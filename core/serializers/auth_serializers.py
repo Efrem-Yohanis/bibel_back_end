@@ -12,7 +12,8 @@ class RegisterSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=50, min_length=3)
     email = serializers.EmailField(required=True)
     password = serializers.CharField(write_only=True, min_length=6, max_length=128)
-    confirm_password = serializers.CharField(write_only=True, min_length=6, max_length=128)
+    confirm_password = serializers.CharField(write_only=True, min_length=6, max_length=128, required=False)
+    password_confirmation = serializers.CharField(write_only=True, min_length=6, max_length=128, required=False)
     
     def validate_username(self, value):
         if User.objects.filter(username=value).exists():
@@ -25,9 +26,14 @@ class RegisterSerializer(serializers.Serializer):
         return value
     
     def validate(self, data):
-        # Only validate password confirmation if confirm_password is provided
-        if 'confirm_password' in data and data.get('password') != data.get('confirm_password'):
+        confirm_value = data.get('confirm_password') or data.get('password_confirmation')
+        if confirm_value is None:
+            raise serializers.ValidationError({
+                'confirm_password': 'Password confirmation is required.'
+            })
+        if data.get('password') != confirm_value:
             raise serializers.ValidationError({"confirm_password": "Passwords do not match"})
+        data['confirm_password'] = confirm_value
         return data
 
 
@@ -94,3 +100,13 @@ class TokenResponseSerializer(serializers.Serializer):
     user_id = serializers.IntegerField()
     username = serializers.CharField()
     is_admin = serializers.BooleanField()
+
+
+class CustomRegisterSerializer(RegisterSerializer):
+    """Alias serializer for dj-rest-auth custom register settings."""
+    pass
+
+
+class CustomUserDetailsSerializer(UserProfileSerializer):
+    """Alias serializer for dj-rest-auth custom user details settings."""
+    pass

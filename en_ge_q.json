@@ -1,0 +1,2042 @@
+{
+  "levels": {
+    "1": {"name": "Easy", "count": 50, "description": "Factual questions directly from the text"},
+    "2": {"name": "Medium", "count": 50, "description": "Interpretive questions about meaning and themes"},
+    "3": {"name": "Hard", "count": 50, "description": "Analytical questions requiring deeper understanding"}
+  },
+  
+  "questions": [
+    {
+      "id": 1,
+      "level": 1,
+      "verse_reference": "Genesis 1:16-19",
+      "question": "On which day did God create the sun, moon, and stars to govern the day and the night?",
+      "correct_answer": "C",
+      "options": {
+        "A": "On the first day",
+        "B": "On the third day",
+        "C": "On the fourth day",
+        "D": "On the sixth day"
+      },
+      "explanation": "Genesis 1:16-19 explicitly states that on the fourth day, God made two great lights (the greater light to govern the day and the lesser light to govern the night) and the stars."
+    },
+    {
+      "id": 2,
+      "level": 2,
+      "verse_reference": "Genesis 1",
+      "question": "In the creation narrative, what does the recurring phrase 'And God saw that it was good' signify?",
+      "correct_answer": "B",
+      "options": {
+        "A": "That creation was imperfect until humanity arrived to manage it.",
+        "B": "That God's creative acts were intentional, orderly, and possessed intrinsic value and harmony.",
+        "C": "That God was surprised by the successful outcome of each creation stage.",
+        "D": "That the material world is inherently superior to the spiritual realm."
+      },
+      "explanation": "This repetition emphasizes that everything created by God has a purposeful role within an orderly world, culminating in verse 31 where the completed creation is declared 'very good.'"
+    },
+    {
+      "id": 3,
+      "level": 3,
+      "verse_reference": "Genesis 1:26-28",
+      "question": "According to verses 26-28, how does the creation of humanity differ from that of animals, and what responsibility is attached to this difference?",
+      "correct_answer": "B",
+      "options": {
+        "A": "Humans were created from the dust first, giving them physical ownership of the land.",
+        "B": "Humans were created in the image and likeness of God, giving them the responsibility to rule, manage, and care for the earth.",
+        "C": "Humans were created on a completely different day than land animals to show total separation from nature.",
+        "D": "Humans were given unique dietary restrictions that animals do not have to follow."
+      },
+      "explanation": "Verses 26 and 27 show the unique status of humanity being created in God's 'image' and 'likeness,' which is directly connected in verse 28 to the command to have dominion over all other living creatures and to subdue the earth."
+    },
+    {
+      "id": 4,
+      "level": 1,
+      "verse_reference": "Genesis 2:2-3",
+      "question": "What did God do on the seventh day after finishing His work of creation?",
+      "correct_answer": "B",
+      "options": {
+        "A": "He created the Garden of Eden.",
+        "B": "He rested, blessed the day, and sanctified it.",
+        "C": "He fashioned the first woman from a rib.",
+        "D": "He caused rain to fall upon the earth."
+      },
+      "explanation": "Genesis 2:2-3 states that on the seventh day, God finished His work, rested from all His labor, and blessed and sanctified the seventh day."
+    },
+    {
+      "id": 5,
+      "level": 2,
+      "verse_reference": "Genesis 2:15-17",
+      "question": "What framework of choice and consequence did God introduce to humanity regarding the trees in the Garden of Eden?",
+      "correct_answer": "D",
+      "options": {
+        "A": "Man was forbidden from eating any fruit until the garden was fully cultivated.",
+        "B": "Man could only eat from the Tree of Life to guarantee immortality.",
+        "C": "Man was given complete freedom to eat everything without any laws or restrictions.",
+        "D": "Man was given freedom to eat from any tree except the Tree of the Knowledge of Good and Evil; disobedience would bring the penalty of death."
+      },
+      "explanation": "God established the boundary of obedience by granting freedom to eat from almost all trees, but explicitly warned that eating from the Tree of the Knowledge of Good and Evil would lead to death."
+    },
+    {
+      "id": 6,
+      "level": 3,
+      "verse_reference": "Genesis 2:18-24",
+      "question": "How does the process of naming the animals lead to the creation of woman, and with which fundamental social institution does this section conclude?",
+      "correct_answer": "A",
+      "options": {
+        "A": "It demonstrated that no suitable helper for Adam was found among the animals; this led God to create woman from his side, concluding with the institution of marriage.",
+        "B": "It proved that animals were better companions for humans, establishing humanity's dominance over nature.",
+        "C": "It showed that Adam preferred solitude, establishing the practice of living alone before family formation.",
+        "D": "It established a hierarchy where animals were created to be servants to the woman rather than the man."
+      },
+      "explanation": "As the text describes, among the named animals, no suitable helper was found for Adam. This necessitated the unique creation of woman from his own flesh, defining the foundational meaning of the marriage covenant."
+    },
+    {
+      "id": 7,
+      "level": 1,
+      "verse_reference": "Genesis 3:1-4",
+      "question": "Which creature was described as more crafty (shrewd) than any of the wild animals and deceived the woman?",
+      "correct_answer": "B",
+      "options": {
+        "A": "The lion",
+        "B": "The serpent",
+        "C": "The leopard",
+        "D": "The eagle"
+      },
+      "explanation": "Genesis 3:1 states, 'Now the serpent was more crafty than any of the wild animals the Lord God had made.'"
+    },
+    {
+      "id": 8,
+      "level": 2,
+      "verse_reference": "Genesis 3:7-10",
+      "question": "What immediate emotional and psychological shift did Adam and Eve experience right after eating the forbidden fruit?",
+      "correct_answer": "C",
+      "options": {
+        "A": "They felt great divine power and joy.",
+        "B": "They completely forgot their previous life in the garden.",
+        "C": "They felt shame due to their nakedness and hid from God's presence out of fear.",
+        "D": "They became aggressive and began fighting with each other."
+      },
+      "explanation": "After eating the fruit, their eyes were opened, they realized they were naked, sewed fig leaves together, and hid from the presence of God out of fear."
+    },
+    {
+      "id": 9,
+      "level": 3,
+      "verse_reference": "Genesis 3:14-19",
+      "question": "How did the divine judgments pronounced upon the serpent, the woman, and the man fundamentally alter human existence?",
+      "correct_answer": "A",
+      "options": {
+        "A": "They introduced constant enmity between humanity and evil, pain in childbearing, and grueling physical labor culminating in physical death.",
+        "B": "They stripped humans of their reasoning capacity, reducing them to the level of wild animals.",
+        "C": "They immediately destroyed all physical life on earth, causing creation to restart completely.",
+        "D": "They granted humanity complete independence from nature, eliminating dependence on the environment."
+      },
+      "explanation": "These verses detail the curses: enmity between the woman's offspring and the serpent, increased pain in childbearing, and the decree that man must cultivate the earth through sweat and toil until returning to the dust."
+    },
+    {
+      "id": 10,
+      "level": 1,
+      "verse_reference": "Genesis 4:1-2",
+      "question": "What were the names of the first two sons born to Adam and Eve, and what were their occupations?",
+      "correct_answer": "D",
+      "options": {
+        "A": "Enoch was a builder, and Seth was a priest.",
+        "B": "Cain was a shepherd, and Abel was a tiller of the ground.",
+        "C": "Lamech was a musician, and Jabal was a tentmaker.",
+        "D": "Cain was a tiller of the ground, and Abel was a shepherd."
+      },
+      "explanation": "Genesis 4:2 clearly notes, 'Abel kept flocks, and Cain worked the soil.'"
+    },
+    {
+      "id": 11,
+      "level": 2,
+      "verse_reference": "Genesis 4:3-7",
+      "question": "From the perspective of inner attitude, why did God look with favor on Abel's offering but not on Cain's?",
+      "correct_answer": "B",
+      "options": {
+        "A": "God always prefers meat over agricultural products under any circumstances.",
+        "B": "Abel faithfully brought the best of the firstborn and their fat portions, whereas Cain's offering lacked the finest quality, prompting God to warn him that sin crouches at the door.",
+        "C": "Cain stole his offering from another field, causing it to be rejected.",
+        "D": "Abel's offering was numerically larger than Cain's offering."
+      },
+      "explanation": "God tells Cain that if he does what is right, he will be accepted, but if not, sin crouches at the door; this indicates a problem with Cain's heart condition and the quality of his offering."
+    },
+    {
+      "id": 12,
+      "level": 3,
+      "verse_reference": "Genesis 4:8-16",
+      "question": "What deep social and existential themes are reflected in Cain's response, 'Am I my brother's keeper?' and the punishment he subsequently received?",
+      "correct_answer": "C",
+      "options": {
+        "A": "The rejection of agricultural life in favor of a nomadic lifestyle.",
+        "B": "The immediate establishment of formal human courts and legal defense teams.",
+        "C": "The breakdown of human brotherhood, the evasion of moral accountability, and the heavy spiritual burden of wandering exiled from God's presence.",
+        "D": "Divine endorsement for society to execute an 'eye for an eye' vengeance."
+      },
+      "explanation": "Cain's refusal of responsibility shows the fractured relationship between humans. His punishment—being cursed from the earth and becoming a restless wanderer—signifies the isolation caused by sin, which was mitigated only by God's protective mark."
+    },
+    {
+      "id": 13,
+      "level": 1,
+      "verse_reference": "Genesis 5:24",
+      "question": "Who among Adam's descendants did not experience physical death because 'God took him'?",
+      "correct_answer": "C",
+      "options": {
+        "A": "Methuselah",
+        "B": "Lamech",
+        "C": "Enoch",
+        "D": "Mahalalel"
+      },
+      "explanation": "Genesis 5:24 states, 'Enoch walked faithfully with God; then he was no more, because God took him.'"
+    },
+    {
+      "id": 14,
+      "level": 2,
+      "verse_reference": "Genesis 5:28-29",
+      "question": "What hope did Lamech express when he prophetically named his son Noah?",
+      "correct_answer": "B",
+      "options": {
+        "A": "That Noah would establish a great empire to rule the earth.",
+        "B": "That he would comfort (or bring rest to) them from their painful toil caused by the ground the Lord had cursed.",
+        "C": "That Noah would rediscover the exact location of the Garden of Eden.",
+        "D": "That Noah would put an end to all spiritual sacrifices."
+      },
+      "explanation": "Lamech named him Noah, saying, 'He will comfort us in the labor and painful toil of our hands caused by the ground the Lord has cursed.'"
+    },
+    {
+      "id": 15,
+      "level": 3,
+      "verse_reference": "Genesis 5:1-32",
+      "question": "Structurally and genealogically, what fundamental reality does the repetition of the phrase 'and he died' in Genesis 5 emphasize? How does Enoch break this pattern?",
+      "correct_answer": "D",
+      "options": {
+        "A": "It shows that physical training can extend human life indefinitely.",
+        "B": "It shows that death was selective and only targeted wicked generations.",
+        "C": "It proves that Seth's line was less spiritual than Cain's line.",
+        "D": "It highlights the absolute certainty of physical death after the Fall; Enoch's removal introduces a divine exception based on walking with God."
+      },
+      "explanation": "The rhythm of the genealogy consistently ends with 'and he died,' showing the grim reality of Adam's curse. Enoch's translation breaks this rhythm, showing that close fellowship with God can transcend death."
+    },
+    {
+      "id": 16,
+      "level": 1,
+      "verse_reference": "Genesis 6:14-15",
+      "question": "What type of wood did God command Noah to use to build the ark, and with what was he told to coat it inside and out?",
+      "correct_answer": "A",
+      "options": {
+        "A": "Gopher wood, coated with pitch inside and out.",
+        "B": "Cedar wood, coated with resin inside and out.",
+        "C": "Acacia wood, overlaid with pure gold.",
+        "D": "Oak wood, coated with thick animal fat oil."
+      },
+      "explanation": "Genesis 6:14 states, 'So make yourself an ark of gopher wood; make rooms in it and coat it with pitch inside and out.'"
+    },
+    {
+      "id": 17,
+      "level": 2,
+      "verse_reference": "Genesis 6:5-8",
+      "question": "What contrast is drawn between the general state of humanity and Noah's standing before God?",
+      "correct_answer": "B",
+      "options": {
+        "A": "Humanity was building advanced cities, while Noah chose a simple hunting life.",
+        "B": "Human inclinations were consistently evil and grieved God, whereas Noah was righteous, blameless in his generation, and found favor.",
+        "C": "People stopped offering sacrifices, while Noah offered double the amount.",
+        "D": "Noah was simply wealthier than all the corrupt people of his time."
+      },
+      "explanation": "God saw that human wickedness was great on the earth and that every inclination of the human heart was only evil all the time, but 'Noah found favor in the eyes of the Lord' because he walked with God."
+    },
+    {
+      "id": 18,
+      "level": 3,
+      "verse_reference": "Genesis 6:1-4",
+      "question": "What complex theological reality is introduced by the marriage of the 'sons of God' with the 'daughters of humans' and the appearance of the Nephilim?",
+      "correct_answer": "C",
+      "options": {
+        "A": "The development of advanced metallurgical techniques within royal dynasties.",
+        "B": "The violation of ancient dietary regulations across different tribes.",
+        "C": "The corruption of creation through the crossing of prescribed boundaries, accelerating moral collapse and triggering divine judgment.",
+        "D": "The establishment of global trade networks prior to the flood."
+      },
+      "explanation": "This crossing of boundaries signifies escalating violence and lawlessness on earth, leading God to declare that His Spirit will not contend with humans forever and capping their lifespan at 120 years."
+    },
+    {
+      "id": 19,
+      "level": 1,
+      "verse_reference": "Genesis 7:11-12",
+      "question": "In the six hundredth year of Noah's life, from which two sources did the floodwaters originate?",
+      "correct_answer": "A",
+      "options": {
+        "A": "The springs of the great deep burst forth, and the floodgates of the heavens were opened.",
+        "B": "The Euphrates and Pishon rivers overflowed their natural banks.",
+        "C": "A massive tidal wave rose from the eastern seas and submerged the land.",
+        "D": "The northern and southern ice caps melted completely within 40 days."
+      },
+      "explanation": "Genesis 7:11 clearly reveals, 'on that day all the springs of the great deep burst forth, and the floodgates of the heavens were opened.'"
+    },
+    {
+      "id": 20,
+      "level": 2,
+      "verse_reference": "Genesis 7:1-3",
+      "question": "Why did God instruct Noah to bring seven pairs of clean animals but only two pairs of unclean animals into the ark?",
+      "correct_answer": "C",
+      "options": {
+        "A": "Clean animals required less space inside the ark.",
+        "B": "Unclean animals were strictly forbidden from reproducing after the flood.",
+        "C": "To ensure that clean animals would survive in sufficient numbers for sacrifices and food after the flood.",
+        "D": "Clean animals were easier to domesticate during the journey."
+      },
+      "explanation": "Clean animals were taken in larger numbers (seven pairs) to ensure that enough animals would be available for sacrificial purposes and consumption after the flood without endangering the species."
+    },
+    {
+      "id": 21,
+      "level": 3,
+      "verse_reference": "Genesis 7:16-24",
+      "question": "What is the cosmic significance of God Himself shutting the door of the ark followed by the complete eradication of life on earth?",
+      "correct_answer": "B",
+      "options": {
+        "A": "It shows that Noah lacked the engineering capability to secure the door from the inside.",
+        "B": "It marks the closing of the window of mercy, establishes God as the sole agent of salvation and judgment, and reverts the earth to its primordial chaotic state.",
+        "C": "It indicates that the ark was designed to serve as a permanent underwater habitat.",
+        "D": "It demonstrates that salvation is completely hidden and will never be revealed to future generations."
+      },
+      "explanation": "'Then the Lord shut him in.' This sealing provides absolute security for those inside and total exclusion for those outside. The overwhelming waters temporarily reversed the separation of waters in Genesis 1, returning the earth to a watery abyss."
+    },
+    {
+      "id": 22,
+      "level": 1,
+      "verse_reference": "Genesis 8:3-4",
+      "question": "Where did the ark finally come to rest after the waters began to recede?",
+      "correct_answer": "D",
+      "options": {
+        "A": "On the peak of Mount Sinai",
+        "B": "On the plain of Shinar",
+        "C": "On the hills of Zion",
+        "D": "On the mountains of Ararat"
+      },
+      "explanation": "Genesis 8:4 states that on the seventeenth day of the seventh month the ark came to rest on the mountains of Ararat."
+    },
+    {
+      "id": 23,
+      "level": 2,
+      "verse_reference": "Genesis 8:6-12",
+      "question": "What did the repeated release of the dove and its ultimate failure to return signify to Noah?",
+      "correct_answer": "A",
+      "options": {
+        "A": "First it found no place to rest; second it returned with an olive leaf; third it did not return, confirming the earth was dry.",
+        "B": "The bird was repeatedly attacked by wild birds of prey outside.",
+        "C": "That the water level was increasing rather than decreasing.",
+        "D": "That Noah had forgotten to feed the animals inside."
+      },
+      "explanation": "The dove’s actions map the stages of environmental recovery: the presence of water, the reemergence of plant life, and finally, a dry land fully habitable once more."
+    },
+    {
+      "id": 24,
+      "level": 3,
+      "verse_reference": "Genesis 8:20-22",
+      "question": "How does God's response to Noah's altar modify the divine stance toward human nature and the cycle of seasons after the flood?",
+      "correct_answer": "C",
+      "options": {
+        "A": "God commands humans to destroy animal life through continuous burnt offerings.",
+        "B": "God decides to bless the earth only during specific and highly limited years.",
+        "C": "Acknowledging that every human inclination is evil from childhood, God promises never again to curse the ground or disrupt the seasons.",
+        "D": "God instantly alters human nature so that committing sin becomes impossible."
+      },
+      "explanation": "The Lord smelled the pleasing aroma and resolved never again to curse the ground because of humans; despite knowing human flaws ('even though every inclination of the human heart is evil from childhood'), He established a covenant order where the world continues amidst human sinfulness."
+    },
+    {
+      "id": 25,
+      "level": 1,
+      "verse_reference": "Genesis 9:11-13",
+      "question": "What visible sign did God place in the sky as a token of His covenant never again to destroy all flesh by a flood?",
+      "correct_answer": "B",
+      "options": {
+        "A": "A blazing comet",
+        "B": "A rainbow",
+        "C": "A pillar of cloud",
+        "D": "A solar eclipse"
+      },
+      "explanation": "Genesis 9:13 states, 'I have set my rainbow in the clouds, and it will be the sign of the covenant between me and the earth.'"
+    },
+    {
+      "id": 26,
+      "level": 2,
+      "verse_reference": "Genesis 9:1-6",
+      "question": "What major shifts were introduced regarding the human diet and moral accountability for life after the flood?",
+      "correct_answer": "A",
+      "options": {
+        "A": "Animals were given for food (excluding their lifeblood), and because humans are made in God's image, murderers face the death penalty.",
+        "B": "Humanity was commanded to return strictly to a vegetarian diet.",
+        "C": "Animal sacrifices were outlawed and banned forever.",
+        "D": "Humans were freed from any moral accountability for violence against their neighbors."
+      },
+      "explanation": "God expanded the dietary allowance to include 'everything that lives and moves,' forbade eating meat with its lifeblood still in it, and upheld the sanctity of human life via the decree 'whoever sheds human blood, by humans shall their blood be shed.'"
+    },
+    {
+      "id": 27,
+      "level": 3,
+      "verse_reference": "Genesis 9:20-27",
+      "question": "What do the actions of Ham, Shem, and Japheth regarding Noah’s drunkenness reveal about honor, and what historical trajectory did the resulting curse and blessing set?",
+      "correct_answer": "D",
+      "options": {
+        "A": "They show that Noah was unfit to continue as the patriarchal leader of his family.",
+        "B": "They show that cultivating vineyards was considered illegal under ancient law.",
+        "C": "They demonstrate that younger brothers have absolute legal authority over older ones.",
+        "D": "Ham's disrespect brought a curse of servitude upon Canaan, while Shem and Japheth's respect earned them blessings of spiritual primacy and geopolitical expansion."
+      },
+      "explanation": "Ham exposed his father's nakedness to others, whereas Shem and Japheth considerately walked backward to cover him. This narrative sets up deep lineage trajectories, subjecting Canaan to servitude while exalting the lines of Shem and Japheth."
+    },
+    {
+      "id": 28,
+      "level": 1,
+      "verse_reference": "Genesis 10:8-9",
+      "question": "In the Table of Nations, who is the grandson of Ham described as 'a mighty hunter before the Lord'?",
+      "correct_answer": "C",
+      "options": {
+        "A": "Mizraim",
+        "B": "Canaan",
+        "C": "Nimrod",
+        "D": "Tarshish"
+      },
+      "explanation": "Genesis 10:8-9 states, 'Cush was the father of Nimrod, who became a mighty warrior on the earth. He was a mighty hunter before the Lord.'"
+    },
+    {
+      "id": 29,
+      "level": 2,
+      "verse_reference": "Genesis 10:5-32",
+      "question": "What is the structural and historical purpose of the 'Table of Nations' recorded in Genesis 10?",
+      "correct_answer": "B",
+      "options": {
+        "A": "To prove that all human groups remained confined to a single geographic location.",
+        "B": "To document the fulfillment of the divine command to multiply and fill the earth, tracing the origins of distinct cultures, languages, and territories.",
+        "C": "To serve as a comprehensive census record for taxation purposes in ancient Babylon.",
+        "D": "To show that only the descendants of Shem survived the migrations following the flood."
+      },
+      "explanation": "This chapter shows how the descendants of Noah's three sons spread out 'by their clans and languages, in their territories and nations' to repopulate the earth."
+    },
+    {
+      "id": 30,
+      "level": 3,
+      "verse_reference": "Genesis 10:25",
+      "question": "Which major geopolitical shift occurred during the lifespan of Peleg that foreshadows the events of the subsequent chapter?",
+      "correct_answer": "A",
+      "options": {
+        "A": "The earth was divided during his time, signaling the fragmentation of human unity at the Tower of Babel.",
+        "B": "A great drought completely dried up the four primordial rivers.",
+        "C": "He became the first leader to pass a ban on any form of tribal migration.",
+        "D": "He successfully consolidated all world languages into a single dialect."
+      },
+      "explanation": "'One was named Peleg, because in his time the earth was divided.' This note serves as an intentional historical and structural marker pointing to the imminent scattering of location and language at Babel."
+    },
+    {
+      "id": 31,
+      "level": 1,
+      "verse_reference": "Genesis 11:3-4",
+      "question": "What building materials did the people in the plain of Shinar use to construct their city and tower?",
+      "correct_answer": "C",
+      "options": {
+        "A": "Dressed limestone and cedar wood",
+        "B": "Granite stone and iron mortar",
+        "C": "Brick instead of stone, and tar (bitumen) for mortar",
+        "D": "Sun-dried mud and straw thatch"
+      },
+      "explanation": "Genesis 11:3 states, 'They said to each other, \"Come, let’s make bricks and bake them thoroughly.\" They used brick instead of stone, and tar for mortar.'"
+    },
+    {
+      "id": 32,
+      "level": 2,
+      "verse_reference": "Genesis 11:4-8",
+      "question": "What was the core sin or misguided ambition driving the project to build the Tower of Babel?",
+      "correct_answer": "B",
+      "options": {
+        "A": "The desire to build a sanctuary dedicated to worshipping the sun and moon.",
+        "B": "Defying the divine command to scatter and fill the earth by attempting to make a name for themselves and prevent dispersion.",
+        "C": "An attempt to raid gold hidden in the upper atmosphere.",
+        "D": "Creating a military fortress to launch attacks on neighboring tribes."
+      },
+      "explanation": "The people explicitly said, 'Come, let us build ourselves a city, with a tower that reaches to the heavens, so that we may make a name for ourselves; otherwise we will be scattered over the face of the whole earth'—a desire for self-exaltation apart from God's plan."
+    },
+    {
+      "id": 33,
+      "level": 3,
+      "verse_reference": "Genesis 11:6-9",
+      "question": "How did God's response of confusing human speech at Babel serve as both a judgment and a form of protection?",
+      "correct_answer": "A",
+      "options": {
+        "A": "It judged their proud, centralized rebellion by scattering them, while protecting them by limiting the potential scale of evil they could achieve in absolute unity.",
+        "B": "It stripped humans of their creative talents, forcing them to live without innovation.",
+        "C": "It erased all memory of God, initiating an era of complete spiritual darkness.",
+        "D": "It permanently forbade humanity from practicing any form of architecture."
+      },
+      "explanation": "God observed that as one people speaking the same language, 'nothing they plan to do will be impossible for them.' Confusing their language shattered their monolithic defiance and compelled them to fulfill the mandate to populate the earth."
+    },
+    {
+      "id": 34,
+      "level": 1,
+      "verse_reference": "Genesis 12:1",
+      "question": "When God called Abram to journey to an unknown land, which three things did He command him to leave behind?",
+      "correct_answer": "D",
+      "options": {
+        "A": "His livestock, his servants, and his gold",
+        "B": "His hunting weapons, his traps, and his shield",
+        "C": "His fields, his vineyards, and the local shrines",
+        "D": "His country, his people, and his father's household"
+      },
+      "explanation": "Genesis 12:1 states, 'The Lord had said to Abram, \"Go from your country, your people and your father’s household to the land I will show you.\""
+    },
+    {
+      "id": 35,
+      "level": 2,
+      "verse_reference": "Genesis 12:10-20",
+      "question": "Why did Abram claim that Sarai was his sister while in Egypt, and what does this reveal about his early faith journey?",
+      "correct_answer": "B",
+      "options": {
+        "A": "He wanted to help her secure a royal inheritance from Pharaoh.",
+        "B": "He feared the Egyptians would kill him to take his beautiful wife, revealing a temporary lapse of trust in God's protection.",
+        "C": "The distress of the famine caused them to temporarily forget their marital relationship.",
+        "D": "He was simply following a unique cultural tradition from the region of Haran."
+      },
+      "explanation": "Abram said, 'When the Egyptians see you, they will say, \"This is his wife.\" Then they will kill me but will let you live. Say you are my sister...' This highlights his reliance on human strategy to survive under pressure."
+    },
+    {
+      "id": 36,
+      "level": 3,
+      "verse_reference": "Genesis 12:2-3",
+      "question": "What is the global and redemptive scope of the Abrahamic Covenant introduced in Genesis 12?",
+      "correct_answer": "C",
+      "options": {
+        "A": "It guarantees that Abram's family will enjoy complete immunity from physical famines.",
+        "B": "It seals Abram's family in total isolation, preventing integration with other nations.",
+        "C": "It promises national greatness and land, while designating Abram's lineage as the channel through which all nations on earth will be blessed.",
+        "D": "It establishes a formal military pact between Abram and the kings of Canaan."
+      },
+      "explanation": "God states, 'I will make you into a great nation... and all peoples on earth will be blessed through you.' This moves past localized prosperity to point toward an encompassing spiritual redemption."
+    },
+    {
+      "id": 37,
+      "level": 1,
+      "verse_reference": "Genesis 13:10-12",
+      "question": "When Lot parted ways with Abram, which region did he choose for himself, and in which direction did he pitch his tents?",
+      "correct_answer": "A",
+      "options": {
+        "A": "He chose the whole plain of the Jordan and pitched his tents near Sodom",
+        "B": "The hilly country of Hebron, near the great trees of Mamre",
+        "C": "The Desert of Shur, close to the border of Egypt",
+        "D": "The mountains of Gilead, next to the Jabbok River"
+      },
+      "explanation": "Genesis 13:11-12 records, 'So Lot chose for himself the whole plain of the Jordan... Lot lived among the cities of the plain and pitched his tents near Sodom.'"
+    },
+    {
+      "id": 38,
+      "level": 2,
+      "verse_reference": "Genesis 13:7-9",
+      "question": "How did Abram resolve the conflict between his herders and Lot's herders, and what does this show about his priorities?",
+      "correct_answer": "C",
+      "options": {
+        "A": "He appealed to local Canaanite rulers to issue a binding legal judgment.",
+        "B": "He used his patriarchal authority to claim the best portion of the land first.",
+        "C": "To preserve peace, he generously allowed Lot first choice, demonstrating faith that God would provide regardless.",
+        "D": "He forced Lot to pack up and return to Ur of the Chaldeans."
+      },
+      "explanation": "Abram said to Lot, 'Let’s not have any quarreling between you and me... If you go to the left, I’ll go to the right; if you go to the right, I’ll go to the left.' This prioritized familial harmony and demonstrated trust in divine provision."
+    },
+    {
+      "id": 39,
+      "level": 3,
+      "verse_reference": "Genesis 13:14-18",
+      "question": "What theological principle is demonstrated by God immediately renewing His promise to Abram right after Lot departed?",
+      "correct_answer": "B",
+      "options": {
+        "A": "It proves that blessings are valid only if they are delivered in absolute secrecy.",
+        "B": "It reinforces that God's covenant is tied exclusively to Abram's chosen line, showing that seeing through the eyes of faith secures an eternal inheritance.",
+        "C": "It shows that God was displeased with Abram's peaceful compromise.",
+        "D": "It indicates that the size of the Promised Land was progressively shrinking over time."
+      },
+      "explanation": "After Lot left (having chosen the fertile plains based on sight), God told Abram to look in every direction. He promised all the land within view to Abram's offspring forever, proving that divine inheritance transcends immediate human sight."
+    },
+    {
+      "id": 40,
+      "level": 1,
+      "verse_reference": "Genesis 14:18-20",
+      "question": "Who was Melchizedek, and what two items did he bring out to refresh Abram following his military victory?",
+      "correct_answer": "D",
+      "options": {
+        "A": "He was the king of Sodom; he brought out gold and silver.",
+        "B": "He was a military commander from Damascus; he brought out water and meat.",
+        "C": "He was the king of Gomorrah; he brought out oil and wheat.",
+        "D": "He was the king of Salem and priest of God Most High; he brought out bread and wine."
+      },
+      "explanation": "Genesis 14:18 states, 'Then Melchizedek king of Salem brought out bread and wine. He was priest of God Most High.'"
+    },
+    {
+      "id": 41,
+      "level": 2,
+      "verse_reference": "Genesis 14:21-24",
+      "question": "Why did Abram refuse to accept any goods or gifts from the king of Sodom after rescuing the captives?",
+      "correct_answer": "A",
+      "options": {
+        "A": "He had sworn an oath to God not to take even a thread or a sandal strap, so Sodom could never claim, 'I made Abram rich.'",
+        "B": "The items were contaminated by a local contagious plague.",
+        "C": "He lacked enough pack animals to transport the captured goods.",
+        "D": "Melchizedek had ordered him to destroy all recovered property."
+      },
+      "explanation": "Abram told the king of Sodom, 'I have raised my hand to the Lord, God Most High... and have taken an oath that I will accept nothing belonging to you, not even a thread or the strap of a sandal, so that you will never be able to say, \"I made Abram rich.\""
+    },
+    {
+      "id": 42,
+      "level": 3,
+      "verse_reference": "Genesis 14:1-16",
+      "question": "What does Abram's ability to mobilize 318 trained men born in his household to execute a successful rescue mission reveal about his social status in Canaan?",
+      "correct_answer": "C",
+      "options": {
+        "A": "He was an isolated hermit who avoided all human interaction.",
+        "B": "He was a subordinate servant completely subject to local Amorite rulers.",
+        "C": "He was a powerful, influential tribal chieftain capable of staging strategic military campaigns against coalitions of kings.",
+        "D": "He was a high-ranking general commissions within Pharaoh's formal army."
+      },
+      "explanation": "Arming 318 men from his household, routing four victorious kings, and restoring regional stability indicates that Abram held substantial social, political, and military weight in the region."
+    },
+    {
+      "id": 43,
+      "level": 1,
+      "verse_reference": "Genesis 15:5-6",
+      "question": "What natural illustration did God use to show Abram the vast number of his future descendants, and what was Abram's response?",
+      "correct_answer": "B",
+      "options": {
+        "A": "The leaves on the trees; Abram questioned the possibility.",
+        "B": "The stars in the sky; Abram believed the Lord, and He credited it to him as righteousness.",
+        "C": "The droplets of water in the sea; Abram demanded a written sign.",
+        "D": "The dust in the valley; Abram fell facedown and wept."
+      },
+      "explanation": "God took him outside and told him to count the stars, adding, 'So shall your offspring be.' Genesis 15:6 records, 'Abram believed the Lord, and he credited it to him as righteousness.'"
+    },
+    {
+      "id": 44,
+      "level": 2,
+      "verse_reference": "Genesis 15:12-16",
+      "question": "During a deep sleep and thick darkness, what prophetic reality did God reveal to Abram regarding the future of his descendants?",
+      "correct_answer": "C",
+      "options": {
+        "A": "They would immediately inherit the entire world without facing any opposition.",
+        "B": "They would settle permanently in Ur of the Chaldeans for ten generations.",
+        "C": "They would be strangers enslaved in a land not their own for 400 years, but would later come out with great possessions.",
+        "D": "They would permanently lose the Promised Land due to the sins of the Amorites."
+      },
+      "explanation": "God foretold the Egyptian bondage, saying, 'Know for certain that for four hundred years your descendants will be strangers in a country not their own and that they will be enslaved and mistreated there. But I will punish the nation they serve as slaves...'"
+    },
+    {
+      "id": 45,
+      "level": 3,
+      "verse_reference": "Genesis 15:17-21",
+      "question": "What is the deep theological significance of the smoking firepot and blazing torch passing between the divided animal pieces?",
+      "correct_answer": "A",
+      "options": {
+        "A": "It shows a unilateral covenant where God alone passes through, taking the absolute responsibility of fulfilling the promise upon Himself.",
+        "B": "It indicates that Abram was expected to keep the fire burning continuously forever.",
+        "C": "It was a traditional agricultural method used to prepare food for a long journey.",
+        "D": "It served as a warning that if Abram failed, the covenant would be destroyed by fire."
+      },
+      "explanation": "In ancient Near Eastern culture, cutting animals and passing between them meant 'may I become like these animals if I break this covenant.' Since Abram was asleep and God alone passed through, it established an unconditional covenant guaranteed solely by the life of the Creator."
+    },
+    {
+      "id": 46,
+      "level": 1,
+      "verse_reference": "Genesis 16:3-4",
+      "question": "Who was Hagar, and what happened after Sarai gave her to Abram as a wife so she could bear a child for them?",
+      "correct_answer": "C",
+      "options": {
+        "A": "She was a Canaanite princess who refused to marry Abram.",
+        "B": "She was a relative from Haran who brought massive wealth to the family.",
+        "C": "She was an Egyptian slave; she conceived, and once she did, she began to despise her mistress Sarai.",
+        "D": "She was a servant of Melchizedek who immediately fled back to Babylon."
+      },
+      "explanation": "Genesis 16:3-4 details that Sarai, Abram's wife, took her Egyptian slave Hagar and gave her to her husband to be his wife. He slept with Hagar, and she conceived. When she knew she was pregnant, she began to despise her mistress."
+    },
+    {
+      "id": 47,
+      "level": 2,
+      "verse_reference": "Genesis 16:7-13",
+      "question": "After Hagar met the angel of the Lord near a spring in the desert, what name did she give to the Lord who spoke to her?",
+      "correct_answer": "B",
+      "options": {
+        "A": "Jehovah Jireh (The Lord Will Provide)",
+        "B": "El Roi (The God Who Sees Me)",
+        "C": "El Shaddai (God Almighty)",
+        "D": "Jehovah Nissi (The Lord Is My Banner)"
+      },
+      "explanation": "Genesis 16:13 states, 'She gave this name to the Lord who spoke to her: \"You are the God who sees me,\" for she said, \"I have now seen the One who sees me.\"'"
+    },
+    {
+      "id": 48,
+      "level": 3,
+      "verse_reference": "Genesis 16:1-6",
+      "question": "When Abram listened to Sarai’s advice regarding Hagar, what pattern of domestic breakdown did this echo from an earlier event in Genesis?",
+      "correct_answer": "D",
+      "options": {
+        "A": "It shows the successful implementation of cooperative farming methods.",
+        "B": "It proves that Egyptian social customs were superior to Canaanite practices.",
+        "C": "It repeated Noah's vineyard error, leading directly to public drunkenness.",
+        "D": "It mirrors the Fall in Genesis 3, where a husband listens to human counsel to manipulate God's timeline, resulting in immediate blame and marital strife."
+      },
+      "explanation": "Sarai's plan to obtain children through Hagar was an attempt to fulfill God’s promise through human schemes rather than faith. Abram's compliance mirrors Adam listening to Eve, which immediately yielded blame and relational fractures."
+    },
+    {
+      "id": 49,
+      "level": 1,
+      "verse_reference": "Genesis 17:5",
+      "question": "What new name did God give to Abram to signify his role as the father of many nations?",
+      "correct_answer": "B",
+      "options": {
+        "A": "Israel",
+        "B": "Abraham",
+        "C": "Abimelech",
+        "D": "Melchizedek"
+      },
+      "explanation": "Genesis 17:5 states, 'No longer will you be called Abram; your name will be Abraham, for I have made you a father of many nations.'"
+    },
+    {
+      "id": 50,
+      "level": 2,
+      "verse_reference": "Genesis 17:9-14",
+      "question": "What physical ritual did God institute in Genesis 17 as the permanent sign of His covenant with Abraham, and what was the consequence of neglecting it?",
+      "correct_answer": "A",
+      "options": {
+        "A": "Circumcision; anyone uncircumcised would be cut off from his people for breaking the covenant.",
+        "B": "Animal sacrifice; neglecting it would bring immediate financial ruin.",
+        "C": "A ritual washing; failure to comply resulted in being exiled to Egypt.",
+        "D": "Building an altar of stones; neglect meant the household could no longer inherit livestock."
+      },
+      "explanation": "God established circumcision as the physical sign of the covenant for Abraham and his descendants, warning that any uncircumcised male would be cut off from his people because he broke the covenant."
+    },
+    {
+      "id": 51,
+      "level": 3,
+      "verse_reference": "Genesis 17:15-21",
+      "question": "How did Abraham react when God promised that Sarah would bear a son in her old age, and how did God's response balance the future of Ishmael with the covenant line?",
+      "correct_answer": "C",
+      "options": {
+        "A": "Abraham wept in despair, leading God to fully replace the covenant line with Ishmael's family.",
+        "B": "Abraham accepted the news silently, and God ignored Ishmael completely.",
+        "C": "Abraham laughed and asked that Ishmael might live under God's blessing; God promised to bless Ishmael but explicitly stated the covenant would be established through Sarah's son, Isaac.",
+        "D": "Abraham immediately built a new altar, demanding that Ishmael be made the sole heir of Canaan."
+      },
+      "explanation": "Abraham fell facedown and laughed, doubting a child could be born to a 100-year-old man and a 90-year-old woman, pleading for Ishmael. God responded that Sarah would bear Isaac, through whom the covenant would stand, though Ishmael would also be blessed and become fruitful."
+    },
+    {
+      "id": 52,
+      "level": 1,
+      "verse_reference": "Genesis 18:1-8",
+      "question": "How many divine visitors did Abraham welcome at the great trees of Mamre, and what did he eagerly offer them?",
+      "correct_answer": "D",
+      "options": {
+        "A": "One visitor; he offered a cup of cold water.",
+        "B": "Two visitors; he offered a basket of summer figs.",
+        "C": "Five visitors; he offered a grain sacrifice.",
+        "D": "Three men; he offered water to wash their feet and a choice meal of bread, milk, and meat."
+      },
+      "explanation": "Genesis 18:1-8 describes Abraham looking up to see three men standing nearby. He rushed to welcome them, washed their feet, and instructed Sarah and his servants to prepare bread and a choice calf."
+    },
+    {
+      "id": 53,
+      "level": 2,
+      "verse_reference": "Genesis 18:22-33",
+      "question": "What theological attribute of God does Abraham appeal to during his intense intercession for the city of Sodom?",
+      "correct_answer": "B",
+      "options": {
+        "A": "God's absolute indifference to the moral actions of pagan cultures.",
+        "B": "God's justice, arguing that the Judge of all the earth must distinguish between the righteous and the wicked.",
+        "C": "God's physical power to completely alter geological formations.",
+        "D": "God's promise to make the plain of the Jordan an agricultural paradise."
+      },
+      "explanation": "Abraham boldly bargains with God, asking, 'Will you sweep away the righteous with the wicked?' and famously declares, 'Far be it from you! Will not the Judge of all the earth do right?'"
+    },
+    {
+      "id": 54,
+      "level": 3,
+      "verse_reference": "Genesis 18:9-15",
+      "question": "What underlying lack of faith is revealed by Sarah's laughter inside the tent, and how does the divine rebuke establish a core principle of God's character?",
+      "correct_answer": "A",
+      "options": {
+        "A": "It reveals structural doubt tied to natural human limitations; the divine question, 'Is anything too hard for the Lord?', establishes His supreme power over nature.",
+        "B": "It reveals her anger toward Abraham; the rebuke proves that laughter is permanently forbidden in the presence of angels.",
+        "C": "It shows her desire to return to Haran; the rebuke proves that Sarah wanted to reject the land of Canaan entirely.",
+        "D": "It demonstrates her total ignorance of the covenant terms established in the previous chapter."
+      },
+      "explanation": "Sarah laughed to herself because she and Abraham were past childbearing age. The Lord confronted this doubt by asking, 'Is anything too hard for the Lord?' emphasizing that divine promises are not restricted by biological impossibility."
+    },
+    {
+      "id": 55,
+      "level": 1,
+      "verse_reference": "Genesis 19:26",
+      "question": "What happened to Lot's wife when she disobeyed the angelic command during the destruction of Sodom and Gomorrah?",
+      "correct_answer": "C",
+      "options": {
+        "A": "She was immediately struck by lightning.",
+        "B": "She fell down a deep crevice in the valley.",
+        "C": "She looked back and turned into a pillar of salt.",
+        "D": "She was captured by the fleeing kings of the plain."
+      },
+      "explanation": "Genesis 19:26 states explicitly, 'But Lot’s wife looked back, and she became a pillar of salt.'"
+    },
+    {
+      "id": 56,
+      "level": 2,
+      "verse_reference": "Genesis 19:1-11",
+      "question": "What do the events at the door of Lot’s house in Sodom reveal about the moral condition of the city's inhabitants?",
+      "correct_answer": "A",
+      "options": {
+        "A": "Total moral corruption and systemic depravity, evidenced by the entire male population demanding to assault the guests.",
+        "B": "A harmless misunderstanding regarding local immigration laws.",
+        "C": "A standard tribal greeting ritual designed to test the strength of visitors.",
+        "D": "The city's desire to install Lot as their supreme military judge."
+      },
+      "explanation": "The narrative shows that all the men from every part of the city of Sodom surrounded the house, demanding that Lot hand over his guests for sexual assault, demonstrating the pervasive wickedness that brought divine judgment."
+    },
+    {
+      "id": 57,
+      "level": 3,
+      "verse_reference": "Genesis 19:30-38",
+      "question": "What are the tragic origins of the Moabite and Ammonite nations as recorded at the end of Genesis 19, and what thematic warning does this carry?",
+      "correct_answer": "D",
+      "options": {
+        "A": "They were founded by Egyptian traders, warning against international corporate alliances.",
+        "B": "They arose from a peaceful division of pastureland between Lot and the kings of Canaan.",
+        "C": "They were established by surviving citizens of Gomorrah who repented after the fire.",
+        "D": "They originated from incestuous deception by Lot's daughters in a cave, illustrating the toxic spiritual fallout of living in Sodom."
+      },
+      "explanation": "Believing no men were left on earth to carry on their line, Lot's daughters intoxicated their father and committed incest. The resulting sons, Moab and Ben-Ammi, became the ancestors of Israel's historic enemies, highlighting the legacy of Sodom's environment."
+    },
+    {
+      "id": 58,
+      "level": 1,
+      "verse_reference": "Genesis 20:1-2",
+      "question": "To which regional king did Abraham repeat the claim that his wife Sarah was merely his sister, this time in the region of Gerar?",
+      "correct_answer": "B",
+      "options": {
+        "A": "Pharaoh of Egypt",
+        "B": "Abimelech king of Gerar",
+        "C": "Bera king of Sodom",
+        "D": "Chedorlaomer king of Elam"
+      },
+      "explanation": "Genesis 20:1-2 notes that Abraham moved into the Negev and stayed in Gerar, where he said of his wife Sarah, 'She is my sister.' Then Abimelech king of Gerar sent for Sarah and took her."
+    },
+    {
+      "id": 59,
+      "level": 2,
+      "verse_reference": "Genesis 20:3-7",
+      "question": "How did God protect the integrity of the covenant line while Sarah was inside Abimelech's palace?",
+      "correct_answer": "C",
+      "options": {
+        "A": "God destroyed the entire city of Gerar with hail before Abimelech could wake up.",
+        "B": "God revealed Abraham's secret to the queen of Gerar.",
+        "C": "God came to Abimelech in a dream, warned him he was a dead man, and revealed he had kept Abimelech from touching her.",
+        "D": "God sent Hagar to rescue Sarah using a military diversion."
+      },
+      "explanation": "God spoke to Abimelech in a dream, confirming the king's integrity of heart in this specific matter, but explicitly stated, 'Yes, I know you did this with a clear conscience, and so I have kept you from sinning against me. That is why I did not let you touch her.'"
+    },
+    {
+      "id": 60,
+      "level": 3,
+      "verse_reference": "Genesis 20:11-18",
+      "question": "What paradox is highlighted by Abraham's excuse about the 'fear of God' in Gerar and his subsequent role as an intercessor for Abimelech?",
+      "correct_answer": "A",
+      "options": {
+        "A": "Abraham wrongly assumed a pagan king had no fear of God, yet Abraham's own deception brought a curse that he, as God's prophet, had to pray to remove.",
+        "B": "It proved that Abimelech was actually the biological ancestor of Isaac.",
+        "C": "It showed that Abraham was trying to lose his inheritance to the Philistines.",
+        "D": "It established that prophets are completely exempt from moral accountability when dealing with foreigners."
+      },
+      "explanation": "Abraham claimed he lied because he thought, 'There is surely no fear of God in this place.' Ironically, Abimelech displayed deep moral sensitivity once warned. Abraham, despite his failure, retained his status as a prophet whose intercessory prayers healed Abimelech's closed household."
+    },
+    {
+      "id": 61,
+      "level": 1,
+      "verse_reference": "Genesis 21:1-3",
+      "question": "What name did Abraham give to the son Sarah finally bore him in his old age, exactly as God had commanded?",
+      "correct_answer": "C",
+      "options": {
+        "A": "Ishmael",
+        "B": "Joseph",
+        "C": "Isaac",
+        "D": "Benjamin"
+      },
+      "explanation": "Genesis 21:3 states, 'Abraham gave the name Isaac to the son Sarah bore him.'"
+    },
+    {
+      "id": 62,
+      "level": 2,
+      "verse_reference": "Genesis 21:9-14",
+      "question": "Why did Sarah demand the expulsion of Hagar and Ishmael, and how did God comfort Abraham regarding this painful request?",
+      "correct_answer": "B",
+      "options": {
+        "A": "Ishmael refused to help work the fields; God told Abraham to punish Ishmael severely.",
+        "B": "Sarah saw Ishmael mocking or playing at Isaac's feast and demanded he not share the inheritance; God told Abraham to listen to her, promising to make Ishmael into a nation because he was Abraham's offspring.",
+        "C": "Hagar attempted to steal Abraham's household gods; God commanded their execution.",
+        "D": "Sarah wanted to claim Hagar's Egyptian property for herself; God prohibited the action."
+      },
+      "explanation": "Sarah did not want the slave woman's son to share an inheritance with her son Isaac. Abraham was distressed, but God reassured him, saying, 'Listen to whatever Sarah tells you, because it is through Isaac that your offspring will be reckoned. I will make the son of the slave into a nation also...'"
+    },
+    {
+      "id": 63,
+      "level": 3,
+      "verse_reference": "Genesis 21:22-34",
+      "question": "What is the historical significance of the treaty made at Beersheba between Abraham and Abimelech involving seven ewe lambs?",
+      "correct_answer": "C",
+      "options": {
+        "A": "It marks the first time Abraham built a permanent military fortification in Egypt.",
+        "B": "It was an agreement to share agricultural innovations regarding vineyard management.",
+        "C": "It legally secured Abraham's right to a critical water well, establishing his recognized presence and legal standing in the region.",
+        "D": "It represents a formal surrender of Abraham's livestock to the Philistines."
+      },
+      "explanation": "By accepting seven ewe lambs from Abraham's hand, Abimelech acknowledged Abraham's ownership of the well he had dug. This legal treaty gave the site its name, Beersheba ('Well of the Seven' or 'Well of the Oath'), marking an important step in Abraham's settlement."
+    },
+    {
+      "id": 64,
+      "level": 1,
+      "verse_reference": "Genesis 22:1-2",
+      "question": "Where did God command Abraham to take Isaac to offer him as a burnt sacrifice?",
+      "correct_answer": "A",
+      "options": {
+        "A": "The region of Moriah",
+        "B": "The mountain of Sinai",
+        "C": "The plains of Moab",
+        "D": "The desert of Paran"
+      },
+      "explanation": "Genesis 22:2 records God's command: 'Take your son, your only son, whom you love—Isaac—and go to the region of Moriah. Sacrifice him there as a burnt offering on a mountain I will show you.'"
+    },
+    {
+      "id": 65,
+      "level": 2,
+      "verse_reference": "Genesis 22:11-14",
+      "question": "How was Isaac spared at the final moment, and what name did Abraham give to the place to honor God's character?",
+      "correct_answer": "B",
+      "options": {
+        "A": "Sarah arrived with a military escort; Abraham named the site 'Sarah's Refuge.'",
+        "B": "The angel of the Lord stopped Abraham's hand, and a ram caught in a thicket was offered instead; Abraham named the place 'The Lord Will Provide' (Yahweh Jireh).",
+        "C": "An earthquake broke the altar pieces apart; Abraham named the site 'The Great Shaking.'",
+        "D": "Isaac managed to untie himself and flee; Abraham named the location 'The Great Flight.'"
+      },
+      "explanation": "The angel stopped the knife, declaring Abraham's fear of God was clear. Abraham saw a ram caught by its horns, sacrificed it instead of his son, and named the place 'The Lord Will Provide.'"
+    },
+    {
+      "id": 66,
+      "level": 3,
+      "verse_reference": "Genesis 22:15-18",
+      "question": "In the context of the entire Abrahamic narrative, how does the outcome of the testing on Mount Moriah alter the nature of God's covenant promises?",
+      "correct_answer": "A",
+      "options": {
+        "A": "Because Abraham did not withhold his only son, God swore an oath by Himself, confirming the covenant with an unconditional divine swear of ultimate blessing and multiplication.",
+        "B": "It reduced the scope of the covenant, limiting the blessing strictly to Isaac's physical heirs while excluding other nations.",
+        "C": "It transformed the covenant into a complex legal code based on human sacrifice laws.",
+        "D": "It cancelled the promises made in Genesis 12, forcing Abraham to begin a new journey."
+      },
+      "explanation": "The text states, 'I swear by myself, declares the Lord, that because you have done this and have not withheld your son... I will surely bless you and make your descendants as numerous as the stars... because you have obeyed me.' This grounds the promise in a divine oath triggered by ultimate compliance."
+    },
+    {
+      "id": 67,
+      "level": 1,
+      "verse_reference": "Genesis 23:16-20",
+      "question": "From whom did Abraham purchase the cave of Machpelah to bury his wife Sarah, and for what price?",
+      "correct_answer": "D",
+      "options": {
+        "A": "From Abimelech for seven ewe lambs",
+        "B": "From Lot for two hundred pieces of gold",
+        "C": "From Pharaoh for fifty chariots of iron",
+        "D": "From Ephron the Hittite for four hundred shekels of silver"
+      },
+      "explanation": "Genesis 23 records Abraham weighing out four hundred shekels of silver to Ephron the Hittite in the hearing of the Hittites to purchase the field and the cave of Machpelah as a burial plot."
+    },
+    {
+      "id": 68,
+      "level": 2,
+      "verse_reference": "Genesis 23:1-9",
+      "question": "Why was Abraham so determined to purchase a burial plot from the Hittites rather than accepting a free offer to use their best tombs?",
+      "correct_answer": "B",
+      "options": {
+        "A": "He wanted to display his massive financial superiority over the local citizens.",
+        "B": "He required a permanent, legally binding deed of ownership to secure a physical foothold in the Promised Land where his family could be buried.",
+        "C": "He feared that using a Hittite tomb would cause Sarah's body to be desecrated by local priests.",
+        "D": "The Hittite tombs were poorly constructed and prone to collapse during rains."
+      },
+      "explanation": "Abraham insisted on paying full price for the field and cave to ensure it became a permanent possession for a burial site, establishing the first piece of Canaan legally owned by his family line."
+    },
+    {
+      "id": 69,
+      "level": 3,
+      "verse_reference": "Genesis 23:3-6",
+      "question": "How do the Hittites address Abraham during their negotiations, and what does this show about his legacy as a resident alien?",
+      "correct_answer": "A",
+      "options": {
+        "A": "They call him 'a mighty prince among us,' showing that despite owning no land, his spiritual integrity, wealth, and character commanded high aristocratic respect.",
+        "B": "They address him as a wandering beggar, showing they wanted to drive him out of Canaan.",
+        "C": "They treat him as a conquering foreign monarch who had taken their cities by military force.",
+        "D": "They call him a false prophet, showing deep religious hostility toward his altars."
+      },
+      "explanation": "The Hittites reply, 'Hear us, my lord; you are a mighty prince among us.' This dynamic shows that though Abraham identified himself as a 'foreigner and stranger,' his influence and stature were highly recognized by the surrounding community."
+    },
+    {
+      "id": 70,
+      "level": 1,
+      "verse_reference": "Genesis 24:2-4",
+      "question": "What oath did Abraham make his chief servant swear regarding the selection of a wife for Isaac?",
+      "advanced_options": "A",
+      "correct_answer": "A",
+      "options": {
+        "A": "That he would not choose a wife from the daughters of the Canaanites, but would go to Abraham's native country and kindred.",
+        "B": "That he would find an Egyptian princess from Pharaoh’s immediate court.",
+        "C": "That he would let Isaac travel freely to choose any woman he desired.",
+        "D": "That he would select the wealthiest woman in the city of Sodom."
+      },
+      "explanation": "Abraham made his servant put his hand under his thigh and swear by the Lord that he would not get a wife for Isaac from the Canaanites among whom he lived, but would return to his homeland."
+    },
+    {
+      "id": 71,
+      "level": 2,
+      "verse_reference": "Genesis 24:12-21",
+      "question": "What specific sign did Abraham's servant request from the Lord at the well to identify the chosen woman, and how did Rebekah fulfill it?",
+      "correct_answer": "C",
+      "options": {
+        "A": "That she would drop her water jar; Rebekah broke her jar instantly.",
+        "B": "That she would offer him gold; Rebekah gave him two silver coins.",
+        "C": "That when asked for a drink, she would offer to draw water for all his ten camels as well; Rebekah did exactly this eagerly.",
+        "D": "That she would guide him to her father's house without saying a single word."
+      },
+      "explanation": "The servant prayed for a woman who would offer to water his camels also. Rebekah quickly emptied her jar into the trough and ran back to the well to draw water for all his camels, demonstrating extraordinary hospitality and strength."
+    },
+    {
+      "id": 72,
+      "level": 3,
+      "verse_reference": "Genesis 24:5-8, 58",
+      "question": "What theological boundary did Abraham establish regarding Isaac's location, and how does Rebekah's final response mirror Abraham’s own historical call?",
+      "correct_answer": "D",
+      "options": {
+        "A": "Abraham insisted Isaac relocate permanently to Ur; Rebekah refused to leave her mother.",
+        "B": "Abraham allowed Isaac to live anywhere; Rebekah demanded they move to Egypt.",
+        "C": "Abraham forbade Isaac from ever marrying; Rebekah overrode this by escaping her family.",
+        "D": "Abraham strictly forbade Isaac from ever returning to Mesopotamia; Rebekah's willing declaration 'I will go' mirrors Abraham's radical faith step of leaving family for an unseen future."
+      },
+      "explanation": "Abraham told his servant, 'Make sure that you do not take my son back there,' preserving Isaac's presence in the Promised Land. Rebekah, when asked if she would leave immediately with the servant, answered, 'I will go,' matching Abraham's departure from her homeland."
+    },
+    {
+      "id": 73,
+      "level": 1,
+      "verse_reference": "Genesis 25:7-9",
+      "question": "At what age did Abraham die, and which two sons buried him in the cave of Machpelah?",
+      "correct_answer": "B",
+      "options": {
+        "A": "At age 120; buried by Ishmael and Midian.",
+        "B": "At age 175; buried by Isaac and Ishmael.",
+        "C": "At age 150; buried by Isaac and Joseph.",
+        "D": "At age 190; buried by Esau and Jacob."
+      },
+      "explanation": "Genesis 25:7-9 states Abraham lived 175 years. His sons Isaac and Ishmael buried him in the cave of Machpelah near Mamre."
+    },
+    {
+      "id": 74,
+      "level": 2,
+      "verse_reference": "Genesis 25:29-34",
+      "question": "For what item did Esau sell his birthright to his brother Jacob, and what value judgment does the text make about Esau's choice?",
+      "correct_answer": "A",
+      "options": {
+        "A": "For some red stew and bread; the text states that Esau despised his birthright.",
+        "B": "For ten silver coins; the text praises his practical business acumen.",
+        "C": "For a flock of choice sheep; the text notes it was a balanced family trade.",
+        "D": "For a beautifully embroidered robe; the text indicates he was forced into the deal."
+      },
+      "explanation": "Esau came from the open country famished and demanded Jacob's red stew. Jacob demanded his birthright in exchange. Esau agreed, saying, 'What good is the birthright to me?' The text concludes, 'So Esau despised his birthright.'"
+    },
+    {
+      "id": 75,
+      "level": 3,
+      "verse_reference": "Genesis 25:21-26",
+      "question": "What divine oracle did Rebekah receive during her difficult pregnancy regarding the struggles of the twins in her womb?",
+      "correct_answer": "C",
+      "options": {
+        "A": "That her children would establish a joint empire in Egypt where harmony would rule.",
+        "B": "That the younger brother would die early, leaving all wealth to the older brother.",
+        "C": "That two nations were in her womb, one would be stronger than the other, and the older would serve the younger.",
+        "D": "That her children would abandon pastoral life to build maritime cities."
+      },
+      "explanation": "When the babies jostled within her, she inquired of the Lord. He told her, 'Two nations are in your womb... one people will be stronger than the other, and the older will serve the younger,' reversing traditional ancient birthright expectations."
+    },
+    {
+      "id": 76,
+      "level": 1,
+      "verse_reference": "Genesis 26:1-3",
+      "question": "When a famine struck the land, where did the Lord specifically tell Isaac NOT to go, commanding him to remain in Canaan instead?",
+      "correct_answer": "D",
+      "options": {
+        "A": "Do not go to Damascus",
+        "B": "Do not go to Babylonia",
+        "C": "Do not go to Mount Seir",
+        "D": "Do not go down to Egypt"
+      },
+      "explanation": "Genesis 26:2 explicitly states: 'The Lord appeared to Isaac and said, \"Do not go down to Egypt; live in the land where I tell you to live.\""
+    },
+    {
+      "id": 77,
+      "level": 2,
+      "verse_reference": "Genesis 26:12-16",
+      "question": "Why did the Philistines envy Isaac, and what action did they take against the wells dug by his father Abraham?",
+      "correct_answer": "B",
+      "options": {
+        "A": "They envied his military weapons; they broke his iron shields.",
+        "B": "They envied his massive crop yields and wealth; they stopped up and filled with dirt all the wells Abraham had dug.",
+        "C": "They envied his political connections in Egypt; they burned his grain stores.",
+        "D": "They envied his dynamic hunting skills; they poisoned his hounds."
+      },
+      "explanation": "Isaac planted crops and reaped a hundredfold because the Lord blessed him. He became so wealthy that the Philistines envied him, leading them to plug up the wells dug during Abraham's lifetime to limit his expansion."
+    },
+    {
+      "id": 78,
+      "level": 3,
+      "verse_reference": "Genesis 26:17-22",
+      "question": "What character trait does Isaac display through his handling of the continuous conflicts over the wells of Esek and Sitnah, culminating at Rehoboth?",
+      "correct_answer": "C",
+      "options": {
+        "A": "Aggressive military ambition, seeking to conquer the territory of Gerar.",
+        "B": "Complete cowardice, resulting in his total exclusion from Canaan.",
+        "C": "A commitment to peace and non-retaliation, moving away from conflict until God granted ample space (Rehoboth) for them to flourish.",
+        "D": "A preference for legal battles in Philistine courts."
+      },
+      "explanation": "Instead of fighting the herders of Gerar who claimed the water at Esek and Sitnah, Isaac chose to move and dig new wells. When they dug a well and no one quarreled over it, he named it Rehoboth, saying, 'Now the Lord has given us room and we will flourish in the land.'"
+    },
+    {
+      "id": 79,
+      "level": 1,
+      "verse_reference": "Genesis 27:18-24",
+      "question": "What two physical methods did Jacob use to deceive his blind father Isaac into thinking he was Esau?",
+      "correct_answer": "A",
+      "options": {
+        "A": "He wore Esau's clothing to smell like the open country and covered his neck and hands with goatskins to appear hairy.",
+        "B": "He wore a leather mask and wore heavy iron rings on his fingers.",
+        "C": "He walked with a heavy limp and spoke through a brass tube to deepen his voice.",
+        "D": "He painted his skin dark and wore armor belonging to his father."
+      },
+      "explanation": "Rebekah put Esau's best clothes on Jacob and covered his smooth hands and neck with goatskins. Isaac felt his hands and smelled his clothes, leading him to conclude it was Esau."
+    },
+    {
+      "id": 80,
+      "level": 2,
+      "verse_reference": "Genesis 27:34-41",
+      "question": "What was Esau's reaction when he discovered Jacob had taken his blessing, and what vow did he make regarding his brother?",
+      "correct_answer": "C",
+      "options": {
+        "A": "He laughed off the loss, intending to build his own kingdom in Egypt.",
+        "B": "He demanded Jacob pay him four hundred shekels of silver immediately.",
+        "C": "He wept bitterly, pleaded for any remaining blessing, and vowed to kill Jacob once the days of mourning for his father were over.",
+        "D": "He petitioned the Hittites to arrest Jacob for domestic fraud."
+      },
+      "explanation": "Esau burst out with a loud and bitter cry when he realized Jacob took the blessing. Holding a grudge against Jacob, Esau said to himself, 'The days of mourning for my father are near; then I will kill my brother Jacob.'"
+    },
+    {
+      "id": 81,
+      "level": 3,
+      "verse_reference": "Genesis 27:1-13",
+      "question": "Analyze the moral complexity of Rebekah's role in the deception of Isaac. What does her willingness to take Jacob's curse upon herself demonstrate?",
+      "correct_answer": "B",
+      "options": {
+        "A": "Her complete ignorance of the divine oracle she received during pregnancy.",
+        "B": "Her fierce determination to secure the covenant blessing for Jacob at any cost, showing a reliance on human deception to force a divine outcome.",
+        "C": "Her desire to destroy Isaac's reputation among the surrounding Hittite tribes.",
+        "D": "Her plan to divide the family wealth so she could return independently to Haran."
+      },
+      "explanation": "Rebekah remembered the oracle that the older would serve the younger. However, seeing Isaac about to bless Esau, she orchestrated a high-risk deception scheme. Her statement, 'My son, let the curse fall on me,' shows her total commitment to Jacob inheriting the promise, even through flawed means."
+    },
+    {
+      "id": 82,
+      "level": 1,
+      "verse_reference": "Genesis 28:10-12",
+      "question": "What did Jacob see in his dream at Bethel while sleeping with a stone for a pillow?",
+      "correct_answer": "C",
+      "options": {
+        "A": "A massive flood covering the mountains of Ararat.",
+        "B": "A blazing torch passing between divided pieces of gold.",
+        "C": "A stairway (ladder) resting on the earth, with its top reaching to heaven, and the angels of God ascending and descending on it.",
+        "D": "Seven thin cows devouring seven fat cows near a river."
+      },
+      "explanation": "Genesis 28:12 explicitly describes Jacob's dream: a stairway set up on earth reaching to heaven, with God's angels moving up and down on it."
+    },
+    {
+      "id": 83,
+      "level": 2,
+      "verse_reference": "Genesis 28:18-22",
+      "question": "What actions did Jacob take upon waking up at Bethel, and what conditional vow did he make to God?",
+      "correct_answer": "A",
+      "options": {
+        "A": "He set up the stone as a pillar, poured oil on top of it, and vowed that if God protected and provided for him, the Lord would be his God and he would give a tenth of everything.",
+        "B": "He smashed the stone in anger and vowed never to return to Canaan.",
+        "C": "He built a massive trench to collect water, promising to fast for forty days.",
+        "D": "He sacrificed a lamb from his flock, promising to rename the city after Esau."
+      },
+      "explanation": "Jacob took the stone pillow, set it up as a pillar, and anointed it with oil, naming the place Bethel ('House of God'). He then made a vow promising allegiance and a tithe ('a tenth') if God brought him back safely."
+    },
+    {
+      "id": 84,
+      "level": 3,
+      "verse_reference": "Genesis 28:13-15",
+      "question": "How does God's address to Jacob at Bethel modify the personal nature of the covenant promises, given Jacob's recent deceptive actions?",
+      "correct_answer": "B",
+      "options": {
+        "A": "God demands that Jacob return to Isaac to confess his sins before any blessings can be activated.",
+        "B": "God unconditionally extends the Abrahamic covenant of land, offspring, and global blessing to Jacob, promising personal presence and protection despite his flawed character.",
+        "C": "God informs Jacob that the blessing is on probation until he behaves perfectly in Haran.",
+        "D": "God changes the focus of the covenant from land inheritance to absolute military supremacy."
+      },
+      "explanation": "Despite Jacob fleeing as a deceptive exile, God does not scold or condemn him. Instead, He introduces Himself as the God of Abraham and Isaac, confirms the inheritance promises, and guarantees His personal presence: 'I am with you and will watch over you wherever you go.'"
+    },
+    {
+      "id": 85,
+      "level": 1,
+      "verse_reference": "Genesis 29:16-18",
+      "question": "Who were Laban's two daughters, and what deal did Jacob strike to marry the younger one?",
+      "correct_answer": "D",
+      "options": {
+        "A": "Hagar and Keturah; he agreed to pay fifty pieces of gold.",
+        "B": "Dinah and Tamar; he agreed to manage Laban's camels for one year.",
+        "C": "Milkah and Reumah; he agreed to build a stone house for Laban.",
+        "D": "Leah and Rachel; he agreed to serve Laban for seven years for Rachel."
+      },
+      "explanation": "Genesis 29 explains that Leah had weak eyes, but Rachel was lovely in form and beautiful. Jacob was in love with Rachel and said, 'I’ll work for you seven years in return for your younger daughter Rachel.'"
+    },
+    {
+      "id": 86,
+      "level": 2,
+      "verse_reference": "Genesis 29:21-26",
+      "question": "How did Laban deceive Jacob on his wedding night, and what cultural justification did he give for his actions?",
+      "correct_answer": "B",
+      "options": {
+        "A": "He gave Jacob no inheritance portion, claiming foreigners have no rights.",
+        "B": "He switched Leah for Rachel in the dark; he justified it by stating it was not their custom to give the younger daughter in marriage before the older one.",
+        "C": "He canceled the wedding completely, claiming Jacob’s family was under a curse.",
+        "D": "He forced Jacob to marry a servant girl first to prove his loyalty to Haran."
+      },
+      "explanation": "When morning came, Jacob discovered he had slept with Leah. He confronted Laban, who responded, 'It is not our custom here to give the younger daughter in marriage before the older one,' irony echoing Jacob's own displacement of his older brother."
+    },
+    {
+      "id": 87,
+      "level": 3,
+      "verse_reference": "Genesis 29:31-35",
+      "question": "How does the opening of Leah's womb contrast with Rachel's barrenness reveal God’s concern for the unloved or marginalized within the family dynamic?",
+      "correct_answer": "A",
+      "options": {
+        "A": "When the Lord saw that Leah was unloved, he enabled her to bear children while Rachel remained childless, showing divine compassion for her emotional distress.",
+        "B": "It shows that God preferred Leah's spiritual heritage over Rachel's pagan background.",
+        "C": "It proved that Rachel was being punished for stealing her father's livestock.",
+        "D": "It demonstrated that older sisters always retain absolute spiritual favor over younger ones."
+      },
+      "explanation": "The text explicitly notes: 'When the Lord saw that Leah was not loved, he enabled her to conceive, but Rachel was childless.' Leah's naming of her sons (Reuben, Simeon, Levi, Judah) records her journey of hoping for her husband's affection, shifting ultimately to praising the Lord."
+    },
+    {
+      "id": 88,
+      "level": 1,
+      "verse_reference": "Genesis 30:22-24",
+      "question": "What was the name of the first biological son born to Rachel after years of barrenness and distress?",
+      "correct_answer": "C",
+      "options": {
+        "A": "Dan",
+        "B": "Gad",
+        "C": "Joseph",
+        "D": "Asher"
+      },
+      "explanation": "Genesis 30:22-24 states that God remembered Rachel, listened to her, and enabled her to conceive. She gave birth to a son and named him Joseph, saying, 'May the Lord add to me another son.'"
+    },
+    {
+      "id": 89,
+      "level": 2,
+      "verse_reference": "Genesis 30:31-43",
+      "question": "What complex breeding strategy did Jacob use to increase his own wealth at the expense of Laban's flocks?",
+      "correct_answer": "B",
+      "options": {
+        "A": "He secretly imported superior sheep from Egypt during the night.",
+        "B": "He placed peeled branches of poplar, almond, and plane trees in the watering troughs when the stronger animals mated, causing them to bear streaked, speckled, and spotted offspring.",
+        "C": "He withheld water from Laban's animals so they would become weak and die.",
+        "D": "He traded all weak sheep to the local Hittite merchants for pure gold."
+      },
+      "explanation": "Jacob agreed to take only the speckled, spotted, and dark animals as his wages. He then manipulated the visual environment of the mating flocks using peeled rods, ensuring the robust animals produced marked offspring that belonged to him."
+    },
+    {
+      "id": 90,
+      "level": 3,
+      "verse_reference": "Genesis 30:1-8",
+      "question": "Examine the desperate surrogate competition between Rachel and Leah involving their maidservants Bilhah and Zilpah. What does this indicate about status in the patriarchal household?",
+      "correct_answer": "C",
+      "options": {
+        "A": "It proves that maidservants held higher legal authority than legal wives.",
+        "B": "It shows that Jacob was trying to reduce the size of his family layout.",
+        "C": "It demonstrates that a woman's honor, security, and power within the household were directly tied to producing male heirs, creating an intense proxy war for dominance.",
+        "D": "It establishes that children born to maidservants could never inherit any property."
+      },
+      "explanation": "Rachel's exclamation, 'I have had a great struggle with my sister, and I have won!' upon the birth of Naphtali through Bilhah highlights that childbearing was weaponized for marital status, dragging their servants into the family rivalry."
+    },
+    {
+      "id": 91,
+      "level": 1,
+      "verse_reference": "Genesis 31:19, 34",
+      "question": "What did Rachel steal from her father Laban when Jacob's household secretly fled from Haran, and where did she hide them?",
+      "correct_answer": "D",
+      "options": {
+        "A": "His gold chalice; hidden inside a bag of wheat.",
+        "B": "His legal land deeds; hidden inside her sleeve.",
+        "C": "His ceremonial sword; hidden under Jacob's mattress.",
+        "D": "His household gods (teraphim); hidden inside her camel's saddle cushion."
+      },
+      "explanation": "Rachel stole her father's household gods. When Laban searched the tents, she placed them inside her camel's saddle and sat on them, falsely claiming she could not stand up because she was having her period."
+    },
+    {
+      "id": 92,
+      "level": 2,
+      "verse_reference": "Genesis 31:22-29",
+      "question": "Why was Laban unable to harm or forcefully bring back Jacob when he finally caught up with him in the hill country of Gilead?",
+      "correct_answer": "A",
+      "options": {
+        "A": "God warned Laban in a dream the night before not to say anything to Jacob, either good or bad.",
+        "B": "Jacob had mobilized a massive mercenary army from Damascus.",
+        "C": "Laban's soldiers refused to fight against their own relatives.",
+        "D": "A sudden landslide blocked Laban's path across the valley."
+      },
+      "explanation": "Laban admitted he had the power to harm Jacob, but explained, 'last night the God of your father said to me, \"Be careful not to say anything to Jacob, either good or bad.\"' This divine intervention protected Jacob from Laban's anger."
+    },
+    {
+      "id": 93,
+      "level": 3,
+      "verse_reference": "Genesis 31:43-55",
+      "question": "What are the structural terms and symbolic monuments associated with the covenant made at Mizpah between Jacob and Laban?",
+      "correct_answer": "B",
+      "options": {
+        "A": "They built an altar of wood and swore never to practice animal breeding again.",
+        "B": "They set up a stone pillar and a heap of stones as a boundary marker, swearing never to pass it to harm each other, invoking God to watch between them when they were apart.",
+        "C": "They signed a clay tablet dividing the territory of Canaan evenly between Haran and Gilead.",
+        "D": "They sacrificed a bull, designating Jacob as the high priest over Laban's northern estate."
+      },
+      "explanation": "The stone heap (Galeed) and the watchtower (Mizpah) served as a witness boundary. Laban declared, 'May the Lord keep watch between you and me when we are away from each other,' setting a non-aggression pact to finalize Jacob's separation from Mesopotamia."
+    },
+    {
+      "id": 94,
+      "level": 1,
+      "verse_reference": "Genesis 32:24-28",
+      "question": "What new name was Jacob given after wrestling with a mysterious man until daybreak at the Jabbok River?",
+      "correct_answer": "C",
+      "options": {
+        "A": "Bethel",
+        "B": "Abraham",
+        "C": "Israel",
+        "D": "Peniel"
+      },
+      "explanation": "The man told him, 'Your name will no longer be Jacob, but Israel, because you have struggled with God and with humans and have overcome.'"
+    },
+    {
+      "id": 95,
+      "level": 2,
+      "verse_reference": "Genesis 32:3-8",
+      "question": "Why did Jacob experience intense fear and distress upon hearing that Esau was coming to meet him with four hundred men?",
+      "correct_answer": "B",
+      "options": {
+        "A": "He thought Esau would steal his spotted sheep to sell them in Egypt.",
+        "B": "He assumed Esau was coming to fulfill his twenty-year-old vow to murder him in revenge for the stolen blessing.",
+        "C": "He feared Esau would force him to return to Laban's estate.",
+        "D": "He lacked enough food supplies to host such a massive military entourage."
+      },
+      "explanation": "Remembering how he left Canaan under threat of death from Esau, the news of an approaching army of four hundred men terrified Jacob, prompting him to divide his people and flocks into two camps for survival."
+    },
+    {
+      "id": 96,
+      "level": 3,
+      "verse_reference": "Genesis 32:9-12, 24-32",
+      "question": "How does Jacob's prayer in verses 9-12 combined with his physical injury at Peniel mark a fundamental conversion in his character?",
+      "correct_answer": "A",
+      "options": {
+        "A": "He shifts from a self-reliant schemer to an dependent servant who confesses his unworthiness, relies on God's covenant promise, and is crippled physically so he must cling to God for validation.",
+        "B": "It shows he decided to abandon his family to save himself from Esau's forces.",
+        "C": "It marks his transformation into an aggressive military conqueror who no longer needs divine assistance.",
+        "D": "It proves that Jacob completely rejected his identity as Abraham's heir."
+      },
+      "explanation": "In his prayer, Jacob openly admits, 'I am unworthy of all the kindness and faithfulness you have shown your servant.' During the wrestling match, his hip is wrenched, forcing him to hold on to his opponent purely for a blessing. His new name, Israel, replaces the identity of 'heel-catcher/deceiver' with 'one who strives with God,' relying on grace over tricks."
+    },
+    {
+      "id": 97,
+      "level": 1,
+      "verse_reference": "Genesis 33:1-4",
+      "question": "What unexpected reaction did Esau show when he finally met Jacob face-to-face after twenty years of separation?",
+      "correct_answer": "C",
+      "options": {
+        "A": "He ordered his four hundred men to attack Jacob's front camp immediately.",
+        "B": "He refused to look at Jacob and demanded a cash payment of all his livestock.",
+        "C": "He ran to meet Jacob, embraced him, threw his arms around his neck, kissed him, and they both wept.",
+        "D": "He turned around and walked back to Seir without saying a single word."
+      },
+      "explanation": "Instead of seeking the bloody revenge Jacob feared, Esau displayed profound grace and forgiveness. He ran to meet Jacob, embraced him warmly, and wept with joy, showing that his anger had completely melted away over the years."
+    },
+    {
+      "id": 98,
+      "level": 2,
+      "verse_reference": "Genesis 33:10-11",
+      "question": "What deep theological declaration does Jacob make to Esau when insisting that Esau accept his massive gift of livestock?",
+      "correct_answer": "B",
+      "options": {
+        "A": "He declares that the livestock belongs to Laban and must be disposed of quickly.",
+        "B": "He states that seeing Esau's face is like seeing the face of God, now that Esau has received him with such favor.",
+        "C": "He claims that the gift will legally purchase the cave of Machpelah from Esau's descendants.",
+        "D": "He mentions that the animals are a blood sacrifice to cleanse their family line from deception."
+      },
+      "explanation": "Jacob tells Esau, 'to see your face is like seeing the face of God, now that you have received me favorably.' Having just wrestled with God at Peniel and survived, Jacob recognizes God's forgiving face reflected in the unexpected grace and unmerited favor shown by his brother."
+    },
+    {
+      "id": 99,
+      "level": 3,
+      "verse_reference": "Genesis 34:1-31",
+      "question": "Analyze the tragic crisis in Shechem involving Dinah, Hamor, and Jacob's sons. How did Simeon and Levi weaponize a sacred covenant sign for political and military slaughter?",
+      "correct_answer": "A",
+      "options": {
+        "A": "They demanded that all men of Shechem be circumcised as a condition for marriage, then attacked and killed them on the third day while they were still in intense pain.",
+        "B": "They invited the Shechemites to a covenant feast at Bethel and poisoned their wine supply.",
+        "C": "They used the stone pillar of Mizpah to trap the royal family inside the city gate.",
+        "D": "They swore an oath of peace by the Jabbok River, only to return with an army of Hittite mercenaries."
+      },
+      "explanation": "Simeon and Levi deceitfully used circumcision—the holy physical sign of Abraham's covenant—as a military strategy. They waited until the men of Shechem were incapacitated by the physical recovery process, then brutally slaughtered them to avenge their sister Dinah, drawing sharp condemnation from Jacob."
+    },
+    {
+      "id": 100,
+      "level": 3,
+      "verse_reference": "Genesis 35:1-4",
+      "question": "When God commands Jacob to return to Bethel to build an altar, what radical spiritual reformation does Jacob demand from his entire household before they travel?",
+      "correct_answer": "D",
+      "options": {
+        "A": "He requires them to fast for forty days and leave all their livestock behind in Shechem.",
+        "B": "He orders them to build a mobile wooden tabernacle to carry Rachel's stolen artifacts.",
+        "C": "He commands everyone to learn the language of the local Canaanites to avoid friction.",
+        "D": "He tells them to get rid of the foreign gods they have with them, purify themselves, and change their clothes."
+      },
+      "explanation": "Before returning to Bethel—the sacred place where God first appeared to him—Jacob calls for a complete break from corporate idolatry. His household surrenders all their foreign gods (including the idols Rachel stole) and their pagan amulets/earrings, burying them under the oak tree at Shechem as a sign of complete purification and covenant renewal."
+    },
+    {
+      "id": 101,
+      "level": 1,
+      "verse_reference": "Genesis 36:1-8",
+      "question": "What is the alternative name for Esau, and where did he permanently resettle his vast family and livestock to get away from Jacob?",
+      "correct_answer": "A",
+      "options": {
+        "A": "Edom; the hill country of Seir",
+        "B": "Moab; the plains of Shinar",
+        "C": "Ammon; the desert of Paran",
+        "D": "Ishmael; the wilderness of Beersheba"
+      },
+      "explanation": "Genesis 36:1 and 36:8 explicitly state that Esau is Edom and that he settled in the hill country of Seir because the land where he and Jacob stayed could not support both of them due to their massive herds."
+    },
+    {
+      "id": 102,
+      "level": 2,
+      "verse_reference": "Genesis 36:31-39",
+      "question": "What is the historical and thematic significance of the phrase 'these were the kings who reigned in Edom before any king reigned over the Israelites'?",
+      "correct_answer": "C",
+      "options": {
+        "A": "It shows that Israel was spiritually abandoned by God while Edom was favored.",
+        "B": "It proves that Edom was a purely democratic society with no centralized layout.",
+        "C": "It highlights that while Esau's descendants achieved rapid geopolitical and institutional power, Israel's path to kingship would require a long spiritual journey of reliance on God's promise.",
+        "D": "It demonstrates that the author of Genesis rejected the concept of human kingship entirely."
+      },
+      "explanation": "This verse contrasts Edom's rapid institutional development as a secular kingdom with Israel's slow, wandering trajectory. It emphasizes that worldly success and early statehood do not equate to holding the primary line of the covenant promise."
+    },
+    {
+      "id": 103,
+      "level": 3,
+      "verse_reference": "Genesis 36:1-43",
+      "question": "Why does the narrative layout of Genesis dedicate an entire, highly detailed chapter to the genealogy of Esau (Edom) right before diving into the story of Jacob's sons?",
+      "correct_answer": "B",
+      "options": {
+        "A": "To prove that Esau had secretly repented and inherited the structural temple rights of Abraham.",
+        "B": "To systematically document how God fulfilled His specific promises to bless Esau and make him a nation, before officially setting him aside to trace the redemptive history of the chosen covenant seed through Jacob.",
+        "C": "To establish a legal property boundary layout for the future Babylonian empire.",
+        "D": "To show that the lineages of Esau and Jacob eventually merged into a single, identical ethnic tribe."
+      },
+      "explanation": "In keeping with the structural pattern of Genesis, the line of the non-chosen seed (Esau) is tracked first to demonstrate God's faithfulness to His secondary promises (Genesis 25:23, 27:39-40). Once Esau's expansion is documented, the narrative wraps it up to focus exclusively on the covenant family."
+    },
+    {
+      "id": 104,
+      "level": 1,
+      "verse_reference": "Genesis 37:3-4",
+      "question": "Why did Joseph's brothers hate him so deeply that they could not even speak a kind word to him?",
+      "correct_answer": "D",
+      "options": {
+        "A": "Because Joseph had stolen their personal weapons and sold them to local merchants.",
+        "B": "Because Joseph refused to work in the fields and slept all day.",
+        "C": "Because Joseph was born in Mesopotamia while they were born in Canaan.",
+        "D": "Because Israel loved Joseph more than all his other sons since he was born in his old age, and he gave Joseph an ornate robe."
+      },
+      "explanation": "Genesis 37:3-4 points out that Jacob's open favoritism, physically symbolized by the gift of an ornate robe (traditionally translated as a coat of many colors), provoked severe jealousy and emotional alienation among the brothers."
+    },
+    {
+      "id": 105,
+      "level": 2,
+      "verse_reference": "Genesis 37:5-11",
+      "question": "What do Joseph's twin dreams of the bowing sheaves and the bowing celestial bodies signify, and how do they impact the family dynamic?",
+      "correct_answer": "A",
+      "options": {
+        "A": "They reveal a genuine divine revelation of Joseph's future authority over his family, but sharing them turns his brothers' passive resentment into active, murderous hatred.",
+        "B": "They show that Joseph was suffering from psychological delusions caused by heat stroke.",
+        "C": "They indicate that the family would soon lose their crops to a locust plague.",
+        "D": "They serve as a cryptic warning that Jacob would soon die at the hands of the Philistines."
+      },
+      "explanation": "The dreams were authentic prophecies of Joseph’s future exaltation in Egypt. However, Joseph’s raw delivery of these dreams, combined with the obvious imagery of his older brothers and parents bowing down to him, pushed the brothers' bitter jealousy past the point of return."
+    },
+    {
+      "id": 106,
+      "level": 3,
+      "verse_reference": "Genesis 37:18-28",
+      "question": "Analyze the internal group dynamics and leadership breakdown among the brothers when plotting Joseph's death at Dothan. How do the actions of Reuben and Judah differ?",
+      "correct_answer": "B",
+      "options": {
+        "A": "Reuben wants to kill Joseph directly, while Judah tries to hide him in a cave permanently.",
+        "B": "Reuben intends to save Joseph completely by putting him in a dry cistern to rescue him later, while Judah profits from the crime by convincing the group to sell him to Ishmaelite merchants.",
+        "C": "Reuben suggests selling Joseph to Egypt, while Judah demands an immediate blood sacrifice.",
+        "D": "Both brothers join forces to fight off the rest of the siblings and protect Joseph's life."
+      },
+      "explanation": "Reuben, as the oldest, feels responsible and plans a secret rescue mission by steering them toward a bloodless option (the pit). Judah, exhibiting cold pragmatism, capitalizes on the situation by suggesting they sell Joseph to traders for twenty pieces of silver, avoiding direct murder while still getting rid of him."
+    },
+    {
+      "id": 107,
+      "level": 1,
+      "verse_reference": "Genesis 38:1-6",
+      "question": "Which woman did Judah marry after leaving his brothers to stay near an Adullamite man named Hirah, and who were their first three sons?",
+      "correct_answer": "C",
+      "options": {
+        "A": "Rebekah; her sons were Esau, Jacob, and Laban.",
+        "B": "Bilhah; her sons were Dan, Naphtali, and Gad.",
+        "C": "The daughter of a Canaanite man named Shua; her sons were Er, Onan, and Shelah.",
+        "D": "Dinah; her sons were Hamor, Shechem, and Gilead."
+      },
+      "explanation": "Genesis 38:1-5 details Judah's compromise in marrying outside the covenant family line, taking the daughter of Shua, a Canaanite, who gave birth to Er, Onan, and Shelah."
+    },
+    {
+      "id": 108,
+      "level": 2,
+      "verse_reference": "Genesis 38:7-11, 26",
+      "question": "Why did Tamar resort to disguising herself as a prostitute to sleep with her father-in-law Judah, and what was Judah's final verdict on her actions?",
+      "correct_answer": "A",
+      "options": {
+        "A": "Because Judah broke his promise to give her his youngest son Shelah in marriage; Judah declared her more righteous than himself because he failed to honor his family obligation.",
+        "B": "Because she wanted to steal Judah's financial ledger; Judah sentenced her to life in prison.",
+        "C": "Because she was practicing Canaanite religious rituals; Judah praised her for her devotion to Baal.",
+        "D": "Because she mistook Judah for her long-lost brother; Judah dismissed it as an accident."
+      },
+      "explanation": "Judah withheld Shelah out of fear that he too would die like Er and Onan. Tamar used deception to secure her legal and familial rights under levirate custom. When confronted with his personal signet, cord, and staff, Judah confessed his own sin and recognized her desperate search for justice."
+    },
+    {
+      "id": 109,
+      "level": 3,
+      "verse_reference": "Genesis 38:1-30",
+      "question": "What is the profound structural and theological purpose of inserting the gritty story of Judah and Tamar right in the middle of the Joseph narrative?",
+      "correct_answer": "D",
+      "options": {
+        "A": "To provide a lighthearted comedic break from the intense drama in Egypt.",
+        "B": "To show that the author had forgotten the main plotline regarding Joseph's career.",
+        "C": "To prove that the Canaanite legal system was superior to Abraham's lifestyle choices.",
+        "D": "To contrast Judah's moral decline and compromise in Canaan with Joseph's purity in Egypt, while tracking how God works through messy human history to preserve the royal line of Perez."
+      },
+      "explanation": "While Joseph is in Egypt preserving the family's physical survival through moral purity, Judah is in Canaan compromising with the local culture. The chapter tracks the birth of Perez, securing the legal lineage of King David and ultimately the Messiah, demonstrating that God weaves fractured human choices into His sovereign plan."
+    },
+    {
+      "id": 110,
+      "level": 1,
+      "verse_reference": "Genesis 39:1-6",
+      "question": "Who bought Joseph from the Ishmaelites, and what position did Joseph quickly attain within his new master's household?",
+      "correct_answer": "B",
+      "options": {
+        "A": "Pharaoh; Joseph became the chief royal baker.",
+        "B": "Potiphar, an Egyptian officer and captain of the guard; Joseph became the head attendant and overseer of his entire estate.",
+        "C": "Hamor; Joseph became the manager of his local textile business.",
+        "D": "Jethro; Joseph became the shepherd of his midianite flocks."
+      },
+      "explanation": "Genesis 39:1-4 states that Potiphar purchased Joseph. Seeing that the Lord was with Joseph and granted him success in everything he did, Potiphar promoted him to be his personal attendant and put him in charge of all his property."
+    },
+    {
+      "id": 111,
+      "level": 2,
+      "verse_reference": "Genesis 39:7-12",
+      "question": "What primary arguments does Joseph use to resist the persistent sexual advances of Potiphar's wife?",
+      "correct_answer": "A",
+      "options": {
+        "A": "He refuses to betray his master's absolute trust, noting that nothing has been withheld from him except her, and emphasizes that doing so would be a great sin against God.",
+        "B": "He claims that Egyptian law punishes extramarital affairs with immediate execution.",
+        "C": "He states that he is under a strict religious vow to never speak to Egyptian women.",
+        "D": "He explains that he is too busy managing the agricultural harvest to focus on relationships."
+      },
+      "explanation": "Joseph’s refusal operates on two levels: social ethics and theological reality. He refuses to violate the horizontal trust established by Potiphar, and more importantly, he recognizes that giving in would be a direct vertical offense against God."
+    },
+    {
+      "id": 112,
+      "level": 3,
+      "verse_reference": "Genesis 39:20-23",
+      "question": "How does Joseph's experience in prison echo his experience in Potiphar's house, and what does this reveal about the book's core theology of success?",
+      "correct_answer": "C",
+      "options": {
+        "A": "It shows that physical strength is the single most important factor in escaping prison camps.",
+        "B": "It demonstrates that God only blesses people when they are living in their own homeland.",
+        "C": "It proves that divine favor is not tied to a person's physical location or social status; the Lord's presence with Joseph causes him to find favor and gain authority even while wrongfully imprisoned.",
+        "D": "It implies that Joseph was using political connections to bribe the prison warden."
+      },
+      "explanation": "The text systematically repeats that 'the Lord was with Joseph.' Just as he rose to the top of Potiphar's house, he rises to manage the prison. True success in Genesis is redefined not as the absence of suffering, but as the unmistakable presence of God operating in the midst of adversity."
+    },
+    {
+      "id": 113,
+      "level": 1,
+      "verse_reference": "Genesis 40:1-4",
+      "question": "Which two royal officials offended the king of Egypt and ended up imprisoned alongside Joseph under the care of the captain of the guard?",
+      "correct_answer": "B",
+      "options": {
+        "A": "The chief military general and the chief scribe",
+        "B": "The chief cupbearer and the chief baker",
+        "C": "The royal astrologer and the chief architect",
+        "D": "The high priest of On and the royal treasurer"
+      },
+      "explanation": "Genesis 40:1-3 states that the chief cupbearer (butler) and the chief baker incurred Pharaoh's anger and were cast into the prison located in the house of the captain of the guard."
+    },
+    {
+      "id": 114,
+      "level": 2,
+      "verse_reference": "Genesis 40:5-19",
+      "question": "How did the specific interpretations of the dreams of the cupbearer and the baker differ, and how did they play out three days later?",
+      "correct_answer": "A",
+      "options": {
+        "A": "The cupbearer's dream of three vine branches meant restoration to his post; the baker's dream of three baskets of bread meant he would be executed and hanged on a tree.",
+        "B": "The cupbearer was sentenced to permanent exile, while the baker was promoted to prime minister.",
+        "C": "Both men were pardoned by Pharaoh during his anniversary celebration.",
+        "D": "The cupbearer's dream predicted a rainstorm, while the baker's dream predicted a wheat shortage."
+      },
+      "explanation": "Joseph accurately interpreted the 'three days' symbolized by the branches and baskets. On Pharaoh's birthday, the cupbearer was restored to his office, while the baker was decapitated and hung on a pole, matching Joseph's predictions precisely."
+    },
+    {
+      "id": 115,
+      "level": 3,
+      "verse_reference": "Genesis 40:14-15, 23",
+      "question": "What poignant glimpse into Joseph's humanity do we get in this chapter, and how does the ending underscore his profound isolation?",
+      "correct_answer": "D",
+      "options": {
+        "A": "He plots a violent prison break, showing his loss of faith in God.",
+        "B": "He demands a large financial bribe from the cupbearer to interpret the dream accurately.",
+        "C": "He expresses total satisfaction with his prison cell, demonstrating an emotionless personality.",
+        "D": "He pleads with the cupbearer to remember him and mention him to Pharaoh, noting he was kidnapped from Canaan and is innocent; however, the cupbearer completely forgets him."
+      },
+      "explanation": "Joseph’s raw plea highlights his deep desire for freedom and vindication, revealing the emotional weight of his long, unjust confinement. The concluding line, 'The chief cupbearer, however, did not remember Joseph; he forgot him,' sets up a brutal two-year period of silent waiting."
+    },
+    {
+      "id": 116,
+      "level": 1,
+      "verse_reference": "Genesis 41:1-7",
+      "question": "What were the two distinct parts of the vivid dream Pharaoh had while standing by the Nile River?",
+      "correct_answer": "C",
+      "options": {
+        "A": "Seven flying eagles eating seven crawling locusts, followed by a solar eclipse.",
+        "B": "Seven golden chariots crashing into seven wooden boats in the middle of the sea.",
+        "C": "Seven sleek, fat cows eaten by seven ugly, gaunt cows; followed by seven full heads of grain swallowed up by seven thin, scorched heads of grain.",
+        "D": "A giant stone statue smashed by a small boulder coming out of a mountain."
+      },
+      "explanation": "Genesis 41:1-7 details Pharaoh’s twin dreams. In both instances, the weak, unhealthy entities completely consume the robust, healthy entities without changing their own gaunt appearance."
+    },
+    {
+      "id": 117,
+      "level": 2,
+      "verse_reference": "Genesis 41:15-16, 25-32",
+      "question": "When summoned before Pharaoh, how does Joseph handle credit for dream interpretation, and what warning does he give about the double dream?",
+      "correct_answer": "A",
+      "options": {
+        "A": "He states he cannot do it himself, but god will give Pharaoh a favorable answer; he explains that the double dream means the matter is firmly decided by God and will happen soon.",
+        "B": "He demands a high cash payment before speaking, claiming his skills are unmatched in the region.",
+        "C": "He credits Potiphar's wife for teaching him the art of reading minds in prison.",
+        "D": "He explains that the double dream is a sign that Pharaoh will have two distinct heirs to his throne."
+      },
+      "explanation": "Joseph immediately shifts the focus away from his personal talent, declaring, 'I cannot do it... but God will give Pharaoh the answer he desires.' He explains that the repetition of the dream highlights its certainty and urgency, indicating that the seven years of abundance and seven years of severe famine are imminent."
+    },
+    {
+      "id": 118,
+      "level": 3,
+      "verse_reference": "Genesis 41:33-45",
+      "question": "What tactical administrative plan does Joseph present that leads to his promotion, and what symbolic items does Pharaoh give him to mark his absolute authority?",
+      "correct_answer": "C",
+      "options": {
+        "A": "He advises building a massive wall around Egypt; he receives a golden shield and a war horse.",
+        "B": "He suggests importing grain from Canaan; he receives a silver chalice and a royal crown.",
+        "C": "He advises appointing a discerning man to collect one-fifth of the harvest during the years of abundance; he receives Pharaoh's signet ring, fine linen robes, a gold chain, and the second royal chariot.",
+        "D": "He recommends taxing the priesthood; he receives a permanent seat in the Egyptian temple layout."
+      },
+      "explanation": "Joseph moves beyond mere interpretation to provide a comprehensive economic stabilization plan (grain storage management). Impressed by this divine wisdom, Pharaoh appoints Joseph as grand vizier (second-in-command over all Egypt), equipping him with the state tools of absolute executive power."
+    },
+    {
+      "id": 119,
+      "level": 1,
+      "verse_reference": "Genesis 42:1-5",
+      "question": "Why did Jacob send ten of his sons to Egypt to buy grain, and why did he refuse to let Benjamin go with them?",
+      "correct_answer": "B",
+      "options": {
+        "A": "Because Benjamin was too busy managing the sheep herds in Goshen.",
+        "B": "Because there was a severe famine in Canaan and Jacob heard grain was available in Egypt; he kept Benjamin back because he was afraid harm might come to him.",
+        "C": "Because Benjamin lacked the proper travel visa for international entry.",
+        "D": "Because the other brothers refused to travel if Benjamin joined the caravan."
+      },
+      "explanation": "Genesis 42:1-5 explains that the famine hit Canaan hard, forcing Jacob to send his sons south. Having lost Joseph, Jacob clung to Benjamin—the only remaining son of his beloved wife Rachel—protecting him from potential danger on the road."
+    },
+    {
+      "id": 120,
+      "level": 2,
+      "verse_reference": "Genesis 42:6-17",
+      "question": "How does Joseph interact with his brothers when they bow down before him, and what specific accusation does he use to test them?",
+      "correct_answer": "A",
+      "options": {
+        "A": "He recognizes them but acts like a stranger, speaking harshly and accusing them of being spies who have come to see where the land is unprotected.",
+        "B": "He immediately reveals his identity and throws a massive celebratory banquet for them.",
+        "C": "He accuses them of murdering his younger brother and locks them up for ten years.",
+        "D": "He pretends to be a native Egyptian who cannot speak their language, asking them to leave immediately."
+      },
+      "explanation": "Joseph sees his first dreams fulfilled as his brothers bow. Instead of seeking immediate revenge or revealing himself, he hides his identity behind an Egyptian mask and throws a serious espionage charge at them. This forces them into a corner where they must talk about their family situation and the brother they left behind."
+    },
+    {
+      "id": 121,
+      "level": 3,
+      "verse_reference": "Genesis 42:21-24",
+      "question": "When the brothers are locked in custody, what do they confess to one another, and how does Joseph respond when he overhears them speaking in their own language?",
+      "correct_answer": "C",
+      "options": {
+        "A": "They plot to kill the Egyptian governor; Joseph calls for the royal guard to execute them.",
+        "B": "They express regret for not stealing more gold from Canaan; Joseph feels vindicated in his harsh treatment.",
+        "C": "They confess they are being punished for their cruelty to Joseph when they ignored his distress; Joseph is so deeply moved that he turns away from them and weeps.",
+        "D": "They blame Jacob for their troubles; Joseph decides to keep Reuben permanently as a slave."
+      },
+      "explanation": "Twenty years later, the brothers' deep guilt surfaces as they link their current crisis directly to their past crime against Joseph. Joseph, listening through an interpreter, hears their raw remorse and Reuben's defensive reminder. The emotional reality breaks through his tough exterior, forcing him to step out of the room to weep before returning to detain Simeon."
+    },
+    {
+      "id": 122,
+      "level": 1,
+      "verse_reference": "Genesis 43:1-5",
+      "question": "Why did Judah tell his father Jacob that they could not return to Egypt to buy more food without bringing Benjamin along?",
+      "correct_answer": "D",
+      "options": {
+        "A": "Because Benjamin was the only one who knew the geography of the Egyptian trail.",
+        "B": "Because the Egyptian governor had ordered Benjamin to work in the state grain silos.",
+        "C": "Because the caravan required an even number of travelers to pass the border checkpoint.",
+        "D": "Because the governor had strictly warned them, 'You will not see my face again unless your brother is with you.'"
+      },
+      "explanation": "Genesis 43:3-5 records Judah explaining the uncompromising terms laid down by the Egyptian vizier. Returning without Benjamin would be completely pointless and highly dangerous."
+    },
+    {
+      "id": 123,
+      "level": 2,
+      "verse_reference": "Genesis 43:8-14",
+      "question": "How does Judah's appeal to Jacob differ from Reuben's earlier offer in Chapter 42, and what does this show about his developing leadership?",
+      "correct_answer": "B",
+      "options": {
+        "A": "Judah offers to sell his own children, while Reuben suggests leaving Simeon to die.",
+        "B": "Reuben foolishly offered the lives of his own two sons, while Judah takes personal responsibility for Benjamin's safety, offering to bear the blame forever if he fails to bring him back.",
+        "C": "Judah suggests fleeing to Edom, while Reuben wants to mount a military assault on Egypt.",
+        "D": "Judah demands that Jacob hand over all his gold to purchase Benjamin's freedom from the family."
+      },
+      "explanation": "Reuben's bizarre offer to let his sons be killed if Benjamin dies was impractical and rejected by Jacob. Judah, demonstrating mature leadership, steps up to guarantee Benjamin’s safety with his own life, forcing Jacob to accept reality and yield to the journey."
+    },
+    {
+      "id": 124,
+      "level": 3,
+      "verse_reference": "Genesis 43:26-34",
+      "question": "During the banquet at Joseph's house, what subtle emotional traps and historical tests does Joseph set for his brothers?",
+      "correct_answer": "A",
+      "options": {
+        "A": "He seats them in exact birth order, which mystifies them, and serves Benjamin a portion five times larger than anyone else to test if they are still driven by favoritism and jealousy.",
+        "B": "He forces them to drink poisoned wine to see if they will defend each other.",
+        "C": "He asks them to sign over their Canaanite land rights in exchange for bread portions.",
+        "D": "He isolates Simeon completely to see if the brothers will abandon him a second time."
+      },
+      "explanation": "Joseph systematically recreates the elements of his childhood trauma. By deliberately favoring Benjamin with a massive five-fold portion, he checks to see if the brothers will erupt in the same jealous rage that ruined his own youth. Their comfortable response reveals a genuine shift in their character."
+    },
+    {
+      "id": 125,
+      "level": 1,
+      "verse_reference": "Genesis 44:1-5",
+      "question": "What item did Joseph secretly command his house steward to hide inside Benjamin's grain sack before the brothers left for Canaan?",
+      "correct_answer": "C",
+      "options": {
+        "A": "A golden crown belonging to Pharaoh's wife",
+        "B": "A detailed layout map of the Egyptian military borders",
+        "C": "His personal silver cup, used for drinking and divination",
+        "D": "Ten heavy blocks of pure Egyptian copper"
+      },
+      "explanation": "Genesis 44:2 states that Joseph commanded his steward to put his silver cup in the mouth of the youngest brother’s sack, along with the silver paid for the grain."
+    },
+    {
+      "id": 126,
+      "level": 2,
+      "verse_reference": "Genesis 44:6-13",
+      "question": "How do the brothers react when Joseph's steward catches up with them, accuses them of theft, and discovers the cup in Benjamin's sack?",
+      "correct_answer": "B",
+      "options": {
+        "A": "They immediately run away, leaving Benjamin behind to face the consequences alone.",
+        "B": "Confident in their innocence, they declare that whoever has it shall die and the rest will be slaves; when it is found in Benjamin's sack, they tear their clothes in grief, reload their donkeys, and return to the city together.",
+        "C": "They attack the steward and try to destroy the silver cup in a local stream.",
+        "D": "They claim that Jacob must have put the cup there as a trick to ruin their reputation."
+      },
+      "explanation": "The brothers' absolute confidence backfires terribly. Instead of abandoning Rachel’s son—as they did twenty years earlier with Joseph—their collective grief (tearing their clothes) and unified return to face the music shows that they now stand together as a family."
+    },
+    {
+      "id": 127,
+      "level": 3,
+      "verse_reference": "Genesis 44:18-34",
+      "question": "Analyze Judah's historic speech before Joseph. How does his desperate offer mark the ultimate turning point of the entire Genesis narrative?",
+      "correct_answer": "A",
+      "options": {
+        "A": "He steps forward, details how losing Benjamin would literally kill their broken father, and offers to take Benjamin's place as a lifelong slave so the boy can return home, completely reversing his past history of selling a brother into slavery.",
+        "B": "He threatens to launch a full-scale war against Egypt using Canaanite mercenary forces.",
+        "C": "He exposes Joseph's identity by recognizing a childhood scar on his shoulder.",
+        "D": "He demands that Pharaoh step in to judge the case under international trade law regulations."
+      },
+      "explanation": "Judah's passionate, self-sacrificial speech is the climax of the family's transformation. The man who once suggested selling Joseph into slavery for quick cash now begs to become a slave himself to save Benjamin and protect his father from unmanageable grief. This complete act of repentance breaks Joseph's test."
+    },
+    {
+      "id": 128,
+      "level": 1,
+      "verse_reference": "Genesis 45:1-4",
+      "question": "What did Joseph do immediately before revealing his true identity to his terrified brothers?",
+      "correct_answer": "D",
+      "options": {
+        "A": "He ordered the royal guards to bind them in heavy iron chains.",
+        "B": "He put on his traditional Hebrew garments and read from a family scroll.",
+        "C": "He demanded a double financial repayment for the silver found in their sacks.",
+        "D": "He wept so loudly that the Egyptians in Pharaoh's household heard him, and he ordered every Egyptian officer to leave the room."
+      },
+      "explanation": "Genesis 45:1-2 shows Joseph completely overwhelmed by emotion after Judah's speech. He clears out all Egyptian witnesses to share this intensely personal, vulnerable moment of family reconciliation in private."
+    },
+    {
+      "id": 129,
+      "level": 2,
+      "verse_reference": "Genesis 45:5-8",
+      "question": "How does Joseph redefine the historical trauma of his betrayal by his brothers from a theological point of view?",
+      "correct_answer": "B",
+      "options": {
+        "A": "He explains that their sin was actually a direct command from an angel of the Lord.",
+        "B": "He tells them not to be distressed or angry with themselves, because it was not they who sent him to Egypt, but God, who sent him ahead to preserve life and save a remnant on earth.",
+        "C": "He states that his suffering was completely irrelevant compared to his financial promotion.",
+        "D": "He argues that God was punishing Jacob for his past deceptions in Mesopotamia."
+      },
+      "explanation": "Joseph looks past human malice to see sovereign orchestration. Without minimizing the reality of their past actions, he recognizes that God used their evil choices as a vehicle to place him exactly where he could save the region from starvation, emphasizing that God's preservation plan overrides human brokenness."
+    },
+    {
+      "id": 130,
+      "level": 3,
+      "verse_reference": "Genesis 45:16-28",
+      "question": "How do Pharaoh and Jacob react to the news that Joseph is alive, and what does this reveal about their respective worldviews?",
+      "correct_answer": "A",
+      "options": {
+        "A": "Pharaoh generously offers the best of Egypt (Goshen) and wagons for transport; Jacob is initially stunned and disbelieves it, but revives when he sees the Egyptian wagons, declaring he must see Joseph before he dies.",
+        "B": "Pharaoh fears a Hebrew political takeover, while Jacob immediately suspects another complex trap.",
+        "C": "Pharaoh demands that Joseph cut ties with his family, while Jacob refuses to leave Canaan under any circumstances.",
+        "D": "Both leaders express complete indifference, viewing the news as an ordinary political event."
+      },
+      "explanation": "Pharaoh’s warm response shows the immense respect Joseph commanded in Egypt, leading to an official state invitation. Meanwhile, Jacob's emotional journey moves from numb disbelief to deep revival when he sees physical proof (the wagons), marking the restoration of his spirit after decades of deep mourning."
+    },
+    {
+      "id": 131,
+      "level": 1,
+      "verse_reference": "Genesis 46:1-4",
+      "question": "Where did God appear to Israel in a vision of the night as he migrated toward Egypt, and what reassurance did He provide?",
+      "correct_answer": "C",
+      "options": {
+        "A": "At Bethel; God told him to turn around and return to the oak of Shechem.",
+        "B": "At Dothan; God warned him that Egypt would enslave his family layout immediately.",
+        "C": "At Beersheba; God told him not to be afraid to go down to Egypt, promising to make him a great nation there and to bring him back up again.",
+        "D": "At Peniel; God wrestled with him again to change his name back to Jacob permanently."
+      },
+      "explanation": "Genesis 46:1-4 records Israel stopping at Beersheba, the border station of the promised land, to offer sacrifices. God reassures him that this migration down to Egypt is directly aligned with the overarching covenant plan, promising His presence and ultimate return."
+    },
+    {
+      "id": 132,
+      "level": 2,
+      "verse_reference": "Genesis 46:28-34",
+      "question": "Why does Joseph instruct his family to explicitly tell Pharaoh that they are shepherds and keepers of livestock?",
+      "correct_answer": "B",
+      "options": {
+        "A": "Because shepherds were highly revered as royalty within Egyptian cultural systems.",
+        "B": "Because shepherds are detestable to the Egyptians, which practically guarantees the family will be isolated in the fertile region of Goshen, keeping them safe from cultural assimilation.",
+        "C": "Because Joseph wants his brothers to join the Egyptian frontline military cavalry.",
+        "D": "Because Pharaoh was looking for skilled builders to design a new temple layout for his cattle."
+      },
+      "explanation": "Joseph uses a cultural taboo as a brilliant strategic move. Since Egyptians despised nomadic shepherds, stating their profession ensured they would be granted the land of Goshen. This kept the covenant family together in a fertile zone, safe from merging with Egyptian society."
+    },
+    {
+      "id": 133,
+      "level": 3,
+      "verse_reference": "Genesis 46:5-27",
+      "question": "What is the primary significance of tracking the comprehensive list of seventy names migrating into Egypt at this specific point in the book?",
+      "correct_answer": "D",
+      "options": {
+        "A": "To prove that the family had completely abandoned their distinct tribal identities.",
+        "B": "To document the exact financial payroll records of Joseph's private business estate.",
+        "C": "To establish a military registry for an upcoming invasion of the Sinai peninsula.",
+        "D": "To show that the family entered Egypt as a complete, unified core unit of seventy people, setting up the fulfillment of God's promise to turn this specific group into a massive nation."
+      },
+      "explanation": "The number seventy symbolizes completion and wholeness in biblical thought. By listing the entire family unit, the narrative establishes a clear baseline. It highlights that the great nation of Israel grew from a small, vulnerable family that went down into Egypt during a crisis."
+    },
+    {
+      "id": 134,
+      "level": 1,
+      "verse_reference": "Genesis 47:7-10",
+      "question": "How does Jacob describe his lifespan when presented before Pharaoh, and what surprising action does he perform during the audience?",
+      "correct_answer": "A",
+      "options": {
+        "A": "He states his years have been few and difficult, not matching the lifespans of his ancestors; and he blesses Pharaoh twice.",
+        "B": "He claims his life has been an unbroken journey of pure joy; and he asks Pharaoh for money.",
+        "C": "He refuses to speak to Pharaoh directly, communicating only through a professional scribe.",
+        "D": "He boasts about his great military victories over the kings of the East."
+      },
+      "explanation": "Genesis 47:9 records Jacob reflecting honestly on his hard life of wandering, conflict, and grief. In an inversion of worldly power, Jacob, a broke old wanderer, twice bestows a blessing upon Pharaoh, the most powerful ruler on earth."
+    },
+    {
+      "id": 135,
+      "level": 2,
+      "verse_reference": "Genesis 47:13-26",
+      "question": "Describe the economic process by which Joseph systematically brings all Egyptian money, livestock, land, and people under Pharaoh's direct ownership during the famine.",
+      "correct_answer": "C",
+      "options": {
+        "A": "He uses military force to seize all private properties without compensation.",
+        "B": "He prints paper money to inflate the local currency system, wiping out private savings.",
+        "C": "As money runs out, he trades grain for livestock, then for land, and finally accepts the citizens as state servants, implementing a permanent twenty percent agricultural tax.",
+        "D": "He cancels all national food distribution programs, forcing citizens to flee to Babylon."
+      },
+      "explanation": "Joseph executes a massive economic centralization program to save the population. In exchange for food, the Egyptians voluntarily surrender their capital, livestock, and real estate to the crown, turning Egypt into a state-owned economy with a uniform twenty percent agrarian tax system, excluding temple lands."
+    },
+    {
+      "id": 136,
+      "level": 3,
+      "verse_reference": "Genesis 47:27-31",
+      "question": "As Jacob approaches death, what solemn oath does he demand from Joseph, and why is this specific requirement so important to him?",
+      "correct_answer": "B",
+      "options": {
+        "A": "He demands that Joseph build a giant stone pyramid in the center of Memphis.",
+        "B": "He makes Joseph swear to put his hand under his thigh and promise not to bury him in Egypt, but to carry his body back to be buried in the family cave of Machpelah in Canaan.",
+        "C": "He requires Joseph to hand over his prime minister post to Judah immediately.",
+        "D": "He makes him swear to launch an immediate military attack on the local Hittite tribes."
+      },
+      "explanation": "Jacob's insistence on being buried in Canaan is an expression of his faith in God's covenant promise. Even though he is dying in a comfortable exile in Egypt, he refuses to let his final resting place be there, anchoring his family’s future and hope to the land God promised to Abraham."
+    },
+    {
+      "id": 137,
+      "level": 1,
+      "verse_reference": "Genesis 48:1-5",
+      "question": "What radical legal adjustment does Jacob make regarding Joseph’s two sons, Ephraim and Manasseh, when blessing them?",
+      "correct_answer": "D",
+      "options": {
+        "A": "He banishes them from the family line due to their Egyptian mother's lineage.",
+        "B": "He commands that they be raised as priests in the temple layout of Heliopolis.",
+        "C": "He assigns them a shared single portion to be managed exclusively by Reuben.",
+        "D": "He adopts them as his own direct sons, putting them on equal legal footing with Reuben and Simeon, effectively granting Joseph a double inheritance portion."
+      },
+      "explanation": "Genesis 48:5 records Jacob claiming Ephraim and Manasseh as his own. This elevates Joseph’s sons to full tribal status within Israel, which explains how Joseph received the double portion of the birthright without creating a single tribe named after himself."
+    },
+    {
+      "id": 138,
+      "level": 2,
+      "verse_reference": "Genesis 48:13-20",
+      "question": "How does Jacob manipulate his physical posture when blessing Joseph's sons, and how does this mirror his own history?",
+      "correct_answer": "A",
+      "options": {
+        "A": "He deliberately crosses his hands, placing his right hand on the younger Ephraim and his left hand on the older Manasseh, intentionally flipping the traditional birthright blessing.",
+        "B": "He refuses to touch either child, offering a verbal prayer from across the room instead.",
+        "C": "He places both hands on Manasseh, reinforcing standard ancient birth order traditions.",
+        "D": "He demands that Joseph choose which son should receive the primary blessing layout."
+      },
+      "explanation": "Despite Joseph's attempt to correct his blind father's hands, Jacob insists on crossing them, choosing the younger son over the older. This layout echoes how God chose Jacob over Esau, showing that divine election operates independently of human tradition."
+    },
+    {
+      "id": 139,
+      "level": 3,
+      "verse_reference": "Genesis 48:15-16",
+      "question": "Analyze the theological depth of Jacob's blessing invocation, where he describes God as a shepherd and a redeemer.",
+      "correct_answer": "C",
+      "options": {
+        "A": "It shows that Jacob viewed God as a distant, cosmic force that rarely steps into human history.",
+        "B": "It marks a total rejection of the promises made to his grandfather Abraham.",
+        "C": "It summarizes his life journey, identifying God as the one who shepherded him through all his wandering and redeemed him from every adversity, passing this personal faith down to the next generation.",
+        "D": "It proves that Jacob believed financial prosperity was the only measure of divine redemption."
+      },
+      "explanation": "Jacob’s prayer introduces the profound concept of God as a personal shepherd who cares for His people throughout their life, and a redeemer who delivers them from danger. It reflects a deep transformation from the young schemer into an old man who trusts completely in God's pastoral care."
+    },
+    {
+      "id": 140,
+      "level": 1,
+      "verse_reference": "Genesis 49:3-4",
+      "question": "Why did Reuben lose his traditional preeminence and rights as the firstborn son during Jacob's deathbed blessing?",
+      "correct_answer": "B",
+      "options": {
+        "A": "Because he refused to join the caravan down to Egypt during the famine crisis.",
+        "B": "Because he was turbulent as water and went up onto his father's bed, defiling it by sleeping with Jacob's concubine Bilhah.",
+        "C": "Because he suggested selling Joseph to the Ishmaelite merchants at Dothan.",
+        "D": "Because he lacked the physical strength needed to lead the family tribes into battle."
+      },
+      "explanation": "Genesis 49:4 references Reuben’s ancient violation of his father's household (Genesis 35:22). His lack of moral restraint cost him the leadership and double inheritance normally reserved for the firstborn."
+    },
+    {
+      "id": 141,
+      "level": 2,
+      "verse_reference": "Genesis 49:8-12",
+      "question": "What extraordinary political and messianic authority is granted to Judah in Jacob's final poetic blessing?",
+      "correct_answer": "A",
+      "options": {
+        "A": "He is described as a lion's cub, and Jacob declares that the scepter will not depart from Judah until He to whom it belongs shall come, demanding obedience from all nations.",
+        "B": "He is appointed as the financial accountant for the future tabernacle systems.",
+        "C": "He is told that his tribe will remain small and hidden along the Mediterranean coast.",
+        "D": "He is given an exclusively prophetic role with zero political authority over the other tribes."
+      },
+      "explanation": "Passing over the older brothers (Reuben, Simeon, Levi), the royal leadership flows to Judah due to his sacrificial character development. The 'scepter' prophecy establishes the tribe of Judah as the royal line of Israel, pointing directly to King David and ultimately to the messianic King."
+    },
+    {
+      "id": 142,
+      "level": 3,
+      "verse_reference": "Genesis 49:1-28",
+      "question": "How does Jacob's final assembly with his twelve sons function as both a retrospective judgment and a future structural map for Israel?",
+      "correct_answer": "C",
+      "options": {
+        "A": "It completely erases their individual histories, creating an identical destiny for all twelve tribes.",
+        "B": "It functions as a legal will that divides physical Egyptian properties among the siblings.",
+        "C": "It reviews their moral conduct in the past to determine their future structural positions, transforming a fractured family into a prophetic blueprint for the twelve tribes of Israel.",
+        "D": "It proves that Jacob favored Joseph's sons so much that he cursed the other ten tribes."
+      },
+      "explanation": "This chapter marks the transition from family history to national history. Jacob's words are not just deathbed wishes; they are prophetic assessments. Character flaws (like Simeon and Levi’s violence) lead to tribal dispersion, while growth (like Judah's) leads to leadership, laying out the geography and destiny of Israel."
+    },
+    {
+      "id": 143,
+      "level": 1,
+      "verse_reference": "Genesis 50:1-3, 12-14",
+      "question": "How did Joseph honor his deceased father Jacob according to both Egyptian and Hebrew traditions, and where was Jacob ultimately buried?",
+      "correct_answer": "B",
+      "options": {
+        "A": "He buried him in a secret tomb near Memphis after forty days of fasting.",
+        "B": "He commanded physicians to embalm him (taking forty days) and led a massive state funeral procession to Canaan, burying him in the cave of Machpelah.",
+        "C": "He cremated his remains and scattered them across the Red Sea highway.",
+        "D": "He buried him directly in Goshen without any formal mourning period or procession."
+      },
+      "explanation": "Genesis 50 records Joseph utilizing Egyptian mummification out of respect, followed by a massive mourning period of seventy days. He then leads a large caravan across the Jordan to fulfill his oath, placing Jacob in the family tomb purchased by Abraham."
+    },
+    {
+      "id": 144,
+      "level": 2,
+      "verse_reference": "Genesis 50:15-21",
+      "question": "What fear grips the brothers after Jacob's death, and what classic theological statement does Joseph make to reassure them?",
+      "correct_answer": "D",
+      "options": {
+        "A": "They fear Pharaoh will deport them; Joseph promises to bribe the royal court.",
+        "B": "They worry about an economic collapse; Joseph offers them additional food management jobs.",
+        "C": "They assume Benjamin will seize their cattle; Joseph promises to divide the property evenly.",
+        "D": "They fear Joseph will finally seek revenge for their past crime; Joseph tells them, 'You intended to harm me, but God intended it for good to accomplish what is now being done, the saving of many lives.'"
+      },
+      "explanation": "The brothers worry that Joseph’s kindness was just a show for Jacob's benefit. Joseph breaks down at their fear and delivers a profound summary of biblical providence: human evil is real and accountable ('you intended harm'), but God’s sovereign grace handles and redirects those actions to achieve His good purposes ('God intended it for good')."
+    },
+    {
+      "id": 145,
+      "level": 3,
+      "verse_reference": "Genesis 50:22-26",
+      "question": "What are Joseph's final words before his death, and how does his specific command regarding his bones serve as a bridge to the Book of Exodus?",
+      "correct_answer": "A",
+      "options": {
+        "A": "He declares, 'God will surely come to your aid,' and makes them swear to carry his bones up from Egypt when they leave for the promised land, turning his unburied coffin into a silent monument of hope.",
+        "B": "He orders them to build a permanent temple layout for him in the center of Goshen.",
+        "C": "He curses the land of Egypt and demands that they flee to Babylon immediately during the night.",
+        "D": "He instructs his sons to fully assimilate into Egyptian political structures and forget Canaan."
+      },
+      "explanation": "Joseph dies in exile, but his eyes are fixed on the promise. By commanding that his bones remain unburied until Israel departs for Canaan, his coffin serves as a physical reminder for generations that Egypt is not their permanent home, setting the stage for the Exodus."
+    }
+  ]
+}
+
