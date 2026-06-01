@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.db import models
 from django.core.mail import send_mail
 from typing import Optional, Tuple, Dict, Any
+import logging
 import secrets
 from datetime import timedelta
 import requests
@@ -17,6 +18,8 @@ from rest_framework_simplejwt.exceptions import TokenError
 
 from ..models import User, UserSession
 
+
+logger = logging.getLogger(__name__)
 
 class AuthService:
     """Authentication service for user management"""
@@ -34,12 +37,18 @@ class AuthService:
     @staticmethod
     def send_mail_message(subject: str, message: str, recipient: str) -> Tuple[bool, Optional[str]]:
         """Send a simple email message."""
+        logger.info("Sending email using backend %s", settings.EMAIL_BACKEND)
+        logger.info("Email host=%s port=%s use_tls=%s use_ssl=%s", settings.EMAIL_HOST, settings.EMAIL_PORT, settings.EMAIL_USE_TLS, settings.EMAIL_USE_SSL)
+        logger.info("Email from=%s recipient=%s", settings.DEFAULT_FROM_EMAIL, recipient)
         if settings.EMAIL_BACKEND == 'django.core.mail.backends.console.EmailBackend' and not settings.DEBUG:
+            logger.error("Console email backend active in production")
             return False, 'Email backend is not configured on production'
         try:
             send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [recipient], fail_silently=False)
+            logger.info("Email sent successfully to %s", recipient)
             return True, None
         except Exception as e:
+            logger.error("Email send failed: %s", str(e), exc_info=True)
             return False, str(e)
     
     def send_email_verification(self, user: User) -> Tuple[Optional[str], Optional[str]]:
