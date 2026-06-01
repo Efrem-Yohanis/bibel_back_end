@@ -21,12 +21,18 @@ def create_admin_user(username='admin', email='admin@example.com', password='Str
     # Check if user already exists
     if User.objects.filter(username=username).exists():
         user = User.objects.get(username=username)
+        updated = False
         if not user.is_admin:
             user.is_admin = True
+            updated = True
+        if not user.is_active:
+            user.is_active = True
+            updated = True
+        if updated:
             user.save()
-            print(f"✓ Updated '{username}' to admin status")
+            print(f"✓ Updated '{username}' to active admin status")
         else:
-            print(f"✓ Admin user '{username}' already exists")
+            print(f"✓ Admin user '{username}' already exists and is active")
         return True
     
     # Create new admin user

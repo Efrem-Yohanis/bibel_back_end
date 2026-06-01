@@ -21,7 +21,14 @@ class BearerAuthentication(authentication.BaseAuthentication):
             # Also check the headers dictionary
             auth_header = request.headers.get('Authorization', '')
             print(f"Auth header from headers: {auth_header[:50] if auth_header else 'None'}")
-        
+
+        if not auth_header:
+            # Fallback: support JWT stored in cookies (access-token)
+            cookie_token = request.COOKIES.get('access-token') or request.COOKIES.get('access_token')
+            if cookie_token:
+                auth_header = f'Bearer {cookie_token}'
+                print(f"Auth header from cookie: {'*' * 8}... (from access-token cookie)")
+
         if not auth_header:
             print("No authorization header found")
             return None

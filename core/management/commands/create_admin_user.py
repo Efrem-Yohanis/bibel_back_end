@@ -19,15 +19,22 @@ class Command(BaseCommand):
 
         # Check if user already exists
         if User.objects.filter(username=username).exists():
-            self.stdout.write(
-                self.style.WARNING(f'Admin user "{username}" already exists')
-            )
             user = User.objects.get(username=username)
+            updated = False
             if not user.is_admin:
                 user.is_admin = True
+                updated = True
+            if not user.is_active:
+                user.is_active = True
+                updated = True
+            if updated:
                 user.save()
                 self.stdout.write(
-                    self.style.SUCCESS(f'Updated "{username}" to admin')
+                    self.style.SUCCESS(f'Updated "{username}" to active admin status')
+                )
+            else:
+                self.stdout.write(
+                    self.style.WARNING(f'Admin user "{username}" already exists and is active')
                 )
             return
 

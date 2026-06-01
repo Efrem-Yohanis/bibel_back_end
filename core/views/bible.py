@@ -566,7 +566,7 @@ class UpdateAudioProgressView(APIView):
         """Update audio progress"""
         try:
             chapter_number = request.data.get('chapter_number')
-            if not chapter_number:
+            if chapter_number is None:
                 return Response({
                     'status': 'error',
                     'message': 'chapter_number is required'
@@ -574,13 +574,15 @@ class UpdateAudioProgressView(APIView):
             
             current_position = request.data.get('current_position')
             completed_chapter = request.data.get('completed_chapter')
+            language_code = request.query_params.get('language', 'en')
             
             result = bible_service.update_audio_progress(
                 user_id=request.user.id,
                 book_id=book_id,
                 chapter_number=chapter_number,
                 current_position=current_position,
-                completed_chapter=completed_chapter
+                completed_chapter=completed_chapter,
+                language_code=language_code
             )
             
             if not result.get('success'):

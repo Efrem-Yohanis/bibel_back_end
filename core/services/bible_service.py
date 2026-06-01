@@ -365,7 +365,8 @@ class BibleService:
             }
     
     def update_audio_progress(self, user_id: int, book_id: int, chapter_number: int, 
-                              current_position: int = None, completed_chapter: int = None) -> Dict:
+                              current_position: int = None, completed_chapter: int = None,
+                              language_code: str = 'en') -> Dict:
         """Update user's audio progress for a book"""
         try:
             progress, created = UserBookProgress.objects.get_or_create(
