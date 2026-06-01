@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     # Third party apps
     'rest_framework',
     'rest_framework.authtoken',
-    'drf_yasg',
     'corsheaders',
     'whitenoise.runserver_nostatic',
     

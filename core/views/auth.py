@@ -9,6 +9,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
+import logging
+
 from ..services.auth_service import AuthService
 from ..models import User
 from ..serializers.auth_serializers import (
@@ -18,6 +20,7 @@ from ..serializers.auth_serializers import (
 )
 
 auth_service = AuthService()
+logger = logging.getLogger(__name__)
 
 
 class RegisterView(APIView):
@@ -55,25 +58,15 @@ class RegisterView(APIView):
                 'message': error
             }, status=status.HTTP_400_BAD_REQUEST)
 
-        verification_message = 'User registered successfully.'
-        status_code = status.HTTP_201_CREATED
-        if user.email:
-            _, email_error = auth_service.send_email_verification(user)
-            if email_error:
-                # Registration succeeded but email failed - return 201 with warning
-                verification_message = f'User registered successfully. Verification email could not be sent: {email_error}'
-            else:
-                verification_message = 'User registered successfully. Verification email sent.'
-        
         return Response({
             'status': 'success',
-            'message': verification_message,
+            'message': 'User registered successfully.',
             'data': {
                 'id': user.id,
                 'username': user.username,
                 'email': user.email
             }
-        }, status=status_code)
+        }, status=status.HTTP_201_CREATED)
 
 
 class LoginView(APIView):
@@ -176,7 +169,7 @@ class ForgotPasswordView(APIView):
             if error == 'User with that email does not exist':
                 return Response({
                     'status': 'success',
-                    'message': 'If an account with that email exists, a password reset email has been sent.'
+                    'message': 'If an account with that email exists, a password reset request has been received.'
                 }, status=status.HTTP_200_OK)
             if error == 'Password reset is only available for non-Google accounts':
                 return Response({
@@ -185,12 +178,12 @@ class ForgotPasswordView(APIView):
                 }, status=status.HTTP_400_BAD_REQUEST)
             return Response({
                 'status': 'error',
-                'message': f'Failed to send password reset email: {error}'
+                'message': 'Password reset request failed'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
         return Response({
             'status': 'success',
-            'message': 'Password reset email sent'
+            'message': 'If an account with that email exists, a password reset request has been received.'
         }, status=status.HTTP_200_OK)
 
 
@@ -295,24 +288,11 @@ class SendVerificationCodeView(APIView):
                 'message': 'Email is required'
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            return Response({
-                'status': 'error',
-                'message': 'User with that email does not exist'
-            }, status=status.HTTP_404_NOT_FOUND)
-        
-        _, email_error = auth_service.send_email_verification(user)
-        if email_error:
-            return Response({
-                'status': 'error',
-                'message': f"Failed to send verification email: {email_error}"
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+        # No email verification is required in this app flow.
+        # Respond success so the frontend can continue without email delivery.
         return Response({
             'status': 'success',
-            'message': 'Verification email sent successfully'
+            'message': 'Verification is not required. Please continue.'
         }, status=status.HTTP_200_OK)
 
 
