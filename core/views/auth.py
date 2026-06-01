@@ -55,14 +55,14 @@ class RegisterView(APIView):
             }, status=status.HTTP_400_BAD_REQUEST)
 
         verification_message = 'User registered successfully.'
+        status_code = status.HTTP_201_CREATED
         if user.email:
             _, email_error = auth_service.send_email_verification(user)
             if email_error:
-                return Response({
-                    'status': 'error',
-                    'message': f"User created but verification email failed: {email_error}"
-                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            verification_message = 'User registered successfully. Verification email sent.'
+                # Registration succeeded but email failed - return 201 with warning
+                verification_message = f'User registered successfully. Verification email could not be sent: {email_error}'
+            else:
+                verification_message = 'User registered successfully. Verification email sent.'
         
         return Response({
             'status': 'success',
@@ -72,7 +72,7 @@ class RegisterView(APIView):
                 'username': user.username,
                 'email': user.email
             }
-        }, status=status.HTTP_201_CREATED)
+        }, status=status_code)
 
 
 class LoginView(APIView):
