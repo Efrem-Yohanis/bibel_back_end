@@ -391,6 +391,19 @@ class AdminUsersView(APIView):
                 'offset': offset
             }
         }, status=status.HTTP_200_OK)
+
+
+class AdminUsersStatsView(APIView):
+    """Admin user statistics summary"""
+    permission_classes = [IsAuthenticated]
+    
+    def check_admin(self, request):
+        if not request.user.is_admin:
+            return Response({
+                'success': False,
+                'message': 'Admin access required'
+            }, status=status.HTTP_403_FORBIDDEN)
+        return None
     
     @swagger_auto_schema(
         operation_description="Get user statistics summary",

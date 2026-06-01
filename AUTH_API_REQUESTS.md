@@ -44,7 +44,30 @@
 ```json
 {
   "status": "success",
-  "message": "If an account with that email exists, a password reset request has been received."
+  "message": "Password reset token generated. Use this token to reset your password.",
+  "reset_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+## Reset password
+
+**Endpoint**
+- `POST /api/auth/reset-password`
+
+**Request**
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "new_password": "NewStrongPass123!",
+  "confirm_password": "NewStrongPass123!"
+}
+```
+
+**Response**
+```json
+{
+  "status": "success",
+  "message": "Password reset successfully"
 }
 ```
 
@@ -80,7 +103,7 @@
 
 ## Notes
 
-- Email verification is not required for registration.
-- The frontend should not call `verify-email` or `send-verification-code`.
-- Login should not be blocked because of email verification.
-- `forgot-password` should return success even if the email is not registered.
+- Email verification is **not used** in this API.
+- There are no `verify-email` or `send-verification-code` endpoints.
+- Users are automatically active after registration; no verification step needed.
+- Login is immediately available after registration.

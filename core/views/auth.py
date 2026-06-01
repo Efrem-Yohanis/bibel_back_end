@@ -161,7 +161,7 @@ class ForgotPasswordView(APIView):
                 'errors': serializer.errors
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        success, error = auth_service.send_password_reset_email(
+        reset_token, error = auth_service.send_password_reset_email(
             email=serializer.validated_data['email']
         )
         
@@ -169,7 +169,7 @@ class ForgotPasswordView(APIView):
             if error == 'User with that email does not exist':
                 return Response({
                     'status': 'success',
-                    'message': 'If an account with that email exists, a password reset request has been received.'
+                    'message': 'If an account with that email exists, a password reset link has been sent.'
                 }, status=status.HTTP_200_OK)
             if error == 'Password reset is only available for non-Google accounts':
                 return Response({
@@ -183,7 +183,8 @@ class ForgotPasswordView(APIView):
         
         return Response({
             'status': 'success',
-            'message': 'If an account with that email exists, a password reset request has been received.'
+            'message': 'Password reset token generated. Use this token to reset your password.',
+            'reset_token': reset_token
         }, status=status.HTTP_200_OK)
 
 

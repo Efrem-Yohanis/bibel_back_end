@@ -6,7 +6,7 @@ from django.urls import path
 from ..views.admin import (
     AdminBooksView, AdminBookDetailView,
     AdminLanguagesView, AdminLanguageDetailView,
-    AdminUsersView, AdminUserDetailView, AdminUserAdminView, AdminUserProgressView,
+    AdminUsersView, AdminUsersStatsView, AdminUserDetailView, AdminUserAdminView, AdminUserProgressView,
     AdminBibleImportView, AdminQuestionsImportView
 )
 
@@ -21,10 +21,10 @@ urlpatterns = [
     
     # User management
     path('users', AdminUsersView.as_view(), name='admin-users'),
+    path('users/stats', AdminUsersStatsView.as_view(), name='admin-users-stats'),
     path('users/<int:user_id>', AdminUserDetailView.as_view(), name='admin-user-detail'),
     path('users/<int:user_id>/admin', AdminUserAdminView.as_view(), name='admin-user-admin'),
     path('users/<int:user_id>/progress', AdminUserProgressView.as_view(), name='admin-user-progress'),
-    path('users/stats', AdminUsersView.as_view(), name='admin-users-stats'),  # Uses same view for stats
     
     # Import management
     path('import/bible', AdminBibleImportView.as_view(), name='admin-import-bible'),

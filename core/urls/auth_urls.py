@@ -2,7 +2,7 @@
 from django.urls import path
 from ..views.auth import (
     RegisterView, LoginView, LogoutView,
-    ForgotPasswordView, ResetPasswordView, VerifyEmailView, SendVerificationCodeView
+    ForgotPasswordView, ResetPasswordView
 )
 from ..views.google_auth_views import GoogleLogin, GoogleAuthRedirectView, GoogleAuthCallbackView
 
@@ -11,8 +11,6 @@ urlpatterns = [
     path('register', RegisterView.as_view(), name='register'),
     path('login', LoginView.as_view(), name='login'),
     path('logout', LogoutView.as_view(), name='logout'),
-    path('verify-email', VerifyEmailView.as_view(), name='verify-email'),
-    path('send-verification-code', SendVerificationCodeView.as_view(), name='send-verification-code'),
     
     # Password Management
     path('forgot-password', ForgotPasswordView.as_view(), name='forgot-password'),

@@ -107,20 +107,20 @@ class AuthService:
         except Exception as e:
             return False, f"Email verification failed: {str(e)}"
     
-    def send_password_reset_email(self, email: str) -> Tuple[bool, Optional[str]]:
-        """Generate a password reset token without sending email."""
+    def send_password_reset_email(self, email: str) -> Tuple[Optional[str], Optional[str]]:
+        """Generate a password reset token without sending email. Returns token or error."""
         try:
             user = User.objects.get(email=email)
             if user.auth_provider == 'google':
-                return False, "Password reset is only available for non-Google accounts"
+                return None, "Password reset is only available for non-Google accounts"
             reset_token, error = self.set_password_reset_token(email)
             if error:
-                return False, error
-            return True, None
+                return None, error
+            return reset_token, None
         except User.DoesNotExist:
-            return False, "User with that email does not exist"
+            return None, "User with that email does not exist"
         except Exception as e:
-            return False, f"Password reset request failed: {str(e)}"
+            return None, f"Password reset request failed: {str(e)}"
     
     def register_user(self, username: str, password: str, email: str = None) -> Tuple[Optional[User], Optional[str]]:
         """Register a new user"""
