@@ -10,6 +10,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 from ..services.auth_service import AuthService
+from ..models import User
 from ..serializers.auth_serializers import (
     RegisterSerializer, LoginSerializer, UserProfileSerializer,
     ChangePasswordSerializer, ForgotPasswordSerializer, ResetPasswordSerializer,
@@ -172,10 +173,20 @@ class ForgotPasswordView(APIView):
         )
         
         if error:
+            if error == 'User with that email does not exist':
+                return Response({
+                    'status': 'success',
+                    'message': 'If an account with that email exists, a password reset email has been sent.'
+                }, status=status.HTTP_200_OK)
+            if error == 'Password reset is only available for non-Google accounts':
+                return Response({
+                    'status': 'error',
+                    'message': error
+                }, status=status.HTTP_400_BAD_REQUEST)
             return Response({
                 'status': 'error',
-                'message': error
-            }, status=status.HTTP_400_BAD_REQUEST)
+                'message': f'Failed to send password reset email: {error}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
         return Response({
             'status': 'success',
