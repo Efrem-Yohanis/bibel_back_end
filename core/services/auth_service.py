@@ -34,6 +34,8 @@ class AuthService:
     @staticmethod
     def send_mail_message(subject: str, message: str, recipient: str) -> Tuple[bool, Optional[str]]:
         """Send a simple email message."""
+        if settings.EMAIL_BACKEND == 'django.core.mail.backends.console.EmailBackend' and not settings.DEBUG:
+            return False, 'Email backend is not configured on production'
         try:
             send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [recipient], fail_silently=False)
             return True, None
