@@ -2,8 +2,8 @@ import requests
 
 url = "https://bibel-quiz.onrender.com/api/auth/register"
 payload = {
-    "username": "efrem_test_user_003",
-    "email": "icraft.efrem1@gmail.com",
+    "username": "efrem_test_user_09",
+    "email": "efremyohanis116@gmail.com",
     "password": "StrongPass123!",
     "confirm_password": "StrongPass123!"
 }
@@ -14,6 +14,3 @@ print("Body:", response.text)
 
 
 
-EMAIL_HOST_USER=your-email@gmail.com
-EMAIL_HOST_PASSWORD=your-gmail-app-password
-DEFAULT_FROM_EMAIL=your-email@gmail.com
