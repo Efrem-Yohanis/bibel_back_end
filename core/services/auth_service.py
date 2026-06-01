@@ -5,7 +5,7 @@ Auth Service - Handles user authentication, registration, session management, an
 from django.contrib.auth.hashers import make_password, check_password
 from django.utils import timezone
 from django.db import models
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage, get_connection
 from typing import Optional, Tuple, Dict, Any
 import logging
 import secrets
@@ -38,13 +38,24 @@ class AuthService:
     def send_mail_message(subject: str, message: str, recipient: str) -> Tuple[bool, Optional[str]]:
         """Send a simple email message."""
         logger.info("Sending email using backend %s", settings.EMAIL_BACKEND)
-        logger.info("Email host=%s port=%s use_tls=%s use_ssl=%s", settings.EMAIL_HOST, settings.EMAIL_PORT, settings.EMAIL_USE_TLS, settings.EMAIL_USE_SSL)
+        logger.info("Email host=%s port=%s use_tls=%s use_ssl=%s timeout=%s", settings.EMAIL_HOST, settings.EMAIL_PORT, settings.EMAIL_USE_TLS, settings.EMAIL_USE_SSL, settings.EMAIL_TIMEOUT)
         logger.info("Email from=%s recipient=%s", settings.DEFAULT_FROM_EMAIL, recipient)
         if settings.EMAIL_BACKEND == 'django.core.mail.backends.console.EmailBackend' and not settings.DEBUG:
             logger.error("Console email backend active in production")
             return False, 'Email backend is not configured on production'
         try:
-            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [recipient], fail_silently=False)
+            connection = get_connection(
+                backend=settings.EMAIL_BACKEND,
+                host=settings.EMAIL_HOST,
+                port=settings.EMAIL_PORT,
+                username=settings.EMAIL_HOST_USER,
+                password=settings.EMAIL_HOST_PASSWORD,
+                use_tls=settings.EMAIL_USE_TLS,
+                use_ssl=settings.EMAIL_USE_SSL,
+                timeout=settings.EMAIL_TIMEOUT,
+            )
+            email = EmailMessage(subject, message, settings.DEFAULT_FROM_EMAIL, [recipient], connection=connection)
+            email.send(fail_silently=False)
             logger.info("Email sent successfully to %s", recipient)
             return True, None
         except Exception as e:
