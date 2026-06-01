@@ -107,6 +107,7 @@ urlpatterns = [
     path('api/bible/', include('core.urls.bible_urls')),
     path('api/auth/', include('core.urls.auth_urls')),  # This now includes Google OAuth
     path('api/user/', include('core.urls.user_urls')),
+    path('api/users/', include('core.urls.user_urls')),  # Alias for /api/user/
     path('api/quiz/', include('core.urls.quiz_urls')),
     path('api/admin/', include('core.urls.admin_urls')),
 ]

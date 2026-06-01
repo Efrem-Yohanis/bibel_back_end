@@ -46,12 +46,14 @@ urlpatterns = [
     
     # GET /api/user/statistics - Aggregated user statistics
     path('statistics', UserStatisticsView.as_view(), name='user-statistics'),
+    path('stats', UserStatisticsView.as_view(), name='user-stats-alias'),
     
     # GET /api/user/quiz-history - User's quiz history
     path('quiz-history', QuizHistoryView.as_view(), name='user-quiz-history'),
     
     # GET /api/user/in-progress - In-progress quizzes
     path('in-progress', InProgressQuizzesView.as_view(), name='user-in-progress'),
+    path('in-progress-quizzes', InProgressQuizzesView.as_view(), name='user-in-progress-quizzes-alias'),
     
     # ==================== QUIZ ACTIONS ====================
     # POST /api/user/quiz/start - Start a new quiz

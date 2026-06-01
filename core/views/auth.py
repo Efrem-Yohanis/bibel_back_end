@@ -255,6 +255,56 @@ class VerifyEmailView(APIView):
         }, status=status.HTTP_200_OK)
 
 
+class SendVerificationCodeView(APIView):
+    """Resend email verification code to user"""
+    permission_classes = [AllowAny]
+    
+    @swagger_auto_schema(
+        operation_description="Resend verification email to user",
+        operation_summary="Resend Verification Email",
+        tags=['Authentication'],
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'email': openapi.Schema(type=openapi.TYPE_STRING, description='User email'),
+            },
+            required=['email']
+        ),
+        responses={
+            200: 'Verification email sent',
+            404: 'User not found',
+            500: 'Email send failed'
+        }
+    )
+    def post(self, request):
+        email = request.data.get('email')
+        if not email:
+            return Response({
+                'status': 'error',
+                'message': 'Email is required'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response({
+                'status': 'error',
+                'message': 'User with that email does not exist'
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        _, email_error = auth_service.send_email_verification(user)
+        if email_error:
+            return Response({
+                'status': 'error',
+                'message': f"Failed to send verification email: {email_error}"
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        return Response({
+            'status': 'success',
+            'message': 'Verification email sent successfully'
+        }, status=status.HTTP_200_OK)
+
+
 class GoogleLoginView(APIView):
     """Google OAuth2 login endpoint"""
     permission_classes = [AllowAny]
