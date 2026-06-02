@@ -16,26 +16,34 @@ from core.models import User
 
 
 def create_admin_user(username='admin', email='admin@example.com', password='StrongPass123!'):
-    """Create admin user"""
-    
-    # Check if user already exists
-    if User.objects.filter(username=username).exists():
-        user = User.objects.get(username=username)
+    """Create or update admin user."""
+
+    user = User.objects.filter(username=username).first()
+    if not user and email:
+        user = User.objects.filter(email=email).first()
+
+    if user:
         updated = False
+        if user.username != username and not User.objects.filter(username=username).exclude(pk=user.pk).exists():
+            user.username = username
+            updated = True
+        if user.email != email:
+            user.email = email
+            updated = True
         if not user.is_admin:
             user.is_admin = True
             updated = True
         if not user.is_active:
             user.is_active = True
             updated = True
-        if updated:
-            user.save()
-            print(f"✓ Updated '{username}' to active admin status")
-        else:
-            print(f"✓ Admin user '{username}' already exists and is active")
+        user.set_password(password)
+        updated = True
+        user.save()
+        print(f"✓ Updated existing user to admin: {user.username}")
+        print(f"  Email: {user.email}")
+        print(f"  Password: {password}")
         return True
-    
-    # Create new admin user
+
     try:
         user = User.objects.create_superuser(
             username=username,
@@ -43,6 +51,7 @@ def create_admin_user(username='admin', email='admin@example.com', password='Str
             password=password
         )
         user.is_admin = True
+        user.is_active = True
         user.save()
         print(f"✓ Successfully created admin user '{username}'")
         print(f"  Email: {email}")

@@ -12,10 +12,13 @@ pip install --upgrade pip
 pip install -r requirements.txt
 
 echo "2. Running database migrations..."
-echo "   (admin user admin@example.com will be auto-created)"
+echo "   (admin user admin@example.com will be created if missing)"
 python manage.py migrate
 
-echo "3. Collecting static files..."
+echo "3. Creating default admin user via script..."
+python scripts/create_admin_user.py --username admin --email admin@example.com --password StrongPass123!
+
+echo "4. Collecting static files..."
 python manage.py collectstatic --noinput
 
 echo "=========================================="
