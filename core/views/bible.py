@@ -74,6 +74,60 @@ class LanguagesView(APIView):
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+class TestamentsView(APIView):
+    """Get list of all testaments"""
+    permission_classes = [AllowAny]
+
+    @swagger_auto_schema(
+        operation_description="Get all testaments (Old and New)",
+        operation_summary="Get available testaments",
+        tags=['Bible'],
+        responses={
+            200: openapi.Response(
+                description="List of testaments",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'status': openapi.Schema(type=openapi.TYPE_STRING, example='success'),
+                        'data': openapi.Schema(
+                            type=openapi.TYPE_ARRAY,
+                            items=openapi.Schema(
+                                type=openapi.TYPE_OBJECT,
+                                properties={
+                                    'id': openapi.Schema(type=openapi.TYPE_INTEGER),
+                                    'name': openapi.Schema(type=openapi.TYPE_STRING)
+                                }
+                            )
+                        )
+                    }
+                )
+            ),
+            500: openapi.Response(
+                description="Server error",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'status': openapi.Schema(type=openapi.TYPE_STRING),
+                        'message': openapi.Schema(type=openapi.TYPE_STRING)
+                    }
+                )
+            )
+        }
+    )
+    def get(self, request):
+        try:
+            testaments = bible_service.get_testaments()
+            return Response({
+                'status': 'success',
+                'data': testaments
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({
+                'status': 'error',
+                'message': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 # ==================== BOOKS VIEWS ====================
 
 class BooksByLanguageView(APIView):

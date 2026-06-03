@@ -6,6 +6,7 @@ Bible URLs - URL configuration for Bible endpoints
 from django.urls import path, re_path
 from ..views.bible import (
     LanguagesView,
+    TestamentsView,
     BooksByLanguageView,
     BooksByTestamentView,
     BookFullContentView,
@@ -23,6 +24,7 @@ from ..views.audio_views import (
 urlpatterns = [
     # Language endpoints
     path('languages', LanguagesView.as_view(), name='languages'),
+    path('testaments', TestamentsView.as_view(), name='testaments'),
     
     # Books endpoints
     path('books/by-language', BooksByLanguageView.as_view(), name='books-by-language'),
