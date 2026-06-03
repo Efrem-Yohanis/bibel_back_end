@@ -2,7 +2,42 @@
 
 **Base URL**: `https://bibel-quiz.onrender.com/api/admin`
 
-**Authentication**: All endpoints require JWT token in `Authorization: Bearer {access_token}` header
+## Authentication
+
+### Login URL
+`POST https://bibel-quiz.onrender.com/api/auth/login`
+
+### Request body
+```json
+{
+  "username_or_email": "admin@example.com",
+  "password": "StrongPass123!"
+}
+```
+
+### Successful response
+```json
+{
+  "status": "success",
+  "data": {
+    "access_token": "<JWT access token>",
+    "refresh_token": "<JWT refresh token>",
+    "session_token": "<session token>",
+    "expires_at": "2026-07-02T19:19:34.713883Z",
+    "user_id": 1,
+    "username": "admin",
+    "email": "admin@example.com",
+    "is_admin": true
+  }
+}
+```
+
+### Usage in frontend
+- Send login payload as JSON to `/api/auth/login`
+- Save `data.access_token`
+- Use `Authorization: Bearer <access_token>` on all admin requests
+
+**Authentication**: All admin endpoints require JWT token in `Authorization: Bearer {access_token}` header
 
 **Admin Requirement**: All endpoints require `is_admin=true` on user account
 
