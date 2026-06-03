@@ -132,7 +132,7 @@ class AdminLanguageService:
         
         return list(languages)
     
-    def add_language(self, code: str, name: str, native_name: str = None) -> Dict:
+    def add_language(self, code: str, name: str, native_name: str = None, is_active: bool = True) -> Dict:
         """Add a new language"""
         try:
             if Language.objects.filter(code=code).exists():
@@ -142,7 +142,7 @@ class AdminLanguageService:
                 code=code,
                 name=name,
                 native_name=native_name or '',
-                is_active=True,
+                is_active=is_active,
                 created_at=timezone.now()
             )
             
@@ -471,7 +471,7 @@ class AdminQuestionsImportService:
         return chapter
     
     @transaction.atomic
-    def import_questions_json(self, json_file_path: str, language_code: str) -> Dict:
+    def import_questions_json(self, json_file_path: str, language_code: str, testament_name: str = None, book_name: str = None) -> Dict:
         """Import questions from JSON file"""
         try:
             # Get language
@@ -483,13 +483,25 @@ class AdminQuestionsImportService:
             with open(json_file_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
             
-            book_name = Path(json_file_path).stem.replace('questions_', '')
+            if not book_name:
+                book_name = Path(json_file_path).stem.replace('questions_', '')
+            book_name = str(book_name).strip()
             
             # Get book
-            try:
-                book = Book.objects.get(name__icontains=book_name)
-            except Book.DoesNotExist:
-                return {'success': False, 'message': f'Book "{book_name}" not found in database'}
+            if testament_name:
+                try:
+                    testament = Testament.objects.get(name__iexact=testament_name)
+                except Testament.DoesNotExist:
+                    return {'success': False, 'message': f'Testament "{testament_name}" not found'}
+                try:
+                    book = Book.objects.get(name__iexact=book_name, testament=testament)
+                except Book.DoesNotExist:
+                    return {'success': False, 'message': f'Book "{book_name}" not found in testament "{testament_name}"'}
+            else:
+                try:
+                    book = Book.objects.get(name__iexact=book_name)
+                except Book.DoesNotExist:
+                    return {'success': False, 'message': f'Book "{book_name}" not found in database'}
             
             questions_imported = 0
             
@@ -508,7 +520,7 @@ class AdminQuestionsImportService:
                 level_num = q.get('level', 1)
                 try:
                     level_num = int(level_num)
-                except:
+                except (TypeError, ValueError):
                     level_num = 1
                 
                 level = Level.objects.filter(level_number=level_num).first()

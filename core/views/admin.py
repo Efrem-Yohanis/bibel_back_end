@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import MultiPartParser, FormParser
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
@@ -257,7 +258,8 @@ class AdminLanguagesView(APIView):
         result = language_service.add_language(
             code=data['code'],
             name=data['name'],
-            native_name=data.get('native_name')
+            native_name=data.get('native_name'),
+            is_active=data.get('is_active', data.get('active', True))
         )
         
         if not result['success']:
@@ -650,6 +652,7 @@ class AdminBibleImportView(APIView):
 class AdminQuestionsImportView(APIView):
     """Admin questions import"""
     permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
     
     def check_admin(self, request):
         if not request.user.is_admin:
@@ -690,7 +693,7 @@ class AdminQuestionsImportView(APIView):
         if admin_check:
             return admin_check
         
-        serializer = QuestionsImportSerializer(data=request.data)
+        serializer = QuestionsImportSerializer(data=request.data, files=request.FILES)
         if not serializer.is_valid():
             return Response({
                 'success': False,
@@ -698,11 +701,36 @@ class AdminQuestionsImportView(APIView):
             }, status=status.HTTP_400_BAD_REQUEST)
         
         data = serializer.validated_data
-        result = questions_import_service.import_questions_json(
-            file_path=data['file_path'],
-            language_code=data['language']
-        )
-        
+        uploaded_file = request.FILES.get('file')
+        if not uploaded_file:
+            return Response({
+                'success': False,
+                'message': 'File upload is required.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        import tempfile
+        from pathlib import Path
+
+        temp_file = None
+        try:
+            temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.json')
+            for chunk in uploaded_file.chunks():
+                temp_file.write(chunk)
+            temp_file.close()
+
+            result = questions_import_service.import_questions_json(
+                file_path=str(Path(temp_file.name)),
+                language_code=data['language'],
+                testament_name=data['testament'],
+                book_name=data['book']
+            )
+        finally:
+            if temp_file is not None:
+                try:
+                    Path(temp_file.name).unlink()
+                except Exception:
+                    pass
+
         if not result['success']:
             return Response({
                 'success': False,

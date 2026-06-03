@@ -69,6 +69,7 @@ class LanguageCreateSerializer(serializers.Serializer):
     code = serializers.CharField(max_length=10)
     name = serializers.CharField(max_length=50)
     native_name = serializers.CharField(max_length=100, required=False, allow_blank=True)
+    is_active = serializers.BooleanField(required=False, default=True)
     
     class Meta:
         ref_name = 'AdminLanguageCreateSerializer'
@@ -173,8 +174,10 @@ class BibleImportSerializer(serializers.Serializer):
 
 class QuestionsImportSerializer(serializers.Serializer):
     """Serializer for questions import"""
-    file_path = serializers.CharField()
+    file = serializers.FileField()
     language = serializers.CharField(max_length=10)
+    testament = serializers.CharField(max_length=10)
+    book = serializers.CharField(max_length=100)
     
     class Meta:
         ref_name = 'AdminQuestionsImportSerializer'
