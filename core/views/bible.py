@@ -830,6 +830,7 @@ class VerseOfTheDayView(APIView):
         ],
         responses={
             200: openapi.Response(description="Verse of the day"),
+            404: openapi.Response(description="Language not found or verse data unavailable"),
             500: openapi.Response(description="Server error")
         }
     )
@@ -841,10 +842,11 @@ class VerseOfTheDayView(APIView):
             verse = bible_service.get_verse_of_the_day(language)
             
             if 'error' in verse:
+                status_code = status.HTTP_404_NOT_FOUND if 'Language' in verse['error'] else status.HTTP_500_INTERNAL_SERVER_ERROR
                 return Response({
                     'status': 'error',
                     'message': verse['error']
-                }, status=status.HTTP_404_NOT_FOUND)
+                }, status=status_code)
             
             return Response({
                 'status': 'success',
