@@ -34,17 +34,16 @@ class BibleService:
     
 # In your bible_service.py, look for any .annotate() calls
 
-    def get_books_by_language(self, language_code: str = 'en') -> List[Dict]:
+    def get_books_by_language(self, language_code: str = 'en') -> Optional[List[Dict]]:
         try:
             language = Language.objects.get(code=language_code)
         except Language.DoesNotExist:
-            return []
+            return None
         
-        # Change this:
         books = Book.objects.filter(
             chapters__verses__texts__language=language
         ).distinct().annotate(
-            chapter_count=models.Count('chapters__id', distinct=True)  # ← Use different name
+            chapter_count=models.Count('chapters__id', distinct=True)
         ).select_related('testament').order_by('testament__id', 'bible_order')
         
         return [
@@ -52,7 +51,7 @@ class BibleService:
                 'id': book.id,
                 'name': book.name,
                 'testament': book.testament.name if book.testament else None,
-                'chapters': getattr(book, 'chapter_count', 0),  # ← Use the annotated name
+                'chapters': getattr(book, 'chapter_count', 0),
                 'has_audio': book.has_audio,
                 'bible_order': book.bible_order
             }

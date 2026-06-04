@@ -184,10 +184,10 @@ class BooksByLanguageView(APIView):
             
             books = bible_service.get_books_by_language(language)
             
-            if not books:
+            if books is None:
                 return Response({
                     'status': 'error',
-                    'message': f'Language "{language}" not found or no books available'
+                    'message': f'Language "{language}" not found'
                 }, status=status.HTTP_404_NOT_FOUND)
             
             return Response({
