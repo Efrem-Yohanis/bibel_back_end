@@ -871,7 +871,31 @@ class BibleService:
         total_daily_verses = DailyVerse.objects.count()
         
         if total_daily_verses == 0:
-            return {'error': 'No daily verses configured. Please run: python manage.py load_daily_verses'}
+            # Fallback to a verse determined by the day of year when daily verses are not loaded.
+            verse_text_qs = VerseText.objects.filter(language=language)
+            if not verse_text_qs.exists():
+                verse_text_qs = VerseText.objects.filter(language__code='en')
+            
+            if not verse_text_qs.exists():
+                return {'error': 'No daily verses configured and no translated verses available.'}
+
+            offset = day_of_year % verse_text_qs.count()
+            verse_text = verse_text_qs.select_related(
+                'verse__chapter__book'
+            )[offset:offset+1].first()
+            if not verse_text:
+                return {'error': 'Could not retrieve fallback verse of the day.'}
+
+            return {
+                'reference': f"{verse_text.verse.chapter.book.name} {verse_text.verse.chapter.chapter_number}:{verse_text.verse.verse_number}",
+                'book': verse_text.verse.chapter.book.name,
+                'book_id': verse_text.verse.chapter.book.id,
+                'chapter': verse_text.verse.chapter.chapter_number,
+                'verse': verse_text.verse.verse_number,
+                'text': verse_text.text,
+                'category': None,
+                'category_slug': None
+            }
         
         # Calculate offset based on day of year (same verse for everyone today)
         offset = day_of_year % total_daily_verses

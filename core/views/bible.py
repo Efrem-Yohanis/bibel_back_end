@@ -844,7 +844,7 @@ class VerseOfTheDayView(APIView):
                 return Response({
                     'status': 'error',
                     'message': verse['error']
-                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                }, status=status.HTTP_404_NOT_FOUND)
             
             return Response({
                 'status': 'success',
