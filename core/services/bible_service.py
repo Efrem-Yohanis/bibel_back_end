@@ -47,44 +47,35 @@ class BibleService:
         Returns None when the language does not exist.
         Book names are returned in the requested language (falls back to the
         default Book.name when no BookName entry exists for that language).
+        Optimised: avoids expensive COUNT annotations — uses stored fields instead.
         """
         if not Language.objects.filter(code=language_code).exists():
             return None
+
+        # Single lightweight query for all translated names
+        book_names = {
+            bn.book_id: bn.name
+            for bn in BookName.objects.filter(
+                language__code=language_code
+            ).only('book_id', 'name')
+        }
 
         books = (
             Book.objects
             .filter(chapters__verses__texts__language__code=language_code)
             .distinct()
-            .annotate(
-                chapter_count=Count('chapters__id', distinct=True),
-                audio_count=Count(
-                    'chapter_audios',
-                    filter=Q(
-                        chapter_audios__language__code=language_code,
-                        chapter_audios__is_available=True,
-                    ),
-                    distinct=True,
-                ),
-            )
-            .prefetch_related(
-                Prefetch(
-                    'names',
-                    queryset=BookName.objects.filter(
-                        language__code=language_code
-                    ).select_related('language'),
-                )
-            )
             .select_related('testament')
+            .only('id', 'name', 'bible_order', 'has_audio', 'total_chapters', 'testament')
             .order_by('testament__id', 'bible_order')
         )
 
         return [
             {
                 'id': book.id,
-                'name': book.get_name(language_code),
+                'name': book_names.get(book.id, book.name),
                 'testament': book.testament.name if book.testament else None,
-                'chapters': book.chapter_count,
-                'has_audio': book.audio_count > 0,
+                'chapters': book.total_chapters,
+                'has_audio': book.has_audio,
                 'bible_order': book.bible_order,
             }
             for book in books
