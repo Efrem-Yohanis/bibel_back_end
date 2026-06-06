@@ -15,7 +15,7 @@ Set APPEND_SLASH = False in settings.py (or add trailing slashes everywhere — 
 
 from django.urls import path
 
-from ..views.bible_views import (
+from ..views.bible import (
     AudioStatsView,
     BibleStatsView,
     BookChaptersView,
