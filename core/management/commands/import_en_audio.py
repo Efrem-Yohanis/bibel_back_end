@@ -96,12 +96,32 @@ class Command(BaseCommand):
                 book_name = json_file.stem   # e.g. "Genesis"
                 urls: dict = json.loads(json_file.read_text(encoding="utf-8"))
 
-                self.stdout.write(f"\n📖 {book_name} ({len(urls)} chapters)")
-
                 # Look up the Book in DB
+                existing_audio = 0
+                existing_chapters = []
                 try:
                     book = Book.objects.get(name__iexact=book_name)
+                    existing_chapters = list(
+                        ChapterAudio.objects.filter(
+                            book=book,
+                            language=language,
+                            is_available=True,
+                        ).values_list('chapter_number', flat=True)
+                    )
+                    existing_audio = len(existing_chapters)
                 except Book.DoesNotExist:
+                    book = None
+                except Book.MultipleObjectsReturned:
+                    self.stdout.write(self.style.ERROR(f"  Multiple DB rows for '{book_name}', skipping."))
+                    total_skip += len(urls)
+                    continue
+
+                self.stdout.write(f"\n📖 {book_name} ({len(urls)} chapters) - DB has {existing_audio} existing en audio chapters")
+                if existing_chapters:
+                    missing = [n for n in range(1, len(urls) + 1) if n not in existing_chapters]
+                    self.stdout.write(f"  Existing chapters: {existing_audio}. Missing: {len(missing)}")
+
+                if book is None:
                     # Try to create it if missing
                     testament = ot_testament if book_name in OT_BOOKS else nt_testament
                     if not dry_run:
@@ -116,10 +136,6 @@ class Command(BaseCommand):
                         self.stdout.write(self.style.WARNING(f"  [DRY] Would create book: {book_name}"))
                         total_skip += len(urls)
                         continue
-                except Book.MultipleObjectsReturned:
-                    self.stdout.write(self.style.ERROR(f"  Multiple DB rows for '{book_name}', skipping."))
-                    total_skip += len(urls)
-                    continue
 
                 ok = fail = 0
                 for chapter_str, audio_url in sorted(urls.items(), key=lambda x: int(x[0])):

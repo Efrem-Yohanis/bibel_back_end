@@ -85,26 +85,36 @@ class Book(models.Model):
     name = models.CharField(max_length=100)
     testament = models.ForeignKey(Testament, on_delete=models.CASCADE, related_name='books', null=True, blank=True)
     
-    # New audio-related fields
     bible_order = models.IntegerField(default=0, help_text="Order in the Bible (1-66)")
     has_audio = models.BooleanField(default=False, help_text="Whether audio is available for this book")
     total_chapters = models.IntegerField(default=0, help_text="Total number of chapters")
-    
-    
+
     class Meta:
         db_table = 'books'
         ordering = ['bible_order', 'id']
     
     def __str__(self):
         return self.name
-    
+
+    def get_name(self, language_code='am'):
+        """Get book name in requested language, fallback to Book.name"""
+        entry = self.names.filter(language__code=language_code).first()
+        return entry.name if entry else self.name
+
+    def get_all_names(self):
+        """Return dict of all available translations e.g. {'am': 'ዘፍጥረት', 'en': 'Genesis'}"""
+        return {
+            bn.language.code: bn.name
+            for bn in self.names.select_related('language').all()
+        }
+
     def get_audio_for_language(self, language_code='en'):
         """Get book-level audio for a specific language"""
         try:
             language = Language.objects.get(code=language_code)
             return BookAudio.objects.filter(
-                book=self, 
-                language=language, 
+                book=self,
+                language=language,
                 is_available=True
             ).first()
         except Language.DoesNotExist:
@@ -139,6 +149,21 @@ class Book(models.Model):
                 'start_time': chapter_audio.start_time
             }
         return {'has_audio': False}
+
+
+class BookName(models.Model):
+    """Multi-language book names — same pattern as VerseText / QuestionText"""
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='names')
+    language = models.ForeignKey(Language, on_delete=models.CASCADE, related_name='book_names')
+    name = models.CharField(max_length=100)
+
+    class Meta:
+        db_table = 'book_names'
+        unique_together = ['book', 'language']
+        ordering = ['book__bible_order']
+
+    def __str__(self):
+        return f"{self.language.code}: {self.name}"
 
 
 class Chapter(models.Model):
@@ -191,20 +216,16 @@ class BookAudio(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='audio')
     language = models.ForeignKey(Language, on_delete=models.CASCADE, related_name='book_audios')
     
-    # Audio file information
     audio_url = models.URLField(max_length=500, blank=True, null=True)
     cloudinary_public_id = models.CharField(max_length=500, blank=True, null=True)
     
-    # Audio metadata
     duration = models.IntegerField(help_text="Duration in seconds", null=True, blank=True)
     file_size = models.BigIntegerField(help_text="File size in bytes", null=True, blank=True)
     is_available = models.BooleanField(default=True)
     
-    # For multi-part books (Psalms has 3 parts, Isaiah has 2, etc.)
     part_number = models.IntegerField(default=1, help_text="Part number for multi-part books")
     total_parts = models.IntegerField(default=1, help_text="Total parts for multi-part books")
     
-    # Chapter timestamps for navigation
     chapter_timestamps = models.JSONField(default=dict, help_text="Mapping of chapter numbers to timestamps in seconds")
     
     created_at = models.DateTimeField(auto_now_add=True)
@@ -220,16 +241,11 @@ class BookAudio(models.Model):
         return f"{self.book.name} - {self.language.code}{part_info}"
     
     def get_audio_url(self):
-        """Get the full audio URL"""
-        # If a direct audio_url is stored, return it.
         if self.audio_url:
             return self.audio_url
-
-        # If a Cloudinary public id is stored, attempt to generate a signed URL.
         if self.cloudinary_public_id:
             try:
                 from cloudinary.utils import cloudinary_url
-
                 public_id = str(self.cloudinary_public_id)
                 for resource_type in ('video', 'raw', 'auto'):
                     try:
@@ -240,11 +256,9 @@ class BookAudio(models.Model):
                         continue
             except Exception:
                 return None
-
         return None
     
     def get_chapter_start_time(self, chapter_number):
-        """Get start time for a specific chapter"""
         return self.chapter_timestamps.get(str(chapter_number), 0)
 
 
@@ -255,16 +269,13 @@ class ChapterAudio(models.Model):
     chapter_number = models.IntegerField()  # Denormalized for easier querying
     language = models.ForeignKey(Language, on_delete=models.CASCADE, related_name='chapter_audios')
     
-    # Audio file information
     audio_url = models.URLField(max_length=500, blank=True, null=True)
     cloudinary_public_id = models.CharField(max_length=500, blank=True, null=True)
     
-    # Audio metadata
     duration = models.IntegerField(help_text="Duration in seconds", null=True, blank=True)
     file_size = models.BigIntegerField(help_text="File size in bytes", null=True, blank=True)
     is_available = models.BooleanField(default=True)
     
-    # For continuous play across chapters
     start_time = models.IntegerField(default=0, help_text="Start time in seconds for full book audio")
     end_time = models.IntegerField(null=True, blank=True, help_text="End time in seconds for full book audio")
     
@@ -280,16 +291,11 @@ class ChapterAudio(models.Model):
         return f"{self.book.name} Chapter {self.chapter_number} - {self.language.code}"
     
     def get_audio_url(self):
-        """Get the full audio URL"""
-        # If a direct audio_url is stored, return it.
         if self.audio_url:
             return self.audio_url
-
-        # If Cloudinary public id exists, try to generate a signed URL (try different resource types)
         if self.cloudinary_public_id:
             try:
                 from cloudinary.utils import cloudinary_url
-
                 public_id = str(self.cloudinary_public_id)
                 for resource_type in ('video', 'raw', 'auto'):
                     try:
@@ -300,7 +306,6 @@ class ChapterAudio(models.Model):
                         continue
             except Exception:
                 return None
-
         return None
 
 
@@ -406,16 +411,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     email_verification_token_expires = models.DateTimeField(blank=True, null=True)
     preferred_language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True, blank=True, related_name='users')
     
-    # Statistics
     total_quizzes_taken = models.IntegerField(default=0)
     total_correct_answers = models.IntegerField(default=0)
     total_questions_answered = models.IntegerField(default=0)
     
-    # Google Auth fields
     google_id = models.CharField(max_length=255, blank=True, null=True, unique=True)
     auth_provider = models.CharField(max_length=50, blank=True, null=True)
     
-    # Django requirements
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
     
@@ -517,7 +519,6 @@ class UserBookProgress(models.Model):
     correct_answers = models.IntegerField(default=0)
     completed = models.BooleanField(default=False)
     
-    # Audio-specific progress
     audio_current_position = models.IntegerField(default=0, help_text="Current position in seconds")
     audio_completed_chapters = models.JSONField(default=list, help_text="Chapters completed via audio")
     last_audio_listened = models.DateTimeField(blank=True, null=True)
@@ -530,7 +531,6 @@ class UserBookProgress(models.Model):
         return f"{self.user.username} - {self.book.name}"
     
     def get_audio_progress_percentage(self):
-        """Get audio progress percentage for the current book"""
         if self.book.total_chapters > 0:
             return int((len(self.audio_completed_chapters) / self.book.total_chapters) * 100)
         return 0

@@ -1,11 +1,8 @@
 """
 Django management command: insert_en_audio_json
-
 Reads bible_en_audio.json and inserts all URLs into ChapterAudio for English.
-
 Place at:
     core/management/commands/insert_en_audio_json.py
-
 Usage:
     python manage.py insert_en_audio_json
     python manage.py insert_en_audio_json --dry-run
@@ -13,15 +10,12 @@ Usage:
 
 import json
 from pathlib import Path
-
 from django.core.management.base import BaseCommand
 from django.db import transaction
-
 from core.models import Book, Chapter, ChapterAudio, Language, Testament
 
 
 JSON_FILE = Path.home() / "english_audio" / "bible_en_audio.json"
-
 OT_BOOKS = {
     "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy",
     "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel",
@@ -33,10 +27,8 @@ OT_BOOKS = {
     "Zephaniah", "Haggai", "Zechariah", "Malachi",
 }
 
-
 class Command(BaseCommand):
     help = "Insert English Bible audio URLs from bible_en_audio.json into the DB."
-
     def add_arguments(self, parser):
         parser.add_argument("--dry-run", action="store_true")
         parser.add_argument("--json", default=None, help="Custom path to JSON file")
