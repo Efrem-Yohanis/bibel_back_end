@@ -207,8 +207,17 @@ class BookWithChaptersSerializer(serializers.ModelSerializer):
                     'audio_url': book_audio.get_audio_url(),
                     'duration': book_audio.duration
                 }
-            
-            return {'type': 'chapter_by_chapter', 'available': True}
+
+            chapter_audio_exists = ChapterAudio.objects.filter(
+                book=obj,
+                language=language,
+                is_available=True
+            ).exists()
+
+            if chapter_audio_exists:
+                return {'type': 'chapter_by_chapter', 'available': True}
+
+            return None
         except:
             return None
 

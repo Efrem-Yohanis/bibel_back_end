@@ -188,7 +188,7 @@ class VerseText(models.Model):
 
 class BookAudio(models.Model):
     """Audio files for entire Bible books (for continuous play)"""
-    book = models.OneToOneField(Book, on_delete=models.CASCADE, related_name='audio')
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='audio')
     language = models.ForeignKey(Language, on_delete=models.CASCADE, related_name='book_audios')
     
     # Audio file information
