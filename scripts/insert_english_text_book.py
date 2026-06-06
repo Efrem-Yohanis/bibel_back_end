@@ -62,8 +62,7 @@ ENGLISH_BOOK_TO_DB_NAME: Dict[str, str] = {
     '1_peter': '1ኛ ጴጥሮስ',
     '2_peter': '2ኛ ጴጥሮስ',
     'jude': 'ይሁዳ',
-    'jude': 'ይሁዳ',
-    'revelation': 'ራእይ ዮሐንስ',
+    'revelation': 'ራዕይ',
 }
 
 
@@ -215,14 +214,72 @@ def build_db_book_name(file_path: Path, explicit_name: str = None) -> str:
     return ENGLISH_BOOK_TO_DB_NAME.get(stem, file_path.stem)
 
 
+def _import_directory(
+    directory: Path,
+    language_code: str,
+    overwrite: bool,
+    dry_run: bool,
+    explicit_book_name: str = None,
+):
+    txt_files = sorted(directory.glob('*.txt'))
+    if not txt_files:
+        raise SystemExit(f'No .txt files found in directory: {directory}')
+
+    summary = {
+        'processed': 0,
+        'skipped': 0,
+        'inserted': 0,
+        'updated': 0,
+        'skipped_rows': 0,
+    }
+
+    for txt_file in txt_files:
+        print('\n' + '=' * 80)
+        print(f'File: {txt_file.name}')
+        if explicit_book_name and len(txt_files) == 1:
+            db_book_name = explicit_book_name
+        else:
+            db_book_name = build_db_book_name(txt_file, explicit_book_name)
+
+        print(f'Resolved book name: {db_book_name}')
+        try:
+            if dry_run:
+                with transaction.atomic():
+                    insert_english_txt(
+                        file_path=txt_file,
+                        db_book_name=db_book_name,
+                        language_code=language_code,
+                        overwrite=overwrite,
+                        dry_run=True,
+                    )
+                    transaction.set_rollback(True)
+            else:
+                insert_english_txt(
+                    file_path=txt_file,
+                    db_book_name=db_book_name,
+                    language_code=language_code,
+                    overwrite=overwrite,
+                    dry_run=False,
+                )
+            summary['processed'] += 1
+        except Exception as exc:
+            summary['skipped'] += 1
+            print(f'  Skipped: {exc}')
+
+    print('\n' + '=' * 80)
+    print('Directory import complete')
+    print(f"  Processed: {summary['processed']}")
+    print(f"  Skipped:   {summary['skipped']}")
+
+
 def main():
     parser = argparse.ArgumentParser(
         description='Insert English Bible text files into existing Amharic Book records.'
     )
-    parser.add_argument('file', help='Path to the English .txt book file.')
+    parser.add_argument('file', help='Path to the English .txt book file or directory.')
     parser.add_argument(
         '--book-name',
-        help='Exact DB book name to use. If omitted, the script maps from the English book title.',
+        help='Exact DB book name to use for a single file. If omitted, the script maps from the English book title.',
     )
     parser.add_argument('--lang', default='en', help='Language code to insert (default: en).')
     parser.add_argument('--no-overwrite', action='store_true', help='Do not update existing VerseText values.')
@@ -231,7 +288,18 @@ def main():
 
     file_path = Path(args.file)
     if not file_path.exists():
-        raise SystemExit(f'File not found: {file_path}')
+        raise SystemExit(f'File or directory not found: {file_path}')
+
+    if file_path.is_dir():
+        print(f'Importing all .txt files from directory: {file_path}')
+        _import_directory(
+            directory=file_path,
+            language_code=args.lang,
+            overwrite=not args.no_overwrite,
+            dry_run=args.dry_run,
+            explicit_book_name=args.book_name,
+        )
+        return
 
     db_book_name = build_db_book_name(file_path, args.book_name)
     print(f'Inserting file: {file_path.name}')
