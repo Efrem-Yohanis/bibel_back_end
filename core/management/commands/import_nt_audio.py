@@ -119,6 +119,36 @@ def _derive_english_book_name(folder_name: str) -> str:
     # Title-case the rest
     return name.title()
 
+
+def _normalize_cloudinary_folder_name(folder_name: str) -> str:
+    folder = folder_name.strip().lower()
+    folder = folder.replace(" ", "_")
+    folder = folder.replace("-", "_")
+    folder = re.sub(r"__+", "_", folder)
+    folder = folder.strip("_")
+    return folder
+
+
+def _resolve_db_book_name(raw_folder: str, language_code: str) -> str:
+    normalized_folder = _normalize_cloudinary_folder_name(raw_folder)
+    db_book_name = BOOK_NAME_MAP.get(normalized_folder)
+    if db_book_name:
+        return db_book_name
+
+    # Try removing part suffixes like _part1/_part2/_part_1
+    canonical = re.sub(r"_part(?:_)?\d+$", "", normalized_folder)
+    if canonical != normalized_folder:
+        db_book_name = BOOK_NAME_MAP.get(canonical)
+        if db_book_name:
+            return db_book_name
+
+    # Some Cloudinary folders use 'song_of_songs'
+    if normalized_folder == "song_of_songs":
+        return BOOK_NAME_MAP.get("song_of_solomon")
+
+    # Do not guess book names for English audio; explicit mapping is required.
+    return None
+
 # Cloudinary config uses environment variables when available (safer for production)
 CLOUDINARY_CONFIG = {
     "cloud_name": os.environ.get("CLOUDINARY_NAME", "dleykahqd"),
@@ -261,9 +291,7 @@ class Command(BaseCommand):
                 chapter_num = int(chapter_str)
 
                 # Resolve DB book name from known Cloudinary folder mapping.
-                db_book_name = BOOK_NAME_MAP.get(raw_folder)
-                if not db_book_name:
-                    db_book_name = _derive_english_book_name(raw_folder)
+                db_book_name = _resolve_db_book_name(raw_folder, language_code)
 
                 if not db_book_name:
                     unknown_books.add(raw_folder)
