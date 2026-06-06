@@ -40,7 +40,15 @@ class BibleService:
         books = Book.objects.filter(
             chapters__verses__texts__language=language
         ).distinct().annotate(
-            chapter_count=models.Count('chapters__id', distinct=True)
+            chapter_count=models.Count('chapters__id', distinct=True),
+            audio_count=models.Count(
+                'chapter_audios',
+                filter=models.Q(
+                    chapter_audios__language=language,
+                    chapter_audios__is_available=True
+                ),
+                distinct=True
+            )
         ).select_related('testament').order_by('testament__id', 'bible_order')
 
         return [
@@ -49,12 +57,11 @@ class BibleService:
                 'name': book.name,
                 'testament': book.testament.name if book.testament else None,
                 'chapters': getattr(book, 'chapter_count', 0),
-                'has_audio': book.has_audio,
+                'has_audio': book.audio_count > 0,
                 'bible_order': book.bible_order
             }
             for book in books
         ]
-
     # ==================== TESTAMENT METHODS ====================
 
     def get_testaments(self) -> List[Dict]:
