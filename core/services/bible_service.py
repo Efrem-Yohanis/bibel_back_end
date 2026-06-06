@@ -9,6 +9,7 @@ Key improvements over the original:
   - record_chapter_completion saves once instead of twice.
   - Bare `except Exception` replaced with specific exception types.
   - Redundant counting queries removed where model fields already hold the value.
+  - Book names now returned in the requested language via BookName table.
 """
 
 import random
@@ -18,11 +19,11 @@ from typing import Any, Dict, List, Optional
 from urllib.parse import unquote
 
 from django.db import models
-from django.db.models import Count, Q
+from django.db.models import Count, Prefetch, Q
 from django.utils import timezone
 
 from ..models import (
-    Book, BookAudio, Chapter, ChapterAudio, DailyVerse,
+    Book, BookAudio, BookName, Chapter, ChapterAudio, DailyVerse,
     Language, Testament, User, UserBookProgress, Verse, VerseText,
 )
 
@@ -44,6 +45,8 @@ class BibleService:
         """
         Get all books that have at least one verse translated into language_code.
         Returns None when the language does not exist.
+        Book names are returned in the requested language (falls back to the
+        default Book.name when no BookName entry exists for that language).
         """
         if not Language.objects.filter(code=language_code).exists():
             return None
@@ -63,6 +66,14 @@ class BibleService:
                     distinct=True,
                 ),
             )
+            .prefetch_related(
+                Prefetch(
+                    'names',
+                    queryset=BookName.objects.filter(
+                        language__code=language_code
+                    ).select_related('language'),
+                )
+            )
             .select_related('testament')
             .order_by('testament__id', 'bible_order')
         )
@@ -70,7 +81,7 @@ class BibleService:
         return [
             {
                 'id': book.id,
-                'name': book.name,
+                'name': book.get_name(language_code),
                 'testament': book.testament.name if book.testament else None,
                 'chapters': book.chapter_count,
                 'has_audio': book.audio_count > 0,
@@ -114,17 +125,24 @@ class BibleService:
             )
             .distinct()
             .annotate(total_chapters_count=Count('chapters__id', distinct=True))
-            .values('id', 'name', 'total_chapters_count', 'has_audio', 'bible_order')
+            .prefetch_related(
+                Prefetch(
+                    'names',
+                    queryset=BookName.objects.filter(
+                        language__code=language_code
+                    ).select_related('language'),
+                )
+            )
             .order_by('bible_order')
         )
 
         return [
             {
-                'book_id': book['id'],
-                'book_name': book['name'],
-                'total_chapters': book['total_chapters_count'] or 0,
-                'has_audio': book['has_audio'],
-                'bible_order': book['bible_order'],
+                'book_id': book.id,
+                'book_name': book.get_name(language_code),
+                'total_chapters': book.total_chapters_count or 0,
+                'has_audio': book.has_audio,
+                'bible_order': book.bible_order,
             }
             for book in books
         ]
@@ -213,7 +231,6 @@ class BibleService:
         Get audio for a specific chapter, including prev/next availability.
         Fetches current, previous, and next chapters in a single query.
         """
-        # Single query for the chapter window [prev, current, next]
         relevant = {
             ca.chapter_number: ca
             for ca in ChapterAudio.objects.filter(
@@ -447,8 +464,25 @@ class BibleService:
 
     # ==================== BOOK CONTENT METHODS ====================
 
-    def _lookup_book(self, book_name: str) -> Optional[Book]:
-        """Case-insensitive book lookup by name."""
+    def _lookup_book(self, book_name: str, language_code: str = 'am') -> Optional[Book]:
+        """
+        Book lookup: tries the BookName table for the given language first,
+        then falls back to a case-insensitive match on Book.name.
+        """
+        # Try translated name first
+        book_name_entry = (
+            BookName.objects
+            .filter(
+                Q(name__iexact=book_name) | Q(name__icontains=book_name),
+                language__code=language_code,
+            )
+            .select_related('book__testament')
+            .first()
+        )
+        if book_name_entry:
+            return book_name_entry.book
+
+        # Fall back to the stored Book.name (Amharic default)
         return (
             Book.objects
             .filter(Q(name__iexact=book_name) | Q(name__icontains=book_name))
@@ -462,7 +496,7 @@ class BibleService:
         organised by chapter.
         """
         book_name = unquote(book_name)
-        book = self._lookup_book(book_name)
+        book = self._lookup_book(book_name, language_code)
         if not book:
             return {'error': f'Book "{book_name}" not found'}
 
@@ -545,12 +579,13 @@ class BibleService:
             audio_info['book_audio_url'] = book_audio.get_audio_url()
             audio_info['book_duration'] = book_audio.duration
 
+        displayed_name = book.get_name(language_code)
+
         return {
             'book_info': {
                 'id': book.id,
-                'name': book.name,
+                'name': displayed_name,
                 'testament': book.testament.name if book.testament else None,
-                # Use the denormalised field — avoids an extra COUNT query
                 'total_chapters': book.total_chapters,
                 'total_verses': Verse.objects.filter(chapter__book=book).count(),
                 'has_audio': book.has_audio or has_any_audio,
@@ -586,7 +621,7 @@ class BibleService:
     ) -> Dict:
         """Get chapters of a book with verse counts for a specific language."""
         book_name = unquote(book_name)
-        book = self._lookup_book(book_name)
+        book = self._lookup_book(book_name, language_code)
         if not book:
             return {'error': f'Book "{book_name}" not found'}
 
@@ -610,7 +645,7 @@ class BibleService:
 
         return {
             'book_id': book.id,
-            'book_name': book.name,
+            'book_name': book.get_name(language_code),
             'total_chapters': len(chapters_list),
             'has_audio': book.has_audio,
             'chapters': chapters_list,
@@ -629,7 +664,7 @@ class BibleService:
         book_name = unquote(book_name)
         chapter = int(chapter)
 
-        book = self._lookup_book(book_name)
+        book = self._lookup_book(book_name, language_code)
         if not book:
             return {'error': f'Book "{book_name}" not found'}
 
@@ -639,7 +674,7 @@ class BibleService:
         try:
             chapter_obj = Chapter.objects.get(book=book, chapter_number=chapter)
         except Chapter.DoesNotExist:
-            return {'error': f'Chapter {chapter} not found in {book.name}'}
+            return {'error': f'Chapter {chapter} not found in {book.get_name(language_code)}'}
 
         verses = (
             VerseText.objects
@@ -650,13 +685,14 @@ class BibleService:
         )
 
         if not verses.exists():
-            return {'error': f'No verses found for {book.name} {chapter} in {language_code}'}
+            return {'error': f'No verses found for {book.get_name(language_code)} {chapter} in {language_code}'}
 
         audio_info = self.get_chapter_audio(book.id, chapter, language_code)
+        displayed_name = book.get_name(language_code)
 
         return {
-            'reference': f'{book.name} {chapter}',
-            'book': book.name,
+            'reference': f'{displayed_name} {chapter}',
+            'book': displayed_name,
             'book_id': book.id,
             'chapter': chapter,
             'total_verses': verses.count(),
@@ -674,7 +710,7 @@ class BibleService:
     ) -> Dict:
         """Get a specific verse."""
         book_name = unquote(book_name)
-        book = self._lookup_book(book_name)
+        book = self._lookup_book(book_name, language_code)
         if not book:
             return {'error': f'Book "{book_name}" not found'}
 
@@ -686,11 +722,13 @@ class BibleService:
                 language__code=language_code,
             )
         except VerseText.DoesNotExist:
-            return {'error': f'Verse {book.name} {chapter}:{verse} not found in {language_code}'}
+            return {'error': f'Verse {book.get_name(language_code)} {chapter}:{verse} not found in {language_code}'}
+
+        displayed_name = book.get_name(language_code)
 
         return {
-            'reference': f'{book.name} {chapter}:{verse}',
-            'book': book.name,
+            'reference': f'{displayed_name} {chapter}:{verse}',
+            'book': displayed_name,
             'book_id': book.id,
             'chapter': chapter,
             'verse': verse,
@@ -742,13 +780,23 @@ class BibleService:
             )[:limit]
         )
 
+        # For search results, also resolve the translated book name
+        book_ids = list({vt['verse__chapter__book__id'] for vt in verse_texts})
+        book_name_map = {
+            bn.book_id: bn.name
+            for bn in BookName.objects.filter(
+                book_id__in=book_ids,
+                language__code=language_code,
+            )
+        }
+
         return [
             {
                 'reference': (
-                    f"{vt['verse__chapter__book__name']} "
+                    f"{book_name_map.get(vt['verse__chapter__book__id'], vt['verse__chapter__book__name'])} "
                     f"{vt['verse__chapter__chapter_number']}:{vt['verse__verse_number']}"
                 ),
-                'book': vt['verse__chapter__book__name'],
+                'book': book_name_map.get(vt['verse__chapter__book__id'], vt['verse__chapter__book__name']),
                 'book_id': vt['verse__chapter__book__id'],
                 'chapter': vt['verse__chapter__chapter_number'],
                 'verse': vt['verse__verse_number'],
@@ -778,12 +826,14 @@ class BibleService:
             [random.randint(0, count - 1)]
         )
 
+        displayed_name = verse_text.verse.chapter.book.get_name(language_code)
+
         return {
             'reference': (
-                f"{verse_text.verse.chapter.book.name} "
+                f"{displayed_name} "
                 f"{verse_text.verse.chapter.chapter_number}:{verse_text.verse.verse_number}"
             ),
-            'book': verse_text.verse.chapter.book.name,
+            'book': displayed_name,
             'book_id': verse_text.verse.chapter.book.id,
             'chapter': verse_text.verse.chapter.chapter_number,
             'verse': verse_text.verse.verse_number,
@@ -814,12 +864,13 @@ class BibleService:
                 .select_related('verse__chapter__book')
                 [offset]
             )
+            displayed_name = verse_text.verse.chapter.book.get_name(language_code)
             return {
                 'reference': (
-                    f"{verse_text.verse.chapter.book.name} "
+                    f"{displayed_name} "
                     f"{verse_text.verse.chapter.chapter_number}:{verse_text.verse.verse_number}"
                 ),
-                'book': verse_text.verse.chapter.book.name,
+                'book': displayed_name,
                 'book_id': verse_text.verse.chapter.book.id,
                 'chapter': verse_text.verse.chapter.chapter_number,
                 'verse': verse_text.verse.verse_number,
@@ -846,12 +897,14 @@ class BibleService:
             except VerseText.DoesNotExist:
                 text = '[Verse text not available]'
 
+        displayed_name = daily_verse.verse.chapter.book.get_name(language_code)
+
         return {
             'reference': (
-                f"{daily_verse.verse.chapter.book.name} "
+                f"{displayed_name} "
                 f"{daily_verse.verse.chapter.chapter_number}:{daily_verse.verse.verse_number}"
             ),
-            'book': daily_verse.verse.chapter.book.name,
+            'book': displayed_name,
             'book_id': daily_verse.verse.chapter.book.id,
             'chapter': daily_verse.verse.chapter.chapter_number,
             'verse': daily_verse.verse.verse_number,
