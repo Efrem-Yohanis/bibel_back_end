@@ -899,11 +899,16 @@ class BibleService:
         # Calculate offset based on day of year (same verse for everyone today)
         offset = day_of_year % total_daily_verses
         
-        # Get daily verse at that offset
-        daily_verse = DailyVerse.objects.select_related(
+        # Get daily verse at that offset without slicing the queryset
+        # (some DB backends / Django versions raise "Cannot reorder a query once a slice has been taken"
+        # when order_by is used after slicing). Use iterator + islice to avoid creating a sliced QuerySet.
+        from itertools import islice
+
+        daily_qs = DailyVerse.objects.select_related(
             'verse__chapter__book',
             'category'
-        ).order_by('id')[offset:offset+1].first()
+        ).order_by('id').iterator()
+        daily_verse = next(islice(daily_qs, offset, offset + 1), None)
         
         if not daily_verse:
             return {'error': 'Could not retrieve daily verse'}
