@@ -1,6 +1,6 @@
 """
 Bible Service - Manages Bible text retrieval and audio for Django
-FIXED: Chapter content, verse of the day, URL encoding errors, and audio support
+FIXED: Removed null book_audio_url and book_duration when no full-book audio exists
 """
 
 from django.db import models
@@ -18,34 +18,31 @@ from ..models import User
 
 class BibleService:
     """Service for Bible text and audio operations using Django ORM"""
-    
+
     def __init__(self):
         pass
-    
+
     # ==================== LANGUAGE METHODS ====================
-    
+
     def get_languages(self) -> List[Dict]:
         """Get all active languages for Bible reading"""
         languages = Language.objects.filter(is_active=True).values(
             'id', 'code', 'name', 'native_name'
         ).order_by('id')
-        
         return list(languages)
-    
-# In your bible_service.py, look for any .annotate() calls
 
     def get_books_by_language(self, language_code: str = 'en') -> Optional[List[Dict]]:
         try:
             language = Language.objects.get(code=language_code)
         except Language.DoesNotExist:
             return None
-        
+
         books = Book.objects.filter(
             chapters__verses__texts__language=language
         ).distinct().annotate(
             chapter_count=models.Count('chapters__id', distinct=True)
         ).select_related('testament').order_by('testament__id', 'bible_order')
-        
+
         return [
             {
                 'id': book.id,
@@ -57,14 +54,14 @@ class BibleService:
             }
             for book in books
         ]
-    
+
     # ==================== TESTAMENT METHODS ====================
-    
+
     def get_testaments(self) -> List[Dict]:
         """Get list of all testaments (Old and New)"""
         testaments = Testament.objects.values('id', 'name').order_by('id')
         return list(testaments)
-    
+
     def get_books_by_testament(self, testament_name: str) -> List[Dict]:
         """Get list of books by testament name (Old or New)"""
         books = Book.objects.filter(
@@ -75,23 +72,22 @@ class BibleService:
         ).values(
             'id', 'name', 'testament__name', 'chapters_count', 'verses_count', 'has_audio', 'bible_order'
         ).order_by('bible_order')
-        
         return list(books)
-    
+
     def get_books_by_testament_with_language(self, testament_name: str, language_code: str = 'en') -> List[Dict]:
         """Get list of books by testament with chapter counts for specific language"""
         try:
             language = Language.objects.get(code=language_code)
         except Language.DoesNotExist:
             return []
-        
+
         books = Book.objects.filter(
             testament__name=testament_name,
             chapters__verses__texts__language=language
         ).distinct().annotate(
             total_chapters_count=models.Count('chapters__id', distinct=True)
         ).values('id', 'name', 'total_chapters_count', 'has_audio', 'bible_order').order_by('bible_order')
-        
+
         return [
             {
                 'book_id': book['id'],
@@ -102,21 +98,21 @@ class BibleService:
             }
             for book in books
         ]
-    
+
     # ==================== AUDIO METHODS ====================
-    
+
     def get_book_audio(self, book_id: int, language_code: str = 'en') -> Dict:
         """Get audio information for a specific book"""
         try:
             language = Language.objects.get(code=language_code)
-            
-            # Check for book-level audio
+
+            # Check for book-level audio first
             book_audio = BookAudio.objects.filter(
                 book_id=book_id,
                 language=language,
                 is_available=True
             ).first()
-            
+
             if book_audio:
                 return {
                     'has_audio': True,
@@ -127,14 +123,14 @@ class BibleService:
                     'total_parts': book_audio.total_parts,
                     'chapter_timestamps': book_audio.chapter_timestamps
                 }
-            
-            # Check for chapter-level audio
+
+            # Fall back to chapter-level audio
             chapter_audios = ChapterAudio.objects.filter(
                 book_id=book_id,
                 language=language,
                 is_available=True
             ).order_by('chapter_number')
-            
+
             if chapter_audios.exists():
                 return {
                     'has_audio': True,
@@ -149,9 +145,9 @@ class BibleService:
                         for ca in chapter_audios
                     ]
                 }
-            
+
             return {'has_audio': False}
-            
+
         except Language.DoesNotExist:
             return {'has_audio': False, 'error': f'Language {language_code} not found'}
 
@@ -189,30 +185,29 @@ class BibleService:
         """Get audio for a specific chapter"""
         try:
             language = Language.objects.get(code=language_code)
-            
+
             chapter_audio = ChapterAudio.objects.filter(
                 book_id=book_id,
                 chapter_number=chapter_number,
                 language=language,
                 is_available=True
             ).first()
-            
+
             if chapter_audio:
-                # Also get next/previous chapter audio
                 next_audio = ChapterAudio.objects.filter(
                     book_id=book_id,
                     chapter_number=chapter_number + 1,
                     language=language,
                     is_available=True
                 ).first()
-                
+
                 prev_audio = ChapterAudio.objects.filter(
                     book_id=book_id,
                     chapter_number=chapter_number - 1,
                     language=language,
                     is_available=True
                 ).first()
-                
+
                 return {
                     'success': True,
                     'has_audio': True,
@@ -223,12 +218,12 @@ class BibleService:
                     'prev_chapter_audio': prev_audio.chapter_number if prev_audio else None,
                     'start_time': chapter_audio.start_time
                 }
-            
+
             return {'success': False, 'has_audio': False, 'message': 'No audio available for this chapter'}
-            
+
         except Language.DoesNotExist:
             return {'success': False, 'error': f'Language {language_code} not found'}
-    
+
     def get_user_audio_progress(self, user_id: int, book_id: int) -> Dict:
         """Get user's audio progress for a specific book"""
         try:
@@ -236,7 +231,7 @@ class BibleService:
                 user_id=user_id,
                 book_id=book_id
             )
-            
+
             book = Book.objects.get(id=book_id)
             duration_info = self._get_book_audio_duration(book_id)
             total_duration = duration_info.get('total_seconds', 0)
@@ -248,7 +243,7 @@ class BibleService:
             current_chapter_duration = chapter_durations.get(progress.current_chapter, 0)
             listened_seconds += min(progress.audio_current_position or 0, current_chapter_duration)
             remaining_seconds = max(total_duration - listened_seconds, 0)
-            audio_progress_duration = int((listened_seconds / total_duration) * 100) if total_duration > 0 else progress.get_audio_progress_percentage()
+            audio_progress_pct = int((listened_seconds / total_duration) * 100) if total_duration > 0 else progress.get_audio_progress_percentage()
 
             return {
                 'success': True,
@@ -262,10 +257,11 @@ class BibleService:
                 'total_audio_duration': total_duration,
                 'listened_audio_duration': listened_seconds,
                 'remaining_audio_duration': remaining_seconds,
-                'audio_progress_percentage': audio_progress_duration,
+                'audio_progress_percentage': audio_progress_pct,
                 'completed': progress.completed,
                 'progress_percentage': progress.get_audio_progress_percentage()
             }
+
         except UserBookProgress.DoesNotExist:
             book = Book.objects.filter(id=book_id).first()
             return {
@@ -310,7 +306,6 @@ class BibleService:
                 progress.audio_completed_chapters.append(chapter_number)
                 progress.audio_completed_chapters.sort()
 
-                # Update current chapter to next uncompleted chapter
                 next_chapter = chapter_number + 1
                 if next_chapter <= book.total_chapters:
                     progress.current_chapter = next_chapter
@@ -318,7 +313,6 @@ class BibleService:
                 progress.last_audio_listened = timezone.now()
                 progress.save()
 
-                # Check if book is complete
                 if len(progress.audio_completed_chapters) >= book.total_chapters:
                     progress.completed = True
                     progress.save()
@@ -362,8 +356,8 @@ class BibleService:
                 'book_completed': False,
                 'progress_percentage': 0
             }
-    
-    def update_audio_progress(self, user_id: int, book_id: int, chapter_number: int, 
+
+    def update_audio_progress(self, user_id: int, book_id: int, chapter_number: int,
                               current_position: int = None, completed_chapter: int = None,
                               language_code: str = 'en') -> Dict:
         """Update user's audio progress for a book"""
@@ -376,32 +370,26 @@ class BibleService:
                     'current_verse': 1
                 }
             )
-            
-            # Update current chapter
+
             progress.current_chapter = chapter_number
-            
-            # Update audio position if provided
+
             if current_position is not None:
                 progress.audio_current_position = current_position
                 progress.last_audio_listened = timezone.now()
-            
-            # Mark chapter as completed if provided
+
             if completed_chapter is not None:
                 if not progress.audio_completed_chapters:
                     progress.audio_completed_chapters = []
                 if completed_chapter not in progress.audio_completed_chapters:
                     progress.audio_completed_chapters.append(completed_chapter)
                     progress.audio_completed_chapters.sort()
-            
-            # Check if book is fully completed
+
             book = Book.objects.get(id=book_id)
             if len(progress.audio_completed_chapters) >= book.total_chapters:
                 progress.completed = True
-            
+
             progress.save()
-            
-            total_duration = 0
-            chapter_durations = {}
+
             duration_info = self._get_book_audio_duration(book_id, language_code)
             total_duration = duration_info.get('total_seconds', 0)
             chapter_durations = duration_info.get('chapter_seconds', {})
@@ -410,7 +398,7 @@ class BibleService:
                 chapter_durations.get(ch, 0) for ch in progress.audio_completed_chapters
             ) + min(progress.audio_current_position or 0, chapter_durations.get(progress.current_chapter, 0))
             remaining_seconds = max(total_duration - listened_seconds, 0)
-            audio_progress_duration = int((listened_seconds / total_duration) * 100) if total_duration > 0 else progress.get_audio_progress_percentage()
+            audio_progress_pct = int((listened_seconds / total_duration) * 100) if total_duration > 0 else progress.get_audio_progress_percentage()
 
             return {
                 'success': True,
@@ -423,47 +411,46 @@ class BibleService:
                 'total_audio_duration': total_duration,
                 'listened_audio_duration': listened_seconds,
                 'remaining_audio_duration': remaining_seconds,
-                'audio_progress_percentage': audio_progress_duration,
+                'audio_progress_percentage': audio_progress_pct,
                 'completed': progress.completed,
                 'progress_percentage': progress.get_audio_progress_percentage()
             }
-            
+
         except Exception as e:
             return {'success': False, 'error': str(e)}
-    
+
     # ==================== BOOK CONTENT METHODS ====================
-    
+
     def get_book_full_content(self, book_name: str, language_code: str = 'en') -> Dict:
         """Get full content of a specific book with book info and chapter audio"""
         try:
             book_name = unquote(book_name)
             language = Language.objects.get(code=language_code)
-            
-            # Get book info
+
             book = Book.objects.filter(
-                Q(name__iexact=book_name) | 
+                Q(name__iexact=book_name) |
                 Q(name__icontains=book_name)
             ).first()
-            
+
             if not book:
                 return {'error': f'Book "{book_name}" not found'}
-            
-            # Get all chapter audio availability at once
+
+            # Get all chapter audio for this book at once
             chapter_audios = ChapterAudio.objects.filter(
                 book=book,
                 language=language,
                 is_available=True
             ).values('chapter_number', 'audio_url', 'duration')
-            
-            # Create a lookup dict for chapter audio
-            audio_lookup = {}
-            for ca in chapter_audios:
-                audio_lookup[ca['chapter_number']] = {
+
+            audio_lookup = {
+                ca['chapter_number']: {
                     'has_audio': True,
                     'audio_url': ca['audio_url'],
                     'audio_duration': ca['duration']
                 }
-            
+                for ca in chapter_audios
+            }
+
             # Get all verses in this book for the specified language
             verses = VerseText.objects.filter(
                 verse__chapter__book=book,
@@ -478,70 +465,74 @@ class BibleService:
                 'verse__verse_number',
                 'text'
             )
-            
-            # Organize by chapter
+
+            # Organize verses by chapter
             chapters_content = []
             current_chapter = None
             current_verses = []
-            
+
             for verse in verses:
-                chapter = verse['verse__chapter__chapter_number']
-                
-                if current_chapter != chapter:
+                chapter_num = verse['verse__chapter__chapter_number']
+
+                if current_chapter != chapter_num:
                     if current_chapter is not None:
-                        audio_info_chapter = audio_lookup.get(current_chapter, {
+                        audio_data = audio_lookup.get(current_chapter, {
                             'has_audio': False,
                             'audio_url': None,
                             'audio_duration': None
                         })
                         chapters_content.append({
                             'chapter': current_chapter,
-                            'has_audio': audio_info_chapter['has_audio'],
-                            'audio_url': audio_info_chapter['audio_url'],
-                            'audio_duration': audio_info_chapter['audio_duration'],
+                            'has_audio': audio_data['has_audio'],
+                            'audio_url': audio_data['audio_url'],
+                            'audio_duration': audio_data['audio_duration'],
                             'verses': current_verses
                         })
-                    current_chapter = chapter
+                    current_chapter = chapter_num
                     current_verses = []
-                
+
                 current_verses.append({
                     'verse': verse['verse__verse_number'],
                     'text': verse['text']
                 })
-            
-            # Add last chapter
+
+            # Append the last chapter
             if current_chapter is not None:
-                audio_info_chapter = audio_lookup.get(current_chapter, {
+                audio_data = audio_lookup.get(current_chapter, {
                     'has_audio': False,
                     'audio_url': None,
                     'audio_duration': None
                 })
                 chapters_content.append({
                     'chapter': current_chapter,
-                    'has_audio': audio_info_chapter['has_audio'],
-                    'audio_url': audio_info_chapter['audio_url'],
-                    'audio_duration': audio_info_chapter['audio_duration'],
+                    'has_audio': audio_data['has_audio'],
+                    'audio_url': audio_data['audio_url'],
+                    'audio_duration': audio_data['audio_duration'],
                     'verses': current_verses
                 })
-            
-            # Get overall book audio info
+
+            # Check for full-book audio
             book_audio = BookAudio.objects.filter(
                 book=book,
                 language=language,
                 is_available=True
             ).first()
-            
-            # Check if any chapter has audio
+
             has_any_audio = len(audio_lookup) > 0 or book_audio is not None
-            
+
+            # ✅ FIX: Only include book_audio_url and book_duration when a full-book audio exists.
+            # When audio is chapter-by-chapter (our case), these fields are omitted entirely
+            # instead of being returned as null, which is cleaner for API consumers.
             audio_info = {
                 'has_audio': has_any_audio,
                 'type': 'full_book' if book_audio else ('chapter_by_chapter' if len(audio_lookup) > 0 else 'none'),
-                'book_audio_url': book_audio.get_audio_url() if book_audio else None,
-                'book_duration': book_audio.duration if book_audio else None,
                 'chapters_with_audio': len(audio_lookup)
             }
-            
+
+            if book_audio:
+                audio_info['book_audio_url'] = book_audio.get_audio_url()
+                audio_info['book_duration'] = book_audio.duration
+
             return {
                 'book_info': {
                     'id': book.id,
@@ -554,30 +545,29 @@ class BibleService:
                 'audio_info': audio_info,
                 'chapters': chapters_content
             }
-            
+
         except Language.DoesNotExist:
             return {'error': f'Language "{language_code}" not found'}
         except Exception as e:
             return {'error': str(e)}
-    
+
     def get_book_chapters(self, book_name: str) -> Dict:
         """Get list of chapters in a book with verse counts"""
         try:
             book = Book.objects.filter(
-                Q(name__iexact=book_name) | 
+                Q(name__iexact=book_name) |
                 Q(name__icontains=book_name)
             ).first()
-            
+
             if not book:
                 return {'error': f'Book "{book_name}" not found'}
-            
-            # Get chapters with verse counts
+
             chapters = Chapter.objects.filter(
                 book=book
             ).annotate(
                 verse_count=models.Count('verses__id')
             ).values('chapter_number', 'verse_count').order_by('chapter_number')
-            
+
             return {
                 'book': book.name,
                 'book_id': book.id,
@@ -585,24 +575,23 @@ class BibleService:
                 'has_audio': book.has_audio,
                 'chapters': list(chapters)
             }
-            
+
         except Exception as e:
             return {'error': str(e)}
-    
+
     def get_book_chapters_with_language(self, book_name: str, language_code: str = 'en') -> Dict:
         """Get chapters of a book with verse counts for specific language"""
         try:
             book_name = unquote(book_name)
-            
+
             book = Book.objects.filter(
-                Q(name__iexact=book_name) | 
+                Q(name__iexact=book_name) |
                 Q(name__icontains=book_name)
             ).first()
-            
+
             if not book:
                 return {'error': f'Book "{book_name}" not found'}
-            
-            # Get chapters with verse counts (verses that exist in the specified language)
+
             chapters = Chapter.objects.filter(book=book).annotate(
                 verse_count=models.Count(
                     'verses__texts',
@@ -610,15 +599,15 @@ class BibleService:
                     distinct=True
                 )
             ).values('chapter_number', 'verse_count').order_by('chapter_number')
-            
-            # Convert to list of dictionaries with proper keys
-            chapters_list = []
-            for ch in chapters:
-                chapters_list.append({
+
+            chapters_list = [
+                {
                     'chapter': ch['chapter_number'],
                     'verses': ch['verse_count'] or 0
-                })
-            
+                }
+                for ch in chapters
+            ]
+
             return {
                 'book_id': book.id,
                 'book_name': book.name,
@@ -626,38 +615,36 @@ class BibleService:
                 'has_audio': book.has_audio,
                 'chapters': chapters_list
             }
-            
+
         except Exception as e:
             return {'error': str(e)}
-    
+
     def get_chapters_content(self, book_name: str, language_code: str = 'en') -> Dict:
         """Get all chapters content of a book"""
         return self.get_book_full_content(book_name, language_code)
-    
+
     # ==================== CHAPTER METHODS ====================
-    
+
     def get_chapter_verses(self, book_name: str, chapter: int, language_code: str = 'en') -> Dict:
         """Get a specific chapter's verses"""
         try:
             book_name = unquote(book_name)
             chapter = int(chapter)
             language = Language.objects.get(code=language_code)
-            
+
             book = Book.objects.filter(
-                Q(name__iexact=book_name) | 
+                Q(name__iexact=book_name) |
                 Q(name__icontains=book_name)
             ).first()
-            
+
             if not book:
                 return {'error': f'Book "{book_name}" not found'}
-            
-            # Get the specific chapter
+
             try:
                 chapter_obj = Chapter.objects.get(book=book, chapter_number=chapter)
             except Chapter.DoesNotExist:
                 return {'error': f'Chapter {chapter} not found in {book.name}'}
-            
-            # Get verses for this chapter
+
             verses = VerseText.objects.filter(
                 verse__chapter=chapter_obj,
                 language=language
@@ -669,13 +656,12 @@ class BibleService:
                 'verse__verse_number',
                 'text'
             )
-            
+
             if not verses.exists():
                 return {'error': f'No verses found for {book.name} {chapter} in {language_code}'}
-            
-            # Get audio for this chapter
+
             audio_info = self.get_chapter_audio(book.id, chapter, language_code)
-            
+
             return {
                 'reference': f'{book.name} {chapter}',
                 'book': book.name,
@@ -692,29 +678,28 @@ class BibleService:
                     for v in verses
                 ]
             }
-            
+
         except Language.DoesNotExist:
             return {'error': f'Language "{language_code}" not found'}
         except Exception as e:
             return {'error': str(e)}
-    
+
     # ==================== VERSE METHODS ====================
-    
+
     def get_specific_verse(self, book_name: str, chapter: int, verse: int, language_code: str = 'en') -> Dict:
         """Get a specific verse"""
         try:
             book_name = unquote(book_name)
             language = Language.objects.get(code=language_code)
-            
+
             book = Book.objects.filter(
-                Q(name__iexact=book_name) | 
+                Q(name__iexact=book_name) |
                 Q(name__icontains=book_name)
             ).first()
-            
+
             if not book:
                 return {'error': f'Book "{book_name}" not found'}
-            
-            # Get verse
+
             try:
                 verse_text = VerseText.objects.get(
                     verse__chapter__book=book,
@@ -722,7 +707,6 @@ class BibleService:
                     verse__verse_number=verse,
                     language=language
                 )
-                
                 return {
                     'reference': f'{book.name} {chapter}:{verse}',
                     'book': book.name,
@@ -731,30 +715,27 @@ class BibleService:
                     'verse': verse,
                     'text': verse_text.text
                 }
-                
+
             except VerseText.DoesNotExist:
-                return {
-                    'error': f'Verse {book.name} {chapter}:{verse} not found'
-                }
-                
+                return {'error': f'Verse {book.name} {chapter}:{verse} not found'}
+
         except Language.DoesNotExist:
             return {'error': f'Language "{language_code}" not found'}
         except Exception as e:
             return {'error': str(e)}
-    
+
     def get_verse_all_languages(self, book_name: str, chapter: int, verse: int) -> Dict:
         """Get a verse in all available languages"""
         try:
             book_name = unquote(book_name)
             book = Book.objects.filter(
-                Q(name__iexact=book_name) | 
+                Q(name__iexact=book_name) |
                 Q(name__icontains=book_name)
             ).first()
-            
+
             if not book:
                 return {'error': f'Book "{book_name}" not found'}
-            
-            # Get verse in all languages
+
             verse_texts = VerseText.objects.filter(
                 verse__chapter__book=book,
                 verse__chapter__chapter_number=chapter,
@@ -764,32 +745,32 @@ class BibleService:
                 'language__name',
                 'text'
             )
-            
+
             if not verse_texts.exists():
                 return {'error': f'Verse {book.name} {chapter}:{verse} not found'}
-            
+
             result = {
                 'reference': f'{book.name} {chapter}:{verse}',
                 'verses': {}
             }
-            
+
             for vt in verse_texts:
                 result['verses'][vt['language__name']] = vt['text']
-            
+
             return result
-            
+
         except Exception as e:
             return {'error': str(e)}
-    
+
     # ==================== SEARCH METHODS ====================
-    
+
     def search_verses(self, query: str, language_code: str = 'en', limit: int = 50) -> List[Dict]:
         """Search for verses containing specific text"""
         try:
             language = Language.objects.get(code=language_code)
         except Language.DoesNotExist:
             return []
-        
+
         verse_texts = VerseText.objects.filter(
             language=language,
             text__icontains=query
@@ -802,7 +783,7 @@ class BibleService:
             'verse__verse_number',
             'text'
         )[:limit]
-        
+
         return [
             {
                 'reference': f"{vt['verse__chapter__book__name']} {vt['verse__chapter__chapter_number']}:{vt['verse__verse_number']}",
@@ -814,37 +795,33 @@ class BibleService:
             }
             for vt in verse_texts
         ]
-    
+
     def get_random_verse(self, language_code: str = 'en', testament: Optional[str] = None) -> Dict:
         """Get a random Bible verse"""
         try:
             language = Language.objects.get(code=language_code)
         except Language.DoesNotExist:
             return {'error': f'Language "{language_code}" not found'}
-        
-        # Build queryset
+
         queryset = VerseText.objects.filter(language=language)
-        
+
         if testament:
             queryset = queryset.filter(
                 verse__chapter__book__testament__name=testament
             )
-        
-        # Get random verse
+
         count = queryset.count()
         if count == 0:
             return {'error': 'No verses found'}
-        
-        # Get a random offset
+
         random_offset = random.randint(0, count - 1)
-        
         verse_text = queryset.select_related(
             'verse__chapter__book'
-        )[random_offset:random_offset+1].first()
-        
+        )[random_offset:random_offset + 1].first()
+
         if not verse_text:
             return {'error': 'No verses found'}
-        
+
         return {
             'reference': f"{verse_text.verse.chapter.book.name} {verse_text.verse.chapter.chapter_number}:{verse_text.verse.verse_number}",
             'book': verse_text.verse.chapter.book.name,
@@ -853,35 +830,34 @@ class BibleService:
             'verse': verse_text.verse.verse_number,
             'text': verse_text.text
         }
-    
+
     def get_verse_of_the_day(self, language_code: str = 'en') -> Dict:
         """Get verse of the day from pre-curated daily verses (based on current date)"""
         from datetime import datetime
         from ..models import DailyVerse, DailyVerseCategory
-        
+
         day_of_year = datetime.now().timetuple().tm_yday
-        
+
         try:
             language = Language.objects.get(code=language_code)
         except Language.DoesNotExist:
             return {'error': f'Language "{language_code}" not found'}
-        
-        # Get total daily verses
+
         total_daily_verses = DailyVerse.objects.count()
-        
+
         if total_daily_verses == 0:
-            # Fallback to a verse determined by the day of year when daily verses are not loaded.
             verse_text_qs = VerseText.objects.filter(language=language)
             if not verse_text_qs.exists():
                 verse_text_qs = VerseText.objects.filter(language__code='en')
-            
+
             if not verse_text_qs.exists():
                 return {'error': 'No daily verses configured and no translated verses available.'}
 
             offset = day_of_year % verse_text_qs.count()
             verse_text = verse_text_qs.select_related(
                 'verse__chapter__book'
-            )[offset:offset+1].first()
+            )[offset:offset + 1].first()
+
             if not verse_text:
                 return {'error': 'Could not retrieve fallback verse of the day.'}
 
@@ -895,36 +871,29 @@ class BibleService:
                 'category': None,
                 'category_slug': None
             }
-        
-        # Calculate offset based on day of year (same verse for everyone today)
-        offset = day_of_year % total_daily_verses
-        
-        # Get daily verse at that offset without slicing the queryset
-        # (some DB backends / Django versions raise "Cannot reorder a query once a slice has been taken"
-        # when order_by is used after slicing). Use iterator + islice to avoid creating a sliced QuerySet.
-        from itertools import islice
 
+        offset = day_of_year % total_daily_verses
+
+        from itertools import islice
         daily_qs = DailyVerse.objects.select_related(
             'verse__chapter__book',
             'category'
         ).order_by('id').iterator()
         daily_verse = next(islice(daily_qs, offset, offset + 1), None)
-        
+
         if not daily_verse:
             return {'error': 'Could not retrieve daily verse'}
-        
-        # Get verse text in requested language
+
         try:
             verse_text = daily_verse.verse.texts.get(language=language)
             text = verse_text.text
         except VerseText.DoesNotExist:
-            # Fallback to English if translation not available
             try:
                 verse_text = daily_verse.verse.texts.get(language__code='en')
                 text = verse_text.text
             except VerseText.DoesNotExist:
                 text = '[Verse text not available]'
-        
+
         return {
             'reference': f"{daily_verse.verse.chapter.book.name} {daily_verse.verse.chapter.chapter_number}:{daily_verse.verse.verse_number}",
             'book': daily_verse.verse.chapter.book.name,
@@ -935,14 +904,14 @@ class BibleService:
             'category': daily_verse.category.title,
             'category_slug': daily_verse.category.slug
         }
-    
+
     # ==================== STATISTICS METHODS ====================
-    
+
     def get_bible_stats(self) -> Dict:
         """Get overall Bible statistics"""
         old_testament = self.get_testament_stats('Old')
         new_testament = self.get_testament_stats('New')
-        
+
         return {
             'old_testament': old_testament,
             'new_testament': new_testament,
@@ -952,7 +921,7 @@ class BibleService:
                 'verses': old_testament.get('verses', 0) + new_testament.get('verses', 0)
             }
         }
-    
+
     def get_testament_stats(self, testament: str) -> Dict:
         """Get statistics for a testament"""
         stats = Book.objects.filter(
@@ -962,21 +931,20 @@ class BibleService:
             chapters=models.Count('chapters__id', distinct=True),
             verses=models.Count('chapters__verses__id', distinct=True)
         )
-        
+
         return {
             'books': stats['books'] or 0,
             'chapters': stats['chapters'] or 0,
             'verses': stats['verses'] or 0
         }
-    
+
     def get_audio_stats(self) -> Dict:
         """Get statistics about audio availability"""
         total_books = Book.objects.count()
         books_with_audio = Book.objects.filter(has_audio=True).count()
-        
         total_chapter_audio = ChapterAudio.objects.filter(is_available=True).count()
         total_book_audio = BookAudio.objects.filter(is_available=True).count()
-        
+
         return {
             'total_books': total_books,
             'books_with_audio': books_with_audio,
