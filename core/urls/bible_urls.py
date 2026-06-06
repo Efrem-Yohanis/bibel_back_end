@@ -45,9 +45,6 @@ urlpatterns = [
             SpecificVerseView.as_view(), name='specific-verse'),
     
     re_path(r'^books/(?P<book_name>.+?)/?$', BookFullContentView.as_view(), name='book-full-content'),
-    # Verse endpoints
-    re_path(r'^books/(?P<book_name>.+?)/chapters/(?P<chapter_number>\d+)/verses/(?P<verse_number>\d+)$', 
-            SpecificVerseView.as_view(), name='specific-verse'),
     
     # Search and utility endpoints
     path('search', SearchVersesView.as_view(), name='search-verses'),
